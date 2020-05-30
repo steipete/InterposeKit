@@ -1,6 +1,7 @@
 # InterposeKit
 
 ![Build](https://github.com/steipete/Interpose/workflows/Build/badge.svg)
+![Platform](https://img.shields.io/badge/platforms-iOS%2011.0%20%7C%20macOS%2010.13%20%7C%20tvOS%2011.0%20%7C%20watchOS%205.0-F28D00.svg)
 
 Interpose is a modern library to swizzle elegant in Swift. Unlike the usual sample, code, this library replaces the implementation, so you avoid some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
@@ -75,6 +76,10 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
 - Experiment with Swift hooking? 🤡
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
+
+Make this happen:
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+![CocoaPods](https://img.shields.io/cocoapods/v/SwiftyJSON.svg)
 
 
 ## License
