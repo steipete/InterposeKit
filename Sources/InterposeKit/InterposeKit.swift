@@ -288,13 +288,13 @@ extension Interpose.Task: CustomDebugStringConvertible {
 }
 #endif
 
-#if os(linux)
+#if os(Linux)
 // Linux is used to create Jazzy docs
 final public struct Selector {}
 final public struct IMP {}
 final public struct Method {}
 func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
 func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
-IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types) { IMP() }
-const char *method_getTypeEncoding(Method m) { return nil }
+func class_replaceMethod(_ cls: AnyClass?, _ name: Selector, _ imp: IMP, _ types: UnsafePointer<Int8>?) -> IMP? { IMP() }
+func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
 #endif
