@@ -10,11 +10,6 @@ import Foundation
 
 #if !os(Linux)
 import MachO.dyld
-#else
-// Linux is used to create Jazzy docs
-final public class Selector {}
-final public class IMP {}
-final public class Method {}
 #endif
 
 /// Helper to swizzle methods the right way, via replacing the IMP.
@@ -291,4 +286,15 @@ extension Interpose.Task: CustomDebugStringConvertible {
         return "\(selector) -> \(String(describing: origIMP))"
     }
 }
+#endif
+
+#if os(linux)
+// Linux is used to create Jazzy docs
+final public struct Selector {}
+final public struct IMP {}
+final public struct Method {}
+func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
+func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
+IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types) { IMP() }
+const char *method_getTypeEncoding(Method m) { return nil }
 #endif
