@@ -24,6 +24,11 @@ on:
 jobs:
   Jazzy:
     runs-on: macos-latest
+    steps:
+      - name: echo
+        run: |
+          brew install docker-machine docker
+          sudo docker –version
     container:
       image: norionomura/jazzy:0.13.2_swift-5.2.1
     steps:
