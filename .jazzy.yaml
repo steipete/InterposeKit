@@ -1,0 +1,9 @@
+module: InterposeKit
+author: Peter Steinberger
+author_url: https://steipete.com
+root_url: https://pages.github.com/steipete/InterposeKit
+github_url: https://github.com/steipete/InterposeKit
+github_file_prefix: https://github.com/steipete/InterposeKit/tree/master
+theme: fullwidth
+clean: true
+copyright: '© 2020 [Peter Steinberger](https://steipete.com) under MIT.'
