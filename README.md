@@ -1,6 +1,6 @@
 # InterposeKit
 
-![Build](https://github.com/steipete/Interpose/workflows/Swift/badge.svg)
+![Build](https://github.com/steipete/Interpose/workflows/Build/badge.svg)
 
 Interpose is a modern library to swizzle elegant in Swift. Unlike the usual sample, code, this library replaces the implementation, so you avoid some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
