@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,7 @@
 		7880B12B248280B300AD2251 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B129248280B300AD2251 /* Main.storyboard */; };
 		7880B12D248280B500AD2251 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12C248280B500AD2251 /* Assets.xcassets */; };
 		7880B130248280B500AD2251 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12E248280B500AD2251 /* LaunchScreen.storyboard */; };
+		78C39D8C2483038D00B46395 /* InterposeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 78C39D8B2483038D00B46395 /* InterposeKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78C39D8C2483038D00B46395 /* InterposeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +114,9 @@
 			dependencies = (
 			);
 			name = InterposeExample;
+			packageProductDependencies = (
+				78C39D8B2483038D00B46395 /* InterposeKit */,
+			);
 			productName = InterposeExample;
 			productReference = 7880B120248280B300AD2251 /* InterposeExample.app */;
 			productType = "com.apple.product-type.application";
@@ -162,6 +167,9 @@
 				Base,
 			);
 			mainGroup = 7880B117248280B300AD2251;
+			packageReferences = (
+				78C39D8A2483038D00B46395 /* XCRemoteSwiftPackageReference "InterposeKit" */,
+			);
 			productRefGroup = 7880B121248280B300AD2251 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -469,6 +477,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		78C39D8A2483038D00B46395 /* XCRemoteSwiftPackageReference "InterposeKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/steipete/InterposeKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		78C39D8B2483038D00B46395 /* InterposeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78C39D8A2483038D00B46395 /* XCRemoteSwiftPackageReference "InterposeKit" */;
+			productName = InterposeKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7880B118248280B300AD2251 /* Project object */;
 }
