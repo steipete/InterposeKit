@@ -1,6 +1,11 @@
 # InterposeKit
 
-[![Build](https://github.com/steipete/Interpose/workflows/Build/badge.svg)](https://github.com/steipete/Interpose/actions?query=workflow%3ABuild)
+[![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM)
+[![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
+[![pod lib lint](https://github.com/steipete/InterposeKit/workflows/pod%20lib%20lint/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3A%22pod+lib+lint%22)
+[![Nightly](https://github.com/steipete/InterposeKit/workflows/Nightly/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3ANightly)
+[![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit)
+
 <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 ![Platform](https://img.shields.io/badge/platforms-iOS%2011.0%20%7C%20macOS%2010.13%20%7C%20tvOS%2011.0%20%7C%20watchOS%205.0-F28D00.svg)
 ![Xcode 11.5+](https://img.shields.io/badge/Xcode-11.5%2B-blue.svg)
