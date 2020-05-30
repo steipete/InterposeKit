@@ -7,7 +7,10 @@
 //
 
 import Foundation
+
+#if !os(Linux)
 import MachO.dyld
+#endif
 
 /// Helper to swizzle methods the right way, via replacing the IMP.
 final public class Interpose {
