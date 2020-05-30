@@ -105,4 +105,4 @@ Make this happen:
 
 ## License
 
-MIT Licensed
+InterposeKit is MIT Licensed.

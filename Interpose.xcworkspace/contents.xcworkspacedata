@@ -11,6 +11,9 @@
       location = "group:README.md">
    </FileRef>
    <FileRef
+      location = "group:CHANGELOG.md">
+   </FileRef>
+   <FileRef
       location = "group:LICENSE">
    </FileRef>
 </Workspace>
