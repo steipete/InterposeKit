@@ -1,0 +1,73 @@
+//
+//  Defaults-Release.xcconfig
+//
+//  Additional defaults to have a unified set of optimization settings
+//
+
+#include "Defaults.xcconfig"
+
+// Performance
+GCC_UNROLL_LOOPS = YES
+GCC_OPTIMIZATION_LEVEL = s
+
+// Without this set to yes, xcode only passes -fembed-bitcode-marker, not -fembed-bitcode to the compiler, when ENABLE_BITCODE is Yes
+DEPLOYMENT_POSTPROCESSING = YES
+
+// Enable bitcode is YES by default on iOS. Mac doesn't support it, so setting that flag would break Mac.
+ENABLE_BITCODE = NO
+ENABLE_BITCODE[sdk=iphoneos*] = YES
+
+// Link-Time optimization reduces file size by quite a bit.
+LLVM_LTO = YES
+
+// Code protection
+STRIP_INSTALLED_PRODUCT = YES
+SEPARATE_STRIP = YES
+COPY_PHASE_STRIP = YES
+DEAD_CODE_STRIPPING = YES
+STRIP_STYLE = non-global
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+
+// Faster assset compilation for debug mode
+ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+
+// build all the architectures
+ONLY_ACTIVE_ARCH = NO
+ENABLE_TESTABILITY = NO
+VALIDATE_PRODUCT = YES
+
+// See Defaults.xcconfig - we always want assertions to be enabled, also for release builds.
+//ENABLE_NS_ASSERTIONS = NO
+
+// Generating dSYM files is super slow but necessary for release builds.
+// This simply restores the default that we override in Defaults.xcconfig.
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+
+// deep static analysis before building
+//RUN_CLANG_STATIC_ANALYZER = YES
+//CLANG_STATIC_ANALYZER_MODE = deep
+
+// Warning are errors!
+GCC_TREAT_WARNINGS_AS_ERRORS = NO
+SWIFT_TREAT_WARNINGS_AS_ERRORS = NO
+
+// Swift
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE
+SWIFT_OPTIMIZATION_LEVEL = -O
+SWIFT_COMPILATION_MODE = wholemodule;
+
+// Disable SwiftLint
+PSPDF_SWIFTLINT = NO
+
+// -gline-tables-only reduces debug information slightly but speeds up LTO.
+// Debug info for variables or function parameters is not produced, which reduces the size of the resulting binary.
+// http://llvm.org/releases/3.2/tools/clang/docs/ReleaseNotes.html
+// This has been added in Xcode 8.
+OTHER_CFLAGS = $(PSPDF_CFLAGS_COMMON) -gline-tables-only -fembed-bitcode
+OTHER_CFLAGS[sdk=macosx*] = $(PSPDF_CFLAGS_COMMON) -gline-tables-only
+
+// ** DEBUGGING ONLY **
+//OTHER_CFLAGS = $(PSPDF_CFLAGS_COMMON) -v
+//OTHER_LDFLAGS = -ObjC -v
+//OTHER_LIBTOOLFLAGS = -v
+//WARNING_LDFLAGS = -v

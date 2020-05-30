@@ -1,0 +1,20 @@
+//
+//  Defaults-Testing.xcconfig
+//
+//  Additional defaults that are used for testing.
+//
+
+#include "Defaults.xcconfig"
+
+// Define the TESTING macro in all debug builds
+GCC_PREPROCESSOR_DEFINITIONS = $(PSPDF_PREPROCESSOR_DEFINITIONS_COMMON) CI=$(CI) DEBUG=1 TESTING=1
+
+// Explicitely enable assertions, just to be sure.
+ENABLE_NS_ASSERTIONS = YES
+
+// Enable extra validation
+// https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
+VALIDATE_PRODUCT = YES
+
+// Default value for CI
+CI = 0

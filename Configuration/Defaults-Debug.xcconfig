@@ -1,0 +1,10 @@
+//
+//  Defaults-Debug.xcconfig
+//
+//  Additional defaults for debugging.
+//
+
+#include "Defaults.xcconfig"
+
+// Set the debugging flag
+GCC_PREPROCESSOR_DEFINITIONS = $(PSPDF_PREPROCESSOR_DEFINITIONS_COMMON) DEBUG=1

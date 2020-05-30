@@ -31,6 +31,10 @@
 		78C39D8E2483164500B46395 /* InterposeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterposeKit.h; path = Sources/InterposeKit/InterposeKit.h; sourceTree = SOURCE_ROOT; };
 		78C39D902483165600B46395 /* InterposeKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InterposeKit.swift; path = Sources/InterposeKit/InterposeKit.swift; sourceTree = SOURCE_ROOT; };
 		78C39D922483169300B46395 /* InterposeKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InterposeKitTests.swift; path = Tests/InterposeKitTests/InterposeKitTests.swift; sourceTree = SOURCE_ROOT; };
+		78C39DBE248317B400B46395 /* Defaults-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Release.xcconfig"; sourceTree = "<group>"; };
+		78C39DBF248317B400B46395 /* Defaults-Testing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Testing.xcconfig"; sourceTree = "<group>"; };
+		78C39DC0248317B400B46395 /* Defaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Defaults.xcconfig; sourceTree = "<group>"; };
+		78C39DC1248317B400B46395 /* Defaults-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +61,7 @@
 			children = (
 				78863EC82464B2F900BA3762 /* InterposeKit */,
 				78C39D782482CC7D00B46395 /* InterposeTests */,
+				78C39DBD248317B400B46395 /* Configuration */,
 				78863EC72464B2F900BA3762 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,6 +92,17 @@
 				78C39D7B2482CC7D00B46395 /* Info-Tests.plist */,
 			);
 			path = InterposeTests;
+			sourceTree = "<group>";
+		};
+		78C39DBD248317B400B46395 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				78C39DBE248317B400B46395 /* Defaults-Release.xcconfig */,
+				78C39DBF248317B400B46395 /* Defaults-Testing.xcconfig */,
+				78C39DC0248317B400B46395 /* Defaults.xcconfig */,
+				78C39DC1248317B400B46395 /* Defaults-Debug.xcconfig */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,12 +241,11 @@
 /* Begin XCBuildConfiguration section */
 		78863ECC2464B2F900BA3762 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 78C39DC1248317B400B46395 /* Defaults-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -257,10 +272,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -274,9 +287,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -288,12 +298,11 @@
 		};
 		78863ECD2464B2F900BA3762 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 78C39DBE248317B400B46395 /* Defaults-Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -320,10 +329,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -331,9 +338,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";

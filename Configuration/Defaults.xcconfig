@@ -1,0 +1,223 @@
+//
+//  Defaults.xcconfig
+//
+//  Common customizations/sanitizations of the platform defaults for our projects.
+//
+//  For compatibility reasons, the iOS platform has a couple of not–so–sensible defaults.
+//  This file collects, and annotates the deviations from these defaults.
+//
+// :NOTE: Some of the settings herein may be redundant for newly created projects/targets:
+//  Xcode’s project/target templates take several (but not all!) of these issues into account.
+//  However, for uniformity it is probably more useful to simply delete the entire warning section in the Xcode project, and then set them up using the standard warning flags.
+// https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
+
+// We support macOS, iOS, watchOS and tvOS by default.
+SUPPORTED_PLATFORMS = macosx iphoneos appletvos watchos appletvsimulator iphonesimulator watchsimulator
+
+// http://promisekit.org/news/2016/08/Multiplatform-Single-Scheme-Xcode-Projects/
+// watchOS build fails if we do not set it exactly like that
+TARGETED_DEVICE_FAMILY = 1,2,3,4
+
+// Deployment targets
+MACOSX_DEPLOYMENT_TARGET = 10.13
+IPHONEOS_DEPLOYMENT_TARGET = 12.0
+TVOS_DEPLOYMENT_TARGET = 11.0
+WATCHOS_DEPLOYMENT_TARGET = 4.0
+
+// We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
+CODE_SIGN_IDENTITY = iOS Developer
+CODE_SIGN_IDENTITY[sdk=iphoneos*] =
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] =
+CODE_SIGN_IDENTITY[sdk=macosx*] =
+
+// :MARK: General Project Setup:
+// :MARK: -Toolchain
+// Universal Objective-C iOS Project
+SDKROOT = iphoneos
+
+LLVM_LTO = NO
+
+// Performance
+ENABLE_TESTABILITY = YES
+VALIDATE_PRODUCT = NO
+COPY_PHASE_STRIP = NO
+DEPLOYMENT_POSTPROCESSING = NO
+STRIP_INSTALLED_PRODUCT = NO
+SEPARATE_STRIP = NO
+DEAD_CODE_STRIPPING = NO
+STRIP_STYLE = debugging
+
+// Limit API to what is safe for extensions.
+APPLICATION_EXTENSION_API_ONLY = YES
+
+// Everything else kills debugging and performance.
+GCC_OPTIMIZATION_LEVEL = 0
+
+// TODO: Neither sdk=uikitformac* nor sdk=maccatalyst nor sdk=iosmac work
+// xcodebuild -showsdks doesn't list macCatalyst either
+// https://twitter.com/owensd/status/1154472549440299009
+// FB6822740: Mac Catalyst: Please add official support for a separate architecture in xcconfig files [sdk=maccatalyst]
+MACCATALYST_YES = YES
+MACCATALYST_NO = NO
+// This will be the case on iOS
+MACCATALYST_ = NO
+
+// This is always defined as YES or NO
+PSPDF_IS_MACCATALYST = $(MACCATALYST_$(IS_MACCATALYST))
+
+// macOS specific: We always want to use the hardened runtime.
+// This is a requirement for the Mac App Store.
+ENABLE_HARDENED_RUNTIME[sdk=macosx*] = $(PSPDF_IS_MACCATALYST)
+
+// :MARK: -Swift
+SWIFT_VERSION = 5
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
+
+// Same reason as GCC_OPTIMIZATION_LEVEL
+SWIFT_OPTIMIZATION_LEVEL = -Onone
+
+// Warn on unguarded API usage
+CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+
+// :MARK: - Reset Diagnostics:
+ENABLE_STRICT_OBJC_MSGSEND = YES
+// :MARK: -Warnings
+// The iOS platform defaults **explicitly** disable several warnings.
+// This defeats the purpose of Clangs `-Weverything`, which we want to use!
+// Therefore, we explicitly enable all those warnings here.
+// Disabling those we do **not** want then happens elsewhere — always in combination with a reason _why_ we don’t want/need it.
+CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+CLANG_WARN_EMPTY_BODY = YES
+GCC_WARN_SHADOW = YES
+CLANG_WARN_CONSTANT_CONVERSION = YES
+CLANG_WARN_BOOL_CONVERSION = YES
+GCC_WARN_64_TO_32_BIT_CONVERSION = YES
+CLANG_WARN_ENUM_CONVERSION = YES
+CLANG_WARN_INT_CONVERSION = YES
+CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES
+GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES
+GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES
+GCC_WARN_ABOUT_MISSING_NEWLINE = YES
+CLANG_WARN_ASSIGN_ENUM = YES
+CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES
+GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES
+GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES
+GCC_WARN_UNKNOWN_PRAGMAS = YES
+CLANG_WARN_UNREACHABLE_CODE = YES_AGGRESSIVE
+GCC_WARN_UNUSED_FUNCTION = YES
+GCC_WARN_UNUSED_LABEL = YES
+GCC_WARN_UNUSED_PARAMETER = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES
+GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES
+GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES
+CLANG_WARN_CXX0X_EXTENSIONS = YES
+CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR
+CLANG_WARN__DUPLICATE_METHOD_MATCH = YES
+CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES
+CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES
+GCC_WARN_UNDECLARED_SELECTOR = YES
+GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES
+CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES
+GCC_WARN_STRICT_SELECTOR_MATCH = YES
+GCC_WARN_UNDECLARED_SELECTOR = YES
+CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR
+CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES
+CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES
+CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES
+CLANG_WARN_OBJC_RECEIVER_WEAK = YES
+CLANG_WARN_INFINITE_RECURSION = YES
+CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES_ERROR
+CLANG_WARN_COMMA = YES_ERROR
+CLANG_WARN_RANGE_LOOP_ANALYSIS = YES
+CLANG_WARN_STRICT_PROTOTYPES = YES_ERROR
+CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES
+CLANG_WARN_OBJC_LITERAL_CONVERSION = YES_ERROR
+
+// Whether to warn when the value returned from a function/method/block does not
+// match its return type
+GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR
+
+// Warn if a variable might be clobbered by a setjmp call or if an automatic variable is used without prior initialization.
+GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE
+
+// Whether to warn about unsafe comparisons between values of different
+// signedness
+GCC_WARN_SIGN_COMPARE = YES
+
+// Whether to warn about the arguments to printf-style functions not matching
+// the format specifiers
+GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES
+
+// Whether to warn about missing braces or parentheses that make the meaning of
+// the code ambiguous
+GCC_WARN_MISSING_PARENTHESES = YES
+
+// Whether to warn about an aggregate data type's initializer not being fully
+// bracketed (e.g., array initializer syntax)
+GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES
+
+// This warning detects suspicious uses of std::move.
+CLANG_WARN_SUSPICIOUS_MOVE = YES
+
+// Whether to warn about the use of four-character constants
+GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES
+
+// Whether to warn when switching on an enum value, and all possibilities are
+// not accounted for
+GCC_WARN_CHECK_SWITCH_STATEMENTS = YES
+
+// Warn for usage of implicit sequentially-consistent atomics
+CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES
+
+// Warning are not errors by default
+GCC_TREAT_WARNINGS_AS_ERRORS = NO
+SWIFT_TREAT_WARNINGS_AS_ERRORS = NO
+
+// Xcode 11: Clang now provides a mechanism for controlling exit-time destructor registration. You can disable these globally with the flag -fno-c++-static-destructors, or apply the attribute [[clang::no_destroy]] to disable the destructors of specific variables. The attribute [[clang::always_destroy]] was also added to enable destructors of specific variables when -fno-c++-static-destructors is used. (21734598)
+// We do not need to destruct statics on iOS at all, so this is a space optimization.
+CLANG_ENABLE_CPP_STATIC_DESTRUCTORS = NO
+
+// :MARK: -Static Analysis
+// As with the warnings, reset all options that are explicitly disabled by the iOS platform defaults
+CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES
+CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES
+CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES
+CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE
+
+// http://www.miqu.me/blog/2016/07/31/xcode-8-new-build-settings-and-analyzer-improvements/
+CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES
+CLANG_ANALYZER_NONNULL = YES
+CLANG_ANALYZER_OBJC_DEALLOC = YES
+LOCALIZED_STRING_MACRO_NAMES = $(inherited) PSPDFLocalize
+
+// Check for C++ container overflow when Address Sanitizer is enabled.
+CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = YES;
+
+// Configure undefined behavior checker.
+CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+CLANG_UNDEFINED_BEHAVIOR_SANITIZER_NULLABILITY = YES;
+
+// Warn about assigning integer constants to enum values that are out of the range of the enumerated type.
+CLANG_WARN_ASSIGN_ENUM = YES
+
+// Warns when a quoted include is used instead of a framework style include in a framework header.
+CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES
+
+// Warn for unnecessary semicolons
+CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES
+
+// Warn when a source file does not end with a newline.
+GCC_WARN_ABOUT_MISSING_NEWLINE = YES
+
+// Check for Grand Central Dispatch idioms that may lead to poor performance.
+CLANG_ANALYZER_GCD_PERFORMANCE = NO
+
+// Warn about implicit ownership types on Objective-C object references as out parameters. For example, declaring a parameter with type `NSObject**` will produce a warning because the compiler will assume that the out parameter's ownership type is `__autoreleasing`
+CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES
+
+CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES
+
+// Whether to warn about implicit conversions in the signedness of the type
+// a pointer is pointing to (e.g., 'int *' getting converted to 'unsigned int *')
+GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES
