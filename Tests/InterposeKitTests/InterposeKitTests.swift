@@ -66,7 +66,8 @@ final class InterposeKitTests: XCTestCase {
         // Swizzle test class
         let interposed = try Interpose(TestClass.self) {
             try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
-                return store((@convention(c) (AnyObject, Selector) -> String).self)(`self`, store.selector) + testSwizzleAddition
+                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
+                return origCall(`self`, store.selector) + testSwizzleAddition
                 } as @convention(block) (AnyObject) -> String})
         }
 
@@ -79,7 +80,8 @@ final class InterposeKitTests: XCTestCase {
         // Swizzle subclass, automatically applys
         let interposedSubclass = try Interpose(TestSubclass.self) {
             try $0.hook(#selector(TestSubclass.sayHi), { store in { blockSelf in
-                return store((@convention(c) (AnyObject, Selector) -> String).self)(blockSelf, store.selector) + testSwizzleAddition
+                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
+                return origCall(blockSelf, store.selector) + testSwizzleAddition
                 } as @convention(block) (AnyObject) -> String})
         }
 
@@ -92,6 +94,6 @@ final class InterposeKitTests: XCTestCase {
 
     static var allTests = [
         ("testClassOverrideAndRevert", testClassOverrideAndRevert),
-        ("testSubclassOverride", testSubclassOverride),
+        ("testSubclassOverride", testSubclassOverride)
     ]
 }

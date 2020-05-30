@@ -212,7 +212,9 @@ extension Interpose {
         private var builder: ((Interpose) throws -> Void)?
         private var completion: (() -> Void)?
 
-        @discardableResult public init(className: String, builder: @escaping (Interpose) throws -> Void, completion: (() -> Void)? = nil) throws {
+        @discardableResult public init(className: String,
+                                       builder: @escaping (Interpose) throws -> Void,
+                                       completion: (() -> Void)? = nil) throws {
             self.className = className
             self.builder = builder
             self.completion = completion
@@ -234,9 +236,8 @@ extension Interpose {
     }
 }
 
-
 // dyld C function cannot capture class context so we pack it in a static struct.
-fileprivate struct InterposeWatcher {
+private struct InterposeWatcher {
     // Global list of waiters; can be multiple per class
     fileprivate static var globalWatchers: [Interpose.Waiter] = {
         // Register after Swift global registers to not deadlock
