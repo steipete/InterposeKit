@@ -43,6 +43,22 @@ Calling sayHi
 After Interposing <InterposeTests.TestClass: 0x7fa0b160c1e0>
 Hi there 👋 and Interpose
 ```
+## Installation
+
+Building InterposeKit requires Xcode 11.4+ or a Swift 5.2+ toolchain with the Swift Package Manager.
+
+### Swift Package Manager
+
+Add `.package(url: "https://github.com/steipete/InterposeKit.git", from: "0.0.1")` to your
+`Package.swift` file's `dependencies`.
+
+### CocoaPods
+
+Add `pod 'InterposeKit'` to your `Podfile`.
+
+### Carthage
+
+Add `github "steipete/InterposeKit"` to your `Cartfile`.
 
 ## Key Facts
 
