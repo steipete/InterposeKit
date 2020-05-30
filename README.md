@@ -3,7 +3,6 @@
 [![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM)
 [![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
 [![pod lib lint](https://github.com/steipete/InterposeKit/workflows/pod%20lib%20lint/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3A%22pod+lib+lint%22)
-[![Nightly](https://github.com/steipete/InterposeKit/workflows/Nightly/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3ANightly)
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit)
 
 ![Xcode 11.5+](https://img.shields.io/badge/Xcode-11.5%2B-blue.svg)
@@ -82,6 +81,7 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
 - Experiment with Swift hooking? 🤡
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
+- Test against Swift Nightly as Chron
 
 Make this happen:
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
