@@ -1,4 +1,4 @@
-# Interpose
+# InterposeKit
 
 Interpose is a modern library to swizzle elegant in Swift. Unlike the usual sample, code, this library replaces the implementation, so you avoid some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
@@ -28,7 +28,7 @@ try Interposer.interpose(TestClass.self) {
 }
 ```
 
-When we call `print(TestClass().sayHi())` we get:
+Here's what we get when calling `print(TestClass().sayHi())` 
 ```
 [Interposer] Swizzled -[TestClass.sayHi] IMP: 0x000000010d9f4430 -> 0x000000010db36020
 Before Interposing <InterposeTests.TestClass: 0x7fa0b160c1e0>
@@ -74,12 +74,6 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 - Experiment with Swift hooking? 🤡
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
 
-
-
-
-
-
-Interpose C functions with this one weird t̶r̶i̶c̶k̶ library
 
 ## License
 

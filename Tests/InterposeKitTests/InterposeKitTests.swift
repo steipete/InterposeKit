@@ -1,13 +1,5 @@
-//
-//  InterposeTests.swift
-//  InterposeTests
-//
-//  Created by Peter Steinberger on 30.05.20.
-//  Copyright © 2020 PSPDFKit GmbH. All rights reserved.
-//
-
 import XCTest
-import InterposeKit
+@testable import InterposeKit
 
 let testClassHi = "Hi from TestClass!"
 let testSwizzleAddition = " and Interpose"
@@ -26,7 +18,7 @@ class TestSubclass: TestClass {
     }
 }
 
-class InterposeTests: XCTestCase {
+final class InterposeKitTests: XCTestCase {
 
     func testClassOverrideAndRevert() throws {
         let testObj = TestClass()
@@ -98,4 +90,8 @@ class InterposeTests: XCTestCase {
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass)
     }
 
+    static var allTests = [
+        ("testClassOverrideAndRevert", testClassOverrideAndRevert),
+        ("testSubclassOverride", testSubclassOverride),
+    ]
 }

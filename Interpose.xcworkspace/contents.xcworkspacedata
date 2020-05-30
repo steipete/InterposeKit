@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Interpose.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:Example/InterposeExample.xcodeproj">
    </FileRef>
    <FileRef

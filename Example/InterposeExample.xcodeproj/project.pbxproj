@@ -13,8 +13,6 @@
 		7880B12B248280B300AD2251 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B129248280B300AD2251 /* Main.storyboard */; };
 		7880B12D248280B500AD2251 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12C248280B500AD2251 /* Assets.xcassets */; };
 		7880B130248280B500AD2251 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12E248280B500AD2251 /* LaunchScreen.storyboard */; };
-		7880B13B248280B500AD2251 /* InterposeExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7880B13A248280B500AD2251 /* InterposeExampleTests.swift */; };
-		7880B14F248281D000AD2251 /* Interpose.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7880B14A248280CC00AD2251 /* Interpose.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,27 +22,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7880B11F248280B300AD2251;
 			remoteInfo = InterposeExample;
-		};
-		7880B149248280CC00AD2251 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7880B145248280CB00AD2251 /* Interpose.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 78863EC62464B2F900BA3762;
-			remoteInfo = Interpose;
-		};
-		7880B14C248281CA00AD2251 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7880B145248280CB00AD2251 /* Interpose.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 78863EC52464B2F900BA3762;
-			remoteInfo = Interpose;
-		};
-		78C39D852482E1A800B46395 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7880B145248280CB00AD2251 /* Interpose.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 78C39D772482CC7D00B46395;
-			remoteInfo = InterposeTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -58,9 +35,6 @@
 		7880B12F248280B500AD2251 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7880B131248280B500AD2251 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7880B136248280B500AD2251 /* InterposeExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7880B13A248280B500AD2251 /* InterposeExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterposeExampleTests.swift; sourceTree = "<group>"; };
-		7880B13C248280B500AD2251 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7880B145248280CB00AD2251 /* Interpose.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Interpose.xcodeproj; path = ../Interpose.xcodeproj; sourceTree = "<group>"; };
 		7880B14B248280D500AD2251 /* InterposeExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InterposeExample.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,7 +43,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7880B14F248281D000AD2251 /* Interpose.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,9 +59,7 @@
 		7880B117248280B300AD2251 = {
 			isa = PBXGroup;
 			children = (
-				7880B145248280CB00AD2251 /* Interpose.xcodeproj */,
 				7880B122248280B300AD2251 /* InterposeExample */,
-				7880B139248280B500AD2251 /* InterposeExampleTests */,
 				7880B121248280B300AD2251 /* Products */,
 				7880B14E248281D000AD2251 /* Frameworks */,
 			);
@@ -118,24 +89,6 @@
 			path = InterposeExample;
 			sourceTree = "<group>";
 		};
-		7880B139248280B500AD2251 /* InterposeExampleTests */ = {
-			isa = PBXGroup;
-			children = (
-				7880B13A248280B500AD2251 /* InterposeExampleTests.swift */,
-				7880B13C248280B500AD2251 /* Info.plist */,
-			);
-			path = InterposeExampleTests;
-			sourceTree = "<group>";
-		};
-		7880B146248280CB00AD2251 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				7880B14A248280CC00AD2251 /* Interpose.framework */,
-				78C39D862482E1A800B46395 /* InterposeTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		7880B14E248281D000AD2251 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,7 +110,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				7880B14D248281CA00AD2251 /* PBXTargetDependency */,
 			);
 			name = InterposeExample;
 			productName = InterposeExample;
@@ -212,12 +164,6 @@
 			mainGroup = 7880B117248280B300AD2251;
 			productRefGroup = 7880B121248280B300AD2251 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 7880B146248280CB00AD2251 /* Products */;
-					ProjectRef = 7880B145248280CB00AD2251 /* Interpose.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				7880B11F248280B300AD2251 /* InterposeExample */,
@@ -225,23 +171,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		7880B14A248280CC00AD2251 /* Interpose.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Interpose.framework;
-			remoteRef = 7880B149248280CC00AD2251 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		78C39D862482E1A800B46395 /* InterposeTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = InterposeTests.xctest;
-			remoteRef = 78C39D852482E1A800B46395 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7880B11E248280B300AD2251 /* Resources */ = {
@@ -278,7 +207,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7880B13B248280B500AD2251 /* InterposeExampleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,11 +217,6 @@
 			isa = PBXTargetDependency;
 			target = 7880B11F248280B300AD2251 /* InterposeExample */;
 			targetProxy = 7880B137248280B500AD2251 /* PBXContainerItemProxy */;
-		};
-		7880B14D248281CA00AD2251 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Interpose;
-			targetProxy = 7880B14C248281CA00AD2251 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
