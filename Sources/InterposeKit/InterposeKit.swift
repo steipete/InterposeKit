@@ -12,9 +12,9 @@ import Foundation
 import MachO.dyld
 #else
 // Linux is used to create Jazzy docs
-class Selector {}
-class IMP {}
-class Method {}
+final public class Selector {}
+final public class IMP {}
+final public class Method {}
 #endif
 
 /// Helper to swizzle methods the right way, via replacing the IMP.
