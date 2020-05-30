@@ -118,9 +118,7 @@ extension Interpose {
             self.class = `class`
             // Check if method exists
             try validate()
-            #if !os(Linux)
             replacementIMP = imp_implementationWithBlock(implementation(self))
-            #endif
         }
 
         /// Validate that the selector exists on the active class
@@ -290,11 +288,13 @@ extension Interpose.Task: CustomDebugStringConvertible {
 
 #if os(Linux)
 // Linux is used to create Jazzy docs
-final public struct Selector {}
-final public struct IMP {}
-final public struct Method {}
+public struct Selector {}
+public struct IMP: Equatable {}
+public struct Method {}
 func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
 func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
 func class_replaceMethod(_ cls: AnyClass?, _ name: Selector, _ imp: IMP, _ types: UnsafePointer<Int8>?) -> IMP? { IMP() }
 func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
+func _dyld_register_func_for_add_image(_ func: (@convention(c) (UnsafePointer<mach_header>?, Int) -> Void)!) {}
+func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
 #endif
