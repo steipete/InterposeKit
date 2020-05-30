@@ -10,7 +10,7 @@ import Foundation
 import MachO.dyld
 
 /// Helper to swizzle methods the right way, via replacing the IMP.
-public class Interpose {
+final public class Interpose {
     /// Stores swizzle tasks and executes them at once.
     public let `class`: AnyClass
     /// Lists all tasks for the current interpose class object.
@@ -70,11 +70,14 @@ public class Interpose {
     public enum InterposeError: Error {
         /// The method couldn't be found. Usually happens for when you use stringified selectors that do not exist.
         case methodNotFound
+
         /// The implementation could not be found. Class must be in a weird state for this to happen.
         case nonExistingImplementation
+
         /// Someone else changed the implementation; reverting removed this implementation.
         /// This is bad, likely someone else also hooked this method. If you are in such a codebase, do not use revert.
         case unexpectedImplementation
+
         /// Can't revert or apply if already done so.
         case invalidState
     }
@@ -84,17 +87,22 @@ public class Interpose {
 
 extension Interpose {
     /// Instance methods only for now
-    public class Task {
+    final public class Task {
         /// The class this tasks operates on
         public let `class`: AnyClass
+
         /// The selector this tasks operates on
         public let selector: Selector
+
         /// The original implementation is set once the swizzling is complete
         public private(set) var origIMP: IMP? // fetched at apply time, changes late, thus class requirement
+
         /// The replacement implementation is created on initialization time.
         public private(set) var replacementIMP: IMP! // else we validate init order
+
         /// The state of the interpose operation.
         public private(set) var state = State.prepared
+
         public enum State: Equatable {
             case prepared
             case interposed
