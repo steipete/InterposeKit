@@ -4,7 +4,6 @@
 [![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
 [![pod lib lint](https://github.com/steipete/InterposeKit/workflows/pod%20lib%20lint/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3A%22pod+lib+lint%22)
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit)
-
 ![Xcode 11.5+](https://img.shields.io/badge/Xcode-11.5%2B-blue.svg)
 ![Swift 5.2+](https://img.shields.io/badge/Swift-5.2%2B-orange.svg)
 
