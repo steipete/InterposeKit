@@ -23,7 +23,7 @@ on:
 
 jobs:
   Jazzy:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     container:
       image: norionomura/jazzy:0.13.2_swift-5.2.1
     steps:
