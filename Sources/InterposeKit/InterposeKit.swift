@@ -30,12 +30,13 @@ final public class Interpose {
         }
     }
 
+    /// Hook an `@objc dynamic` instance method via selector name on the current class.
     @discardableResult public func hook(_ selName: String,
                                         _ implementation: (Task) -> Any) throws -> Task {
         try hook(NSSelectorFromString(selName), implementation)
     }
 
-    /// Interpose a method instance on the class.
+    /// Hook an `@objc dynamic` instance method via selector  on the current class.
     @discardableResult public func hook(_ selector: Selector,
                                         _ implementation: (Task) -> Any) throws -> Task {
         let task = try Task(class: `class`, selector: selector, implementation: implementation)
@@ -43,11 +44,12 @@ final public class Interpose {
         return task
     }
 
-    /// Apply all stored tasks
+    /// Apply all stored hooks.
     @discardableResult public func apply(_ task: ((Interpose) throws -> Void)? = nil) throws -> Interpose {
         try execute(task) { try $0.apply() }
     }
 
+    /// Revert all stored hooks.
     @discardableResult public func revert(_ task: ((Interpose) throws -> Void)? = nil) throws -> Interpose {
         try execute(task, expectedState: .interposed) { try $0.revert() }
     }
@@ -70,6 +72,7 @@ final public class Interpose {
         return self
     }
 
+    /// The list of errors while hooking a method.
     public enum InterposeError: Error {
         /// The method couldn't be found. Usually happens for when you use stringified selectors that do not exist.
         case methodNotFound
@@ -106,9 +109,15 @@ extension Interpose {
         /// The state of the interpose operation.
         public private(set) var state = State.prepared
 
+        /// The possible task states
         public enum State: Equatable {
+            /// The task is prepared to be nterposed.
             case prepared
+
+            /// The method has been successfully interposed.
             case interposed
+
+            /// An error happened while interposing a method.
             case error(InterposeError)
         }
 
@@ -128,11 +137,12 @@ extension Interpose {
             return method
         }
 
-        /// Apply the implementation change
+        /// Apply the interpose hook.
         public func apply() throws {
             try execute(newState: .interposed) { try replaceImplementation() }
         }
 
+        /// Revert the interpose hoook.
         public func revert() throws {
             try execute(newState: .prepared) { try resetImplementation() }
         }
@@ -187,22 +197,27 @@ extension Interpose {
 
 extension Interpose {
     // Separate definitions to have more eleveant calling syntax when completion is not needed.
+
+    /// Interpose a class once available. Class is passed via `classParts` string array.
     @discardableResult public class func whenAvailable(_ classParts: [String],
                                                        builder: @escaping (Interpose) throws -> Void) throws -> Waiter {
         try whenAvailable(classParts, builder: builder, completion: nil)
     }
 
+    /// Interpose a class once available. Class is passed via `classParts` string array, with completion handler.
     @discardableResult public class func whenAvailable(_ classParts: [String],
                                                        builder: @escaping (Interpose) throws -> Void,
                                                        completion: (() -> Void)? = nil) throws -> Waiter {
         try whenAvailable(classParts.joined(), builder: builder, completion: completion)
     }
 
+    /// Interpose a class once available. Class is passed via `className` string..
     @discardableResult public class func whenAvailable(_ className: String,
                                                        builder: @escaping (Interpose) throws -> Void) throws -> Waiter {
         try Waiter(className: className, builder: builder, completion: nil)
     }
 
+    /// Interpose a class once available. Class is passed via `className` string, with completion handler.
     @discardableResult public class func whenAvailable(_ className: String,
                                                        builder: @escaping (Interpose) throws -> Void,
                                                        completion: (() -> Void)? = nil) throws -> Waiter {
@@ -215,9 +230,10 @@ extension Interpose {
         private var builder: ((Interpose) throws -> Void)?
         private var completion: (() -> Void)?
 
-        @discardableResult public init(className: String,
-                                       builder: @escaping (Interpose) throws -> Void,
-                                       completion: (() -> Void)? = nil) throws {
+        /// Initialize waiter object.
+        @discardableResult init(className: String,
+                                builder: @escaping (Interpose) throws -> Void,
+                                completion: (() -> Void)? = nil) throws {
             self.className = className
             self.builder = builder
             self.completion = completion
@@ -288,8 +304,11 @@ extension Interpose.Task: CustomDebugStringConvertible {
 
 #if os(Linux)
 // Linux is used to create Jazzy docs
+/// Selector
 public struct Selector {}
+/// IMP
 public struct IMP: Equatable {}
+/// Method
 public struct Method {}
 func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
 func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
