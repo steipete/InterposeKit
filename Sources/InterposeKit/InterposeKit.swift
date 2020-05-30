@@ -10,6 +10,11 @@ import Foundation
 
 #if !os(Linux)
 import MachO.dyld
+#else
+// Linux is used to create Jazzy docs
+class Selector {}
+class IMP {}
+class Method {}
 #endif
 
 /// Helper to swizzle methods the right way, via replacing the IMP.
@@ -118,7 +123,9 @@ extension Interpose {
             self.class = `class`
             // Check if method exists
             try validate()
+            #if !os(Linux)
             replacementIMP = imp_implementationWithBlock(implementation(self))
+            #endif
         }
 
         /// Validate that the selector exists on the active class
