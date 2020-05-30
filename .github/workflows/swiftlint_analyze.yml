@@ -5,7 +5,7 @@ on:
     branches: [master]
     paths: 
       - '.github/workflows/swiftlint_analyze.yml'
-      - 'Yams.xcodeproj/**'
+      - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
       - 'Tests/**/*.swift'
@@ -13,7 +13,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/swiftlint_analyze.yml'
-      - 'Yams.xcodeproj/**'
+      - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
       - 'Tests/**/*.swift'
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Generate xcodebuild.log
-        run: xcodebuild -scheme Yams -project Yams.xcodeproj clean build-for-testing > xcodebuild.log
+        run: xcodebuild -scheme Yams -project InterposeKit.xcodeproj clean build-for-testing > xcodebuild.log
         shell: bash
       - name: Install SwiftLint
         run: HOMEBREW_NO_AUTO_UPDATE=1 brew install https://raw.github.com/Homebrew/homebrew-core/master/Formula/swiftlint.rb
