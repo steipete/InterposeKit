@@ -23,14 +23,10 @@ on:
 
 jobs:
   Jazzy:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     container:
       image: norionomura/jazzy:0.13.2_swift-5.2.1
     steps:
-      - name: "[Pre] Install Docker"
-        run: |
-          brew install docker-machine docker
-          sudo docker –version
       - uses: actions/checkout@v2
       - run: bundle install --path vendor/bundle
       - run: swift build
