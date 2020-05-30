@@ -31,9 +31,9 @@ jobs:
       - run: bundle install --path vendor/bundle
       - run: swift build
       - name: Generate documentation json
-        run: sourcekitten doc --spm-module Yams > yams.json
+        run: sourcekitten doc --spm-module InterposeKit > interposekit.json
       - name: Run jazzy
-        run: bundle exec jazzy --clean --sourcekitten-sourcefile yams.json
+        run: bundle exec jazzy --clean --sourcekitten-sourcefile interposekit.json
       - name: Validate documentation coverage
         run: |
           if ruby -rjson -e "j = JSON.parse(File.read('docs/undocumented.json')); exit j['warnings'].length != 0"; then
