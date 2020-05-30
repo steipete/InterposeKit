@@ -3,6 +3,8 @@
 [![Build](https://github.com/steipete/Interpose/workflows/Build/badge.svg)](https://github.com/steipete/Interpose/actions?query=workflow%3ABuild)
 <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 ![Platform](https://img.shields.io/badge/platforms-iOS%2011.0%20%7C%20macOS%2010.13%20%7C%20tvOS%2011.0%20%7C%20watchOS%205.0-F28D00.svg)
+![Xcode 11.5+](https://img.shields.io/badge/Xcode-11.5%2B-blue.svg)
+![Swift 5.2+](https://img.shields.io/badge/Swift-5.2%2B-orange.svg)
 
 Interpose is a modern library to swizzle elegant in Swift. Unlike the usual sample, code, this library replaces the implementation, so you avoid some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
