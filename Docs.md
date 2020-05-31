@@ -2,4 +2,4 @@
 
 For installation instructions, see [README.md](README.md).
 
-API documentation available at [steipete.github.io/InterposeKit](https://steipete.github.io/InterposeKit/)
+API documentation available at [http://interposekit.com](http://interposekit.com/)
