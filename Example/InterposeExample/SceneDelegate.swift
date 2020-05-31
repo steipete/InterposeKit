@@ -2,9 +2,9 @@
 //  SceneDelegate.swift
 //  InterposeExample
 //
-//  Created by Peter Steinberger on 30.05.20.
-//  Copyright © 2020 PSPDFKit GmbH. All rights reserved.
+//  Copyright © 2020 Peter Steinberger. All rights reserved.
 //
+
 
 import UIKit
 
