@@ -109,7 +109,7 @@ Make this happen:
 
 ## Thanks
 
-Special thanks to [JP Simard](https://github.com/jpsim/Yams) who did such a great job in setting up [Yams] with GitHub Actions - this was extremely helpful to build CI here fast.
+Special thanks to [JP Simard](https://github.com/jpsim/Yams) who did such a great job in setting up [Yams](https://github.com/jpsim/Yams) with GitHub Actions - this was extremely helpful to build CI here fast.
 
 ## License
 
