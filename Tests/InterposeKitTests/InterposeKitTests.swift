@@ -25,10 +25,13 @@ final class InterposeKitTests: XCTestCase {
         XCTAssertEqual(testObj.sayHi(), testClassHi)
 
         // Functions need to be `@objc dynamic` to be hookable.
+        // Test that we can specify signatures via `hook` arguments
         let interposer = try Interpose(TestClass.self) {
             try $0.hook(
-                #selector(TestClass.sayHi)
-            ) { (store: Interpose.Task<@convention(c) (AnyObject, Selector) -> String, @convention(block) (AnyObject) -> String>) in { `self` in
+                #selector(TestClass.sayHi),
+                methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+                hookSignature: (@convention(block) (AnyObject) -> String).self
+            ) { store in { `self` in
 
                 print("Before Interposing \(`self`)")
 
@@ -66,6 +69,7 @@ final class InterposeKitTests: XCTestCase {
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass)
 
         // Swizzle test class
+        // Test that we can specify signatures via generic parameters
         let interposed = try Interpose(TestClass.self) {
             try $0.hook(
                 #selector(TestClass.sayHi)
@@ -81,12 +85,15 @@ final class InterposeKitTests: XCTestCase {
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass)
 
         // Swizzle subclass, automatically applys
+        // Test that we can specify hook signature with `as` typecast
+        // Note: swiftc segfaults on this code if hook builder return type is non-optiona in InterposeKit
         let interposedSubclass = try Interpose(TestSubclass.self) {
             try $0.hook(
-                #selector(TestSubclass.sayHi)
-            ) { (store: Interpose.Task<@convention(c) (AnyObject, Selector) -> String, @convention(block) (AnyObject) -> String>) in { blockSelf in
+                #selector(TestSubclass.sayHi),
+                methodSignature: (@convention(c) (AnyObject, Selector) -> String).self
+            ) { store in { blockSelf in
                 return store.original(blockSelf, store.selector) + testSwizzleAddition
-            } }
+            } as @convention(block) (AnyObject) -> String }
         }
 
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass + testSwizzleAddition)

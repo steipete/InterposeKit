@@ -32,7 +32,9 @@ final public class Interpose {
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
     @discardableResult public func hook<MethodSignature, HookSighature>(
         _ selName: String,
-        _ implementation: (Task<MethodSignature, HookSighature>) -> HookSighature? /* This must be optional or swift runtime will crash. Compiler bug? */
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSighature.Type = HookSighature.self,
+        _ implementation: (Task<MethodSignature, HookSighature>) -> HookSighature? /* This must be optional or swift runtime will crash. Or swiftc may segfault. Compiler bug? */
     ) throws -> Task<MethodSignature, HookSighature> {
         try hook(NSSelectorFromString(selName), implementation)
     }
@@ -40,7 +42,9 @@ final public class Interpose {
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
     @discardableResult public func hook<MethodSignature, HookSighature>(
         _ selector: Selector,
-        _ implementation: (Task<MethodSignature, HookSighature>) -> HookSighature? /* This must be optional or swift runtime will crash. Compiler bug? */
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSighature.Type = HookSighature.self,
+        _ implementation: (Task<MethodSignature, HookSighature>) -> HookSighature? /* This must be optional or swift runtime will crash. Or swiftc may segfault. Compiler bug? */
     ) throws -> Task<MethodSignature, HookSighature> {
         let task = try Task(class: `class`, selector: selector, implementation: implementation)
         tasks.append(task)
