@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/steipete/InterposeKit/master/logo.png" width="50%"> alt="InterposeKit"/>
+<img src="https://raw.githubusercontent.com/steipete/InterposeKit/master/logo.png" width="50%" alt="InterposeKit"/>
 
 [![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM)
 [![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
