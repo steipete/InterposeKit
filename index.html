@@ -72,20 +72,6 @@
               </li>
             </ul>
           </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Structs.html">Structures</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Structs.html#/s:12InterposeKit3IMPV">IMP</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Structs.html#/s:12InterposeKit6MethodV">Method</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Structs.html#/s:12InterposeKit8SelectorV">Selector</a>
-              </li>
-            </ul>
-          </li>
         </ul>
       </nav>
       <article class="main-content">
@@ -151,7 +137,7 @@ Hi there 👋 and Interpose
 <h2 id='key-facts' class='heading'>Key Facts</h2>
 
 <ul>
-<li>Interpose directly modifies the implementaton of a <code><a href="Structs.html#/s:12InterposeKit6MethodV">Method</a></code>, which is <a href="(https://pspdfkit.com/blog/2019/swizzling-in-swift/)">better than selector-based swizzling</a>.</li>
+<li>Interpose directly modifies the implementaton of a <code>Method</code>, which is <a href="(https://pspdfkit.com/blog/2019/swizzling-in-swift/)">better than selector-based swizzling</a>.</li>
 <li>Pure Swift, no <code>NSInvocation</code>, which requires boxing and can be slow.</li>
 <li>No Type checking. If you have a typo or forget a <code>convention</code> part, this will crash at runtime.</li>
 <li>Yes, you have to type the resulting type twice This is a tradeoff, else we need NSInvocation or assembly</li>
