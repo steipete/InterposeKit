@@ -13,7 +13,11 @@
 		7880B12B248280B300AD2251 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B129248280B300AD2251 /* Main.storyboard */; };
 		7880B12D248280B500AD2251 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12C248280B500AD2251 /* Assets.xcassets */; };
 		7880B130248280B500AD2251 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12E248280B500AD2251 /* LaunchScreen.storyboard */; };
-		78C39D8C2483038D00B46395 /* InterposeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 78C39D8B2483038D00B46395 /* InterposeKit */; };
+		78C39DDC2483363300B46395 /* InterposeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 78C39DDB2483363300B46395 /* InterposeKit */; };
+		78C39DE22483366B00B46395 /* Defaults-Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DDE2483366B00B46395 /* Defaults-Release.xcconfig */; };
+		78C39DE32483366B00B46395 /* Defaults-Testing.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DDF2483366B00B46395 /* Defaults-Testing.xcconfig */; };
+		78C39DE42483366B00B46395 /* Defaults.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DE02483366B00B46395 /* Defaults.xcconfig */; };
+		78C39DE52483366B00B46395 /* Defaults-Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DE12483366B00B46395 /* Defaults-Debug.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +41,11 @@
 		7880B131248280B500AD2251 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7880B136248280B500AD2251 /* InterposeExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7880B14B248280D500AD2251 /* InterposeExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InterposeExample.entitlements; sourceTree = "<group>"; };
+		78C39DD8248335B100B46395 /* Interpose */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interpose; path = ..; sourceTree = "<group>"; };
+		78C39DDE2483366B00B46395 /* Defaults-Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Defaults-Release.xcconfig"; sourceTree = "<group>"; };
+		78C39DDF2483366B00B46395 /* Defaults-Testing.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Defaults-Testing.xcconfig"; sourceTree = "<group>"; };
+		78C39DE02483366B00B46395 /* Defaults.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Defaults.xcconfig; sourceTree = "<group>"; };
+		78C39DE12483366B00B46395 /* Defaults-Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Defaults-Debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78C39D8C2483038D00B46395 /* InterposeKit in Frameworks */,
+				78C39DDC2483363300B46395 /* InterposeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +70,7 @@
 		7880B117248280B300AD2251 = {
 			isa = PBXGroup;
 			children = (
+				78C39DD8248335B100B46395 /* Interpose */,
 				7880B122248280B300AD2251 /* InterposeExample */,
 				7880B121248280B300AD2251 /* Products */,
 				7880B14E248281D000AD2251 /* Frameworks */,
@@ -79,6 +89,7 @@
 		7880B122248280B300AD2251 /* InterposeExample */ = {
 			isa = PBXGroup;
 			children = (
+				78C39DDD2483366B00B46395 /* Configuration */,
 				7880B14B248280D500AD2251 /* InterposeExample.entitlements */,
 				7880B123248280B300AD2251 /* AppDelegate.swift */,
 				7880B125248280B300AD2251 /* SceneDelegate.swift */,
@@ -98,6 +109,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		78C39DDD2483366B00B46395 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				78C39DDE2483366B00B46395 /* Defaults-Release.xcconfig */,
+				78C39DDF2483366B00B46395 /* Defaults-Testing.xcconfig */,
+				78C39DE02483366B00B46395 /* Defaults.xcconfig */,
+				78C39DE12483366B00B46395 /* Defaults-Debug.xcconfig */,
+			);
+			name = Configuration;
+			path = ../../Configuration;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -112,10 +135,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				78C39DDA2483362F00B46395 /* PBXTargetDependency */,
 			);
 			name = InterposeExample;
 			packageProductDependencies = (
-				78C39D8B2483038D00B46395 /* InterposeKit */,
+				78C39DDB2483363300B46395 /* InterposeKit */,
 			);
 			productName = InterposeExample;
 			productReference = 7880B120248280B300AD2251 /* InterposeExample.app */;
@@ -168,7 +192,6 @@
 			);
 			mainGroup = 7880B117248280B300AD2251;
 			packageReferences = (
-				78C39D8A2483038D00B46395 /* XCRemoteSwiftPackageReference "InterposeKit" */,
 			);
 			productRefGroup = 7880B121248280B300AD2251 /* Products */;
 			projectDirPath = "";
@@ -187,6 +210,10 @@
 			files = (
 				7880B130248280B500AD2251 /* LaunchScreen.storyboard in Resources */,
 				7880B12D248280B500AD2251 /* Assets.xcassets in Resources */,
+				78C39DE22483366B00B46395 /* Defaults-Release.xcconfig in Resources */,
+				78C39DE52483366B00B46395 /* Defaults-Debug.xcconfig in Resources */,
+				78C39DE32483366B00B46395 /* Defaults-Testing.xcconfig in Resources */,
+				78C39DE42483366B00B46395 /* Defaults.xcconfig in Resources */,
 				7880B12B248280B300AD2251 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,6 +253,10 @@
 			target = 7880B11F248280B300AD2251 /* InterposeExample */;
 			targetProxy = 7880B137248280B500AD2251 /* PBXContainerItemProxy */;
 		};
+		78C39DDA2483362F00B46395 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 78C39DD92483362F00B46395 /* InterposeKit */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -250,6 +281,7 @@
 /* Begin XCBuildConfiguration section */
 		7880B13D248280B500AD2251 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 78C39DE12483366B00B46395 /* Defaults-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -305,11 +337,14 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
 		};
 		7880B13E248280B500AD2251 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 78C39DDE2483366B00B46395 /* Defaults-Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -358,6 +393,8 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -378,7 +415,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -398,7 +434,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -478,21 +513,13 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		78C39D8A2483038D00B46395 /* XCRemoteSwiftPackageReference "InterposeKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/steipete/InterposeKit";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		78C39D8B2483038D00B46395 /* InterposeKit */ = {
+		78C39DD92483362F00B46395 /* InterposeKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 78C39D8A2483038D00B46395 /* XCRemoteSwiftPackageReference "InterposeKit" */;
+			productName = InterposeKit;
+		};
+		78C39DDB2483363300B46395 /* InterposeKit */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = InterposeKit;
 		};
 /* End XCSwiftPackageProductDependency section */

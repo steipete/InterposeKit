@@ -22,7 +22,7 @@ TARGETED_DEVICE_FAMILY = 1,2,3,4
 MACOSX_DEPLOYMENT_TARGET = 10.13
 IPHONEOS_DEPLOYMENT_TARGET = 12.0
 TVOS_DEPLOYMENT_TARGET = 11.0
-WATCHOS_DEPLOYMENT_TARGET = 4.0
+WATCHOS_DEPLOYMENT_TARGET = 5.0
 
 // We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
 CODE_SIGN_IDENTITY = iOS Developer
