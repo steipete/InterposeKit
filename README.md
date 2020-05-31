@@ -1,3 +1,4 @@
+<div style="text-align:center">
 <a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/steipete/InterposeKit/master/logo.png"><img src="https://raw.githubusercontent.com/steipete/InterposeKit/master/logo.png" alt="InterposeKit" style="max-width:50%;"></a>
 
 [![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM)
@@ -7,6 +8,7 @@
 ![Swift 5.2+](https://img.shields.io/badge/Swift-5.2%2B-orange.svg)
 <!--
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit) -->
+</div>
 
 InterposeKit is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. API documentation available at [interposekit.com](http://interposekit.com/), and some [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
 
