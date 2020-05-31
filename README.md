@@ -97,7 +97,7 @@ Naming it Interpose was the plan, but then [SR-898](https://bugs.swift.org/brows
 UIKit and AppKit won't go away, and the bugs won't go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that's a separate (and much more difficult!) project. 
 
 ### Can I ship this?
-Yes, absolutely. The goal for this one prokect is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
+Yes, absolutely. The goal for this one project is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
 
 ### It does not do X!
 Pull Requests welcome! You might wanna open a draft before to lay out what you plan, I want to keep the feature-set minimal so it stays simple and no-magic.
