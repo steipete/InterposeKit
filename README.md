@@ -22,23 +22,33 @@ Let's say you want to amend `sayHi` from `TestClass`:
 ```swift
 
 class TestClass: NSObject {
+    // Functions need to be marked as `@objc dynamic` or written in Objective-C.
     @objc dynamic func sayHi() -> String {
         print("Calling sayHi")
         return "Hi there 👋"
     }
 }
 
-try Interpose(TestClass.self) {
+let interposer = try Interpose(TestClass.self) {
     try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
+
         print("Before Interposing \(`self`)")
 
-        let string = store((@convention(c) (AnyObject, Selector) -> String).self)(`self`, store.selector)
+        // Calling convention and passing selector is important!
+        // You're free to skip calling the original implementation.
+        let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
+        let string = origCall(`self`, store.selector)
 
         print("After Interposing \(`self`)")
+
         return string + testSwizzleAddition
-        }
-        as @convention(block) (AnyObject) -> String})
+
+        // Similar signature cast as above, but without selector.
+        } as @convention(block) (AnyObject) -> String})
 }
+
+// Don't need the hook anymore? Undo is built-in!
+interposer.revert()
 ```
 
 Here's what we get when calling `print(TestClass().sayHi())` 
