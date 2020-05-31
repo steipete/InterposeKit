@@ -88,10 +88,11 @@
 <img src="https://img.shields.io/badge/Xcode-11.5%2B-blue.svg" alt="Xcode 11.5+">
 <img src="https://img.shields.io/badge/Swift-5.2%2B-orange.svg" alt="Swift 5.2+"></p>
 
-<p>Interpose is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+.
-Unlike the usual swizzling logic, this library replaces the implementation, so you avoid some of <a href="https://pspdfkit.com/blog/2019/swizzling-in-swift/">the usual problems with swizzling</a>. Since you have full control over the original implementation, it&rsquo;s easy to add code before, instead or after a method call - similar to the <a href="https://github.com/steipete/Aspects">Aspects library</a>.</p>
+<p>Interpose is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on <code>@objc dynamic</code> Swift functions or Objective-C classes. API documentation available at <a href="https://steipete.github.io/InterposeKit/">steipete.github.io/InterposeKit</a></p>
 
-<p>API documentation available at <a href="https://steipete.github.io/InterposeKit/">steipete.github.io/InterposeKit</a></p>
+<p>Instead of adding new methods and exchanging implementations, this library replaces the implementation directly. This avoids some of <a href="https://pspdfkit.com/blog/2019/swizzling-in-swift/">the usual problems with swizzling</a>.</p>
+
+<p>You can call the original implementation and add code before, instead or after a method call. This is similart o the <a href="https://github.com/steipete/Aspects">Aspects library</a>.</p>
 
 <p>Let&rsquo;s say you want to amend <code>sayHi</code> from <code>TestClass</code>:</p>
 <pre class="highlight swift"><code>
