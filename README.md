@@ -15,6 +15,8 @@ This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blo
 You can call the original implementation and add code before, instead or after a method call.  
 This is similart o the [Aspects library](https://github.com/steipete/Aspects).
 
+## Usage
+
 Let's say you want to amend `sayHi` from `TestClass`:
 
 ```swift
