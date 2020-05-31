@@ -92,6 +92,8 @@
 
 <p>InterposeKit is a modern library to swizzle elegantly in Swift. It is <a href="http://interposekit.com/">well-documented</a>, <a href="https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM">tested</a>, written in &ldquo;pure&rdquo; Swift 5.2 and works on <code>@objc dynamic</code> Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was <a href="https://steipete.com/posts/mac-catalyst-crash-hunt/">a race condition in Mac Catalyst</a>, which required tricky swizzling to fix, I also wrote up  <a href="https://steipete.com/posts/interposekit/">implementation thoughts on my blog</a>.</p>
 
+<p>Compare: <a href="https://gist.github.com/steipete/f955aaa0742021af15add0133d8482b9">Swizzling a property without helper and with InterposeKit</a> </p>
+
 <p>Instead of <a href="https://nshipster.com/method-swizzling/">adding new methods and exchanging implementations</a> based on <a href="https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations"><code>method_exchangeImplementations</code></a>, this library replaces the implementation directly using <a href="https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod"><code>class_replaceMethod</code></a>. This avoids some of <a href="https://pspdfkit.com/blog/2019/swizzling-in-swift/">the usual problems with swizzling</a>.</p>
 
 <p>You can call the original implementation and add code before, instead or after a method call.<br>
