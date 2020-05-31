@@ -32,7 +32,8 @@ final class InterposeKitTests: XCTestCase {
 
                 // Calling convention and passing selector is important!
                 // You're free to skip calling the original implementation.
-                let string = store((@convention(c) (AnyObject, Selector) -> String).self)(`self`, store.selector)
+                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
+                let string = origCall(`self`, store.selector)
 
                 print("After Interposing \(`self`)")
 
