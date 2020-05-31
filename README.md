@@ -98,7 +98,7 @@ UIKit and AppKit won't go away, and the bugs won't go away either. I see this as
 ### Can I ship this?
 Yes, absolutely. The goal for this one prokect is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
 
-### It does not do X
+### It does not do X!
 Pull Requests welcome! You might wanna open a draft before to lay out what you plan, I want to keep the feature-set minimal so it stays simple and no-magic.
 
 ## Installation
