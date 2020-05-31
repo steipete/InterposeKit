@@ -63,6 +63,7 @@ Hi there 👋 and Interpose
 ## Key Facts
 
 - Interpose directly modifies the implementaton of a `Method`, which is [better than selector-based swizzling]((https://pspdfkit.com/blog/2019/swizzling-in-swift/)).
+- Hooks can easily be undone via calling `revert()`. This also checks and errors if someone else changed stuff in between.
 - Pure Swift, no `NSInvocation`, which requires boxing and can be slow.
 - No Type checking. If you have a typo or forget a `convention` part, this will crash at runtime.
 - Yes, you have to type the resulting type twice This is a tradeoff, else we need NSInvocation or assembly.
