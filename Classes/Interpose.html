@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Interpose Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/Interpose" class="dashAnchor"></a>
+
+    <a title="Interpose Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          InterposeKit 0.0.1 Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/steipete/InterposeKit">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="dash-feed://https%3A%2F%2Fpages%2Egithub%2Ecom%2Fsteipete%2Fdocsets%2FInterposeKit%2Exml">
+            <img class="header-icon" src="../img/dash.png"/>
+            Install in Dash
+          </a>
+        </p>
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">InterposeKit Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      Interpose Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose.html">Interpose</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose/InterposeError.html">– InterposeError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose/Task.html">– Task</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">– Waiter</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs.html#/s:12InterposeKit3IMPV">IMP</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs.html#/s:12InterposeKit6MethodV">Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs.html#/s:12InterposeKit8SelectorV">Selector</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>Interpose</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">final</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">Interpose</span></code></pre>
+
+                </div>
+              </div>
+            <p>Helper to swizzle methods the right way, via replacing the IMP.</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C5classyXlXpvp"></a>
+                    <a name="//apple_ref/swift/Property/class" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C5classyXlXpvp">class</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Stores swizzle tasks and executes them at once.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">let</span> <span class="p">`</span><span class="nv">class</span><span class="p">`:</span> <span class="kt">AnyClass</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L18">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C5tasksSayAC4TaskCGvp"></a>
+                    <a name="//apple_ref/swift/Property/tasks" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C5tasksSayAC4TaskCGvp">tasks</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Lists all tasks for the current interpose class object.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Classes/Interpose/Task.html">Task</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L20">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C_7builderACyXlXp_yACKcSgtKcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(_:builder:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C_7builderACyXlXp_yACKcSgtKcfc">init(_:<wbr>builder:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes an instance of Interpose for a specific class.
+If <code>builder</code> is present, <code>apply()</code> is automatically called.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">_</span> <span class="nv">class</span><span class="p">:</span> <span class="kt">AnyClass</span><span class="p">,</span> <span class="nv">builder</span><span class="p">:</span> <span class="p">((</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L24-L31">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C4hookyAC4TaskCSS_ypAFXEtKF"></a>
+                    <a name="//apple_ref/swift/Method/hook(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C4hookyAC4TaskCSS_ypAFXEtKF">hook(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Hook an <code>@objc dynamic</code> instance method via selector name on the current class.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">hook</span><span class="p">(</span><span class="n">_</span> <span class="nv">selName</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                 <span class="n">_</span> <span class="nv">implementation</span><span class="p">:</span> <span class="p">(</span><span class="kt"><a href="../Classes/Interpose/Task.html">Task</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interpose/Task.html">Task</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L34-L37">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C4hookyAC4TaskCAA8SelectorV_ypAFXEtKF"></a>
+                    <a name="//apple_ref/swift/Method/hook(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C4hookyAC4TaskCAA8SelectorV_ypAFXEtKF">hook(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Hook an <code>@objc dynamic</code> instance method via selector  on the current class.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">hook</span><span class="p">(</span><span class="n">_</span> <span class="nv">selector</span><span class="p">:</span> <span class="kt"><a href="../Structs.html#/s:12InterposeKit8SelectorV">Selector</a></span><span class="p">,</span>
+                 <span class="n">_</span> <span class="nv">implementation</span><span class="p">:</span> <span class="p">(</span><span class="kt"><a href="../Classes/Interpose/Task.html">Task</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Any</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interpose/Task.html">Task</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L40-L45">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C5applyyACyACKcSgKF"></a>
+                    <a name="//apple_ref/swift/Method/apply(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C5applyyACyACKcSgKF">apply(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Apply all stored hooks.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">apply</span><span class="p">(</span><span class="n">_</span> <span class="nv">task</span><span class="p">:</span> <span class="p">((</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Interpose</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L48-L50">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C6revertyACyACKcSgKF"></a>
+                    <a name="//apple_ref/swift/Method/revert(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C6revertyACyACKcSgKF">revert(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Revert all stored hooks.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">revert</span><span class="p">(</span><span class="n">_</span> <span class="nv">task</span><span class="p">:</span> <span class="p">((</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Interpose</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L53-L55">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C0A5ErrorO"></a>
+                    <a name="//apple_ref/swift/Enum/InterposeError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C0A5ErrorO">InterposeError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The list of errors while hooking a method.</p>
+
+                        <a href="../Classes/Interpose/InterposeError.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">InterposeError</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L76-L89">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Interpose%20Task%20Logic"></a>
+                <a name="//apple_ref/swift/Section/Interpose Task Logic" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Interpose%20Task%20Logic"></a>
+                  <h3 class="section-name"><p>Interpose Task Logic</p>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C4TaskC"></a>
+                    <a name="//apple_ref/swift/Class/Task" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C4TaskC">Task</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Instance methods only for now</p>
+
+                        <a href="../Classes/Interpose/Task.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">final</span> <span class="kd">public</span> <span class="kd"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C5classyXlXpvp">class</a></span> <span class="kt">Task</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../Classes/Interpose.html">Interpose</a></span><span class="o">.</span><span class="kt">Task</span><span class="p">:</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L96-L179">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Logging"></a>
+                <a name="//apple_ref/swift/Section/Logging" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Logging"></a>
+                  <h3 class="section-name"><p>Logging</p>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C16isLoggingEnabledSbvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/isLoggingEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C16isLoggingEnabledSbvpZ">isLoggingEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logging uses print and is minimal.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">isLoggingEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L186">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Interpose%20Class%20Loadeer%20Watcher"></a>
+                <a name="//apple_ref/swift/Section/Interpose Class Loadeer Watcher" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Interpose%20Class%20Loadeer%20Watcher"></a>
+                  <h3 class="section-name"><p>Interpose Class Loadeer Watcher</p>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C13whenAvailable_7builderAC6WaiterVSaySSG_yACKctKFZ"></a>
+                    <a name="//apple_ref/swift/Method/whenAvailable(_:builder:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C13whenAvailable_7builderAC6WaiterVSaySSG_yACKctKFZ">whenAvailable(_:<wbr>builder:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Interpose a class once available. Class is passed via <code>classParts</code> string array.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C5classyXlXpvp">class</a></span> <span class="kd">func</span> <span class="nf">whenAvailable</span><span class="p">(</span><span class="n">_</span> <span class="nv">classParts</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span>
+                                <span class="nv">builder</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">Waiter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L202-L205">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C13whenAvailable_7builder10completionAC6WaiterVSaySSG_yACKcyycSgtKFZ"></a>
+                    <a name="//apple_ref/swift/Method/whenAvailable(_:builder:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C13whenAvailable_7builder10completionAC6WaiterVSaySSG_yACKcyycSgtKFZ">whenAvailable(_:<wbr>builder:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Interpose a class once available. Class is passed via <code>classParts</code> string array, with completion handler.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C5classyXlXpvp">class</a></span> <span class="kd">func</span> <span class="nf">whenAvailable</span><span class="p">(</span><span class="n">_</span> <span class="nv">classParts</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">],</span>
+                                <span class="nv">builder</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
+                                <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">Waiter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L208-L212">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C13whenAvailable_7builderAC6WaiterVSS_yACKctKFZ"></a>
+                    <a name="//apple_ref/swift/Method/whenAvailable(_:builder:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C13whenAvailable_7builderAC6WaiterVSS_yACKctKFZ">whenAvailable(_:<wbr>builder:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Interpose a class once available. Class is passed via <code>className</code> string..</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C5classyXlXpvp">class</a></span> <span class="kd">func</span> <span class="nf">whenAvailable</span><span class="p">(</span><span class="n">_</span> <span class="nv">className</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                                <span class="nv">builder</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">Waiter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L215-L218">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C13whenAvailable_7builder10completionAC6WaiterVSS_yACKcyycSgtKFZ"></a>
+                    <a name="//apple_ref/swift/Method/whenAvailable(_:builder:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C13whenAvailable_7builder10completionAC6WaiterVSS_yACKcyycSgtKFZ">whenAvailable(_:<wbr>builder:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Interpose a class once available. Class is passed via <code>className</code> string, with completion handler.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C5classyXlXpvp">class</a></span> <span class="kd">func</span> <span class="nf">whenAvailable</span><span class="p">(</span><span class="n">_</span> <span class="nv">className</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                                <span class="nv">builder</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Interpose</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
+                                <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">Waiter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L221-L225">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A0C6WaiterV"></a>
+                    <a name="//apple_ref/swift/Struct/Waiter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A0C6WaiterV">Waiter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Helper that stores tasks to a specific class and executes them once the class becomes available.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Waiter</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L228-L255">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>© 2020 <a class="link" href="https://steipete.com" target="_blank" rel="external">Peter Steinberger</a> under MIT.</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
