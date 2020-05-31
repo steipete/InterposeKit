@@ -65,7 +65,7 @@ final public class Interpose {
         guard tasks.allSatisfy({
             (try? $0.validate(expectedState: expectedState)) != nil
         }) else {
-            throw InterposeError.invalidState
+            throw Error.invalidState
         }
         // Execute all tasks
         try tasks.forEach(executor)
@@ -73,7 +73,7 @@ final public class Interpose {
     }
 
     /// The list of errors while hooking a method.
-    public enum InterposeError: Error {
+    public enum Error: Swift.Error {
         /// The method couldn't be found. Usually happens for when you use stringified selectors that do not exist.
         case methodNotFound
 
@@ -118,7 +118,7 @@ extension Interpose {
             case interposed
 
             /// An error happened while interposing a method.
-            case error(InterposeError)
+            case error(Error)
         }
 
         /// Initialize a new task to interpose an instance method.
@@ -132,8 +132,8 @@ extension Interpose {
 
         /// Validate that the selector exists on the active class
         @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
-            guard let method = class_getInstanceMethod(`class`, selector) else { throw InterposeError.methodNotFound }
-            guard state == expectedState else { throw InterposeError.invalidState }
+            guard let method = class_getInstanceMethod(`class`, selector) else { throw Error.methodNotFound }
+            guard state == expectedState else { throw Error.invalidState }
             return method
         }
 
@@ -151,7 +151,7 @@ extension Interpose {
             do {
                 try task()
                 state = newState
-            } catch let error as InterposeError {
+            } catch let error as Error {
                 state = .error(error)
                 throw error
             }
@@ -160,7 +160,7 @@ extension Interpose {
         private func replaceImplementation() throws {
             let method = try validate()
             origIMP = class_replaceMethod(`class`, selector, replacementIMP, method_getTypeEncoding(method))
-            guard origIMP != nil else { throw InterposeError.nonExistingImplementation }
+            guard origIMP != nil else { throw Error.nonExistingImplementation }
             Interpose.log("Swizzled -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
         }
 
@@ -168,7 +168,7 @@ extension Interpose {
             let method = try validate(expectedState: .interposed)
             precondition(origIMP != nil)
             let previousIMP = class_replaceMethod(`class`, selector, origIMP!, method_getTypeEncoding(method))
-            guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation }
+            guard previousIMP == replacementIMP else { throw Error.unexpectedImplementation }
             Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
         }
 
