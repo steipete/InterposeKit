@@ -128,7 +128,7 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 - Add object-based hooking with dynamic subclassing (Aspects again)
 - Add [dyld_dynamic_interpose](https://twitter.com/steipete/status/1258482647933870080) to hook pure C functions
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
-- Experiment with Swift hooking? ⚡️
+- Experiment with [Swift function hooking](https://github.com/rodionovd/SWRoute/wiki/Function-hooking-in-Swift)? ⚡️
 - Test against Swift Nightly as Chron Jpb
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
 
