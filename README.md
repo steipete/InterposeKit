@@ -10,8 +10,7 @@
 
 InterposeKit is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. API documentation available at [interposekit.com](http://interposekit.com/), and some [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
 
-Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/), this library replaces the implementation directly.  
-This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
+Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/) based on [`method_exchangeImplementations`](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations), this library replaces the implementation directly using [`class_replaceMethod`](https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod). This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
 You can call the original implementation and add code before, instead or after a method call.  
 This is similar to the [Aspects library](https://github.com/steipete/Aspects).
