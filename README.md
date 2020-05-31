@@ -10,7 +10,7 @@
 
 Interpose is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. API documentation available at [steipete.github.io/InterposeKit](https://steipete.github.io/InterposeKit/)
 
-Instead of adding new methods and exchanging implementations, this library replaces the implementation directly.  
+Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/), this library replaces the implementation directly.  
 This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
 You can call the original implementation and add code before, instead or after a method call.  
