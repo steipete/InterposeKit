@@ -3,17 +3,20 @@
 [![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM)
 [![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
 [![pod lib lint](https://github.com/steipete/InterposeKit/workflows/pod%20lib%20lint/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3A%22pod+lib+lint%22)
-[![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit)
 ![Xcode 11.4+](https://img.shields.io/badge/Xcode-11.4%2B-blue.svg)
 ![Swift 5.2+](https://img.shields.io/badge/Swift-5.2%2B-orange.svg)
+<!--
+[![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit) -->
 
 Interpose is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. API documentation available at [steipete.github.io/InterposeKit](https://steipete.github.io/InterposeKit/)
 
-Instead of adding new methods and exchanging implementations, this library replaces the implementation directly.  
+Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/), this library replaces the implementation directly.  
 This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
 You can call the original implementation and add code before, instead or after a method call.  
 This is similart o the [Aspects library](https://github.com/steipete/Aspects).
+
+## Usage
 
 Let's say you want to amend `sayHi` from `TestClass`:
 
@@ -75,6 +78,20 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 }
 ```
 
+## FAQ
+
+### Why didn't you call it Interpose? "Kit" feels so old-school.
+Naming it Interpose was the plan, but then [SR-898](https://bugs.swift.org/browse/SR-898) came. While having a class with the same name as the module works [in most cases](https://forums.swift.org/t/frameworkname-is-not-a-member-type-of-frameworkname-errors-inside-swiftinterface/28962), [this breaks](https://twitter.com/BalestraPatrick/status/1260928023357878273) when you enable build-for-distribution. There's some [discussion](https://forums.swift.org/t/pitch-fully-qualified-name-syntax/28482/81) to get that fixed, but this will be more towards end of 2020, if even.
+
+### I want to hook into Swift! You made another ObjC swizzle thingy, why?
+UIKit and AppKit won't go away, and the bugs won't go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that's a separate (and much more difficult!) project. 
+
+### Can I ship this?
+Yes, absolutely. The goal for this one prokect is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
+
+### It does not do X
+Pull Requests welcome! You might wanna open a draft before to lay out what you plan, I want to keep the feature-set minimal so it stays simple and no-magic.
+
 ## Installation
 
 Building InterposeKit requires Xcode 11.4+ or a Swift 5.2+ toolchain with the Swift Package Manager.
@@ -106,6 +123,10 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 Make this happen:
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 ![CocoaPods](https://img.shields.io/cocoapods/v/SwiftyJSON.svg)
+
+## Thanks
+
+Special thanks to [JP Simard](https://github.com/jpsim/Yams) who did such a great job in setting up [Yams](https://github.com/jpsim/Yams) with GitHub Actions - this was extremely helpful to build CI here fast.
 
 ## License
 
