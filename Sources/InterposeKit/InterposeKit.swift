@@ -16,7 +16,7 @@ final public class Interpose {
     /// Stores swizzle tasks and executes them at once.
     public let `class`: AnyClass
     /// Lists all tasks for the current interpose class object.
-    public private(set) var tasks: [Task] = []
+    public private(set) var tasks: [AnyTask] = []
 
     /// Initializes an instance of Interpose for a specific class.
     /// If `builder` is present, `apply()` is automatically called.
@@ -30,14 +30,18 @@ final public class Interpose {
     }
 
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
-    @discardableResult public func hook(_ selName: String,
-                                        _ implementation: (Task) -> Any) throws -> Task {
+    @discardableResult public func hook<MethodSignature, HookSighature>(
+        _ selName: String,
+        _ implementation: (Task<MethodSignature, HookSighature>) -> HookSighature? /* This must be optional or swift runtime will crash. Compiler bug? */
+    ) throws -> Task<MethodSignature, HookSighature> {
         try hook(NSSelectorFromString(selName), implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
-    @discardableResult public func hook(_ selector: Selector,
-                                        _ implementation: (Task) -> Any) throws -> Task {
+    @discardableResult public func hook<MethodSignature, HookSighature>(
+        _ selector: Selector,
+        _ implementation: (Task<MethodSignature, HookSighature>) -> HookSighature? /* This must be optional or swift runtime will crash. Compiler bug? */
+    ) throws -> Task<MethodSignature, HookSighature> {
         let task = try Task(class: `class`, selector: selector, implementation: implementation)
         tasks.append(task)
         return task
@@ -54,8 +58,8 @@ final public class Interpose {
     }
 
     private func execute(_ task: ((Interpose) throws -> Void)? = nil,
-                         expectedState: Task.State = .prepared,
-                         executor: ((Task) throws -> Void)) throws -> Interpose {
+                         expectedState: AnyTask.State = .prepared,
+                         executor: ((AnyTask) throws -> Void)) throws -> Interpose {
         // Run pre-apply code first
         if let task = task {
             try task(self)
@@ -91,8 +95,35 @@ final public class Interpose {
 // MARK: Interpose Task
 
 extension Interpose {
+    public class AnyTask {
+        /// The possible task states
+        public enum State: Equatable {
+            /// The task is prepared to be nterposed.
+            case prepared
+
+            /// The method has been successfully interposed.
+            case interposed
+
+            /// An error happened while interposing a method.
+            case error(Error)
+        }
+
+        @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
+            preconditionFailure("Not implemented")
+        }
+
+        public func apply() throws {
+            preconditionFailure("Not implemented")
+        }
+
+        /// Revert the interpose hoook.
+        public func revert() throws {
+            preconditionFailure("Not implemented")
+        }
+    }
+
     /// A task represents a hook to an instance method and stores both the original and new implementation.
-    final public class Task {
+    final public class Task<MethodSignature, HookSignature>: AnyTask {
         /// The class this tasks operates on
         public let `class`: AnyClass
 
@@ -108,41 +139,30 @@ extension Interpose {
         /// The state of the interpose operation.
         public private(set) var state = State.prepared
 
-        /// The possible task states
-        public enum State: Equatable {
-            /// The task is prepared to be nterposed.
-            case prepared
-
-            /// The method has been successfully interposed.
-            case interposed
-
-            /// An error happened while interposing a method.
-            case error(Error)
-        }
-
         /// Initialize a new task to interpose an instance method.
         public init(`class`: AnyClass, selector: Selector, implementation: (Task) -> Any) throws {
             self.selector = selector
             self.class = `class`
+            super.init()
             // Check if method exists
             try validate()
             replacementIMP = imp_implementationWithBlock(implementation(self))
         }
 
         /// Validate that the selector exists on the active class
-        @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
+        @discardableResult override func validate(expectedState: State = .prepared) throws -> Method {
             guard let method = class_getInstanceMethod(`class`, selector) else { throw Error.methodNotFound }
             guard state == expectedState else { throw Error.invalidState }
             return method
         }
 
         /// Apply the interpose hook.
-        public func apply() throws {
+        public override func apply() throws {
             try execute(newState: .interposed) { try replaceImplementation() }
         }
 
         /// Revert the interpose hoook.
-        public func revert() throws {
+        public override func revert() throws {
             try execute(newState: .prepared) { try resetImplementation() }
         }
 
@@ -172,8 +192,8 @@ extension Interpose {
         }
 
         /// Convenience to call the original implementation
-        public func callAsFunction<U>(_ type: U.Type) -> U {
-            unsafeBitCast(origIMP, to: type)
+        public var original: MethodSignature {
+            unsafeBitCast(origIMP, to: MethodSignature.self)
         }
     }
 }
