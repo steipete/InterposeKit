@@ -95,7 +95,7 @@
 <p>Instead of <a href="https://nshipster.com/method-swizzling/">adding new methods and exchanging implementations</a> based on <a href="https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations"><code>method_exchangeImplementations</code></a>, this library replaces the implementation directly using <a href="https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod"><code>class_replaceMethod</code></a>. This avoids some of <a href="https://pspdfkit.com/blog/2019/swizzling-in-swift/">the usual problems with swizzling</a>.</p>
 
 <p>You can call the original implementation and add code before, instead or after a method call.<br>
-This is similar to the <a href="https://github.com/steipete/Aspects">Aspects library</a>.</p>
+This is similar to the <a href="https://github.com/steipete/Aspects">Aspects library</a>, but doesn&rsquo;t yet do dynamic subclassing.</p>
 <h2 id='usage' class='heading'>Usage</h2>
 
 <p>Let&rsquo;s say you want to amend <code>sayHi</code> from <code>TestClass</code>:</p>
@@ -187,15 +187,15 @@ Hi there 👋 and Interpose
 <li>Write proposal to allow to <a href="https://twitter.com/steipete/status/1266799174563041282?s=21">convert the calling convention of existing types</a>.</li>
 <li>Use the C block struct to perfom type checking between Method type and C type (I do that in  <a href="https://github.com/steipete/Aspects">Aspects library</a>), it&rsquo;s still a runtime crash but could be at hook time, not when we call it.</li>
 <li>Add object-based hooking with dynamic subclassing (Aspects again)</li>
-<li>Add dyld_interpose to hook pure C functions</li>
+<li>Add <a href="https://twitter.com/steipete/status/1258482647933870080">dyld_dynamic_interpose</a> to hook pure C functions</li>
 <li>Combine Promise-API for <code>Interpose.whenAvailable</code> for better error bubbling.</li>
 </ul><div class="aside aside-experiment">
     <p class="aside-title">Experiment</p>
-    Experiment with Swift hooking? 🤡
+    Experiment with Swift hooking? ⚡️
 
 </div><ul>
+<li>Test against Swift Nightly as Chron Jpb</li>
 <li>I&rsquo;m sure there&rsquo;s more - Pull Requests or <a href="https://twitter.com/steipete">comments</a> very welcome!</li>
-<li>Test against Swift Nightly as Chron</li>
 </ul>
 
 <p>Make this happen:
