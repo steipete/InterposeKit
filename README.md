@@ -105,7 +105,7 @@ Add `.package(url: "https://github.com/steipete/InterposeKit.git", from: "0.0.1"
 
 ### CocoaPods
 
-Add `pod 'InterposeKit'` to your `Podfile`.
+[InterposeKit is on CocoaPods](https://cocoapods.org/pods/InterposeKit). Add `pod 'InterposeKit'` to your `Podfile`.
 
 ### Carthage
 
