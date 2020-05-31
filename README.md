@@ -65,8 +65,8 @@ Hi there 👋 and Interpose
 - Interpose directly modifies the implementaton of a `Method`, which is [better than selector-based swizzling]((https://pspdfkit.com/blog/2019/swizzling-in-swift/)).
 - Pure Swift, no `NSInvocation`, which requires boxing and can be slow.
 - No Type checking. If you have a typo or forget a `convention` part, this will crash at runtime.
-- Yes, you have to type the resulting type twice This is a tradeoff, else we need NSInvocation or assembly 
-- Delayed Interposing helps when a class is loaded at runtime. This is useful for [Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/)
+- Yes, you have to type the resulting type twice This is a tradeoff, else we need NSInvocation or assembly.
+- Delayed Interposing helps when a class is loaded at runtime. This is useful for [Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/).
 
 ## Delayed Hooking
 
