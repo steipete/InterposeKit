@@ -130,7 +130,7 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
 <span class="n">interposer</span><span class="o">.</span><span class="nf">revert</span><span class="p">()</span>
 </code></pre>
 
-<p>Here&rsquo;s what we get when calling <code>print(TestClass().sayHi())</code> </p>
+<p>Here&rsquo;s what we get when calling <code>print(TestClass().sayHi())</code></p>
 <pre class="highlight plaintext"><code>[Interposer] Swizzled -[TestClass.sayHi] IMP: 0x000000010d9f4430 -&gt; 0x000000010db36020
 Before Interposing &lt;InterposeTests.TestClass: 0x7fa0b160c1e0&gt;
 Calling sayHi
@@ -140,7 +140,7 @@ Hi there 👋 and Interpose
 <h2 id='key-facts' class='heading'>Key Facts</h2>
 
 <ul>
-<li>Interpose directly modifies the implementaton of a <code>Method</code>, which is <a href="(https://pspdfkit.com/blog/2019/swizzling-in-swift/)">better than selector-based swizzling</a>.</li>
+<li>Interpose directly modifies the implementation of a <code>Method</code>, which is <a href="(https://pspdfkit.com/blog/2019/swizzling-in-swift/)">better than selector-based swizzling</a>.</li>
 <li>Hooks can easily be undone via calling <code>revert()</code>. This also checks and errors if someone else changed stuff in between.</li>
 <li>Pure Swift, no <code>NSInvocation</code>, which requires boxing and can be slow.</li>
 <li>No Type checking. If you have a typo or forget a <code>convention</code> part, this will crash at runtime.</li>
@@ -169,10 +169,10 @@ Hi there 👋 and Interpose
 <p>Naming it Interpose was the plan, but then <a href="https://bugs.swift.org/browse/SR-898">SR-898</a> came. While having a class with the same name as the module works <a href="https://forums.swift.org/t/frameworkname-is-not-a-member-type-of-frameworkname-errors-inside-swiftinterface/28962">in most cases</a>, <a href="https://twitter.com/BalestraPatrick/status/1260928023357878273">this breaks</a> when you enable build-for-distribution. There&rsquo;s some <a href="https://forums.swift.org/t/pitch-fully-qualified-name-syntax/28482/81">discussion</a> to get that fixed, but this will be more towards end of 2020, if even.</p>
 <h3 id='i-want-to-hook-into-swift-you-made-another-objc-swizzle-thingy-why' class='heading'>I want to hook into Swift! You made another ObjC swizzle thingy, why?</h3>
 
-<p>UIKit and AppKit won&rsquo;t go away, and the bugs won&rsquo;t go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that&rsquo;s a separate (and much more difficult!) project. </p>
+<p>UIKit and AppKit won&rsquo;t go away, and the bugs won&rsquo;t go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that&rsquo;s a separate (and much more difficult!) project.</p>
 <h3 id='can-i-ship-this' class='heading'>Can I ship this?</h3>
 
-<p>Yes, absolutely. The goal for this one prokect is a simple library that doesn&rsquo;t try to be too smart. I did this in <a href="https://github.com/steipete/Aspects">Aspects</a> and while I loved this to no end, it&rsquo;s problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don&rsquo;t have to worry about conditions like &ldquo;We added New Relic to our app and now <a href="https://github.com/steipete/Aspects/issues/21">your thing crashes</a>&rdquo;.</p>
+<p>Yes, absolutely. The goal for this one project is a simple library that doesn&rsquo;t try to be too smart. I did this in <a href="https://github.com/steipete/Aspects">Aspects</a> and while I loved this to no end, it&rsquo;s problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don&rsquo;t have to worry about conditions like &ldquo;We added New Relic to our app and now <a href="https://github.com/steipete/Aspects/issues/21">your thing crashes</a>&rdquo;.</p>
 <h3 id='it-does-not-do-x' class='heading'>It does not do X!</h3>
 
 <p>Pull Requests welcome! You might wanna open a draft before to lay out what you plan, I want to keep the feature-set minimal so it stays simple and no-magic.</p>
@@ -193,7 +193,7 @@ Hi there 👋 and Interpose
 
 <ul>
 <li>Write proposal to allow to <a href="https://twitter.com/steipete/status/1266799174563041282?s=21">convert the calling convention of existing types</a>.</li>
-<li>Use the C block struct to perfom type checking between Method type and C type (I do that in  <a href="https://github.com/steipete/Aspects">Aspects library</a>), it&rsquo;s still a runtime crash but could be at hook time, not when we call it.</li>
+<li>Use the C block struct to perform type checking between Method type and C type (I do that in  <a href="https://github.com/steipete/Aspects">Aspects library</a>), it&rsquo;s still a runtime crash but could be at hook time, not when we call it.</li>
 <li>Add object-based hooking with dynamic subclassing (Aspects again)</li>
 <li>Add <a href="https://twitter.com/steipete/status/1258482647933870080">dyld_dynamic_interpose</a> to hook pure C functions</li>
 <li>Combine Promise-API for <code>Interpose.whenAvailable</code> for better error bubbling.</li>
@@ -202,7 +202,7 @@ Hi there 👋 and Interpose
     Experiment with <a href="https://github.com/rodionovd/SWRoute/wiki/Function-hooking-in-Swift">Swift function hooking</a>? ⚡️
 
 </div><ul>
-<li>Test against Swift Nightly as Chron Jpb</li>
+<li>Test against Swift Nightly as Cron Job</li>
 <li>I&rsquo;m sure there&rsquo;s more - Pull Requests or <a href="https://twitter.com/steipete">comments</a> very welcome!</li>
 </ul>
 
