@@ -7,7 +7,7 @@
 ![Xcode 11.5+](https://img.shields.io/badge/Xcode-11.5%2B-blue.svg)
 ![Swift 5.2+](https://img.shields.io/badge/Swift-5.2%2B-orange.svg)
 
-Interpose is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C classes. API documentation available at [steipete.github.io/InterposeKit](https://steipete.github.io/InterposeKit/)
+Interpose is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. API documentation available at [steipete.github.io/InterposeKit](https://steipete.github.io/InterposeKit/)
 
 Instead of adding new methods and exchanging implementations, this library replaces the implementation directly. This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
