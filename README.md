@@ -13,7 +13,7 @@ InterposeKit is a modern library to swizzle elegantly in Swift. It is fully writ
 Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/) based on [`method_exchangeImplementations`](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations), this library replaces the implementation directly using [`class_replaceMethod`](https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod). This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
 You can call the original implementation and add code before, instead or after a method call.  
-This is similar to the [Aspects library](https://github.com/steipete/Aspects).
+This is similar to the [Aspects library](https://github.com/steipete/Aspects), but doesn't yet do dynamic subclassing.
 
 ## Usage
 
@@ -116,11 +116,11 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 - Write proposal to allow to [convert the calling convention of existing types](https://twitter.com/steipete/status/1266799174563041282?s=21).
 - Use the C block struct to perfom type checking between Method type and C type (I do that in  [Aspects library](https://github.com/steipete/Aspects)), it's still a runtime crash but could be at hook time, not when we call it.
 - Add object-based hooking with dynamic subclassing (Aspects again)
-- Add dyld_interpose to hook pure C functions
+- Add [dyld_dynamic_interpose](https://twitter.com/steipete/status/1258482647933870080) to hook pure C functions
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
-- Experiment with Swift hooking? 🤡
+- Experiment with Swift hooking? ⚡️
+- Test against Swift Nightly as Chron Jpb
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
-- Test against Swift Nightly as Chron
 
 Make this happen:
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
