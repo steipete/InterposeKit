@@ -8,7 +8,7 @@
 <!--
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit) -->
 
-InterposeKit is a modern library to swizzle elegantly in Swift. It is [well-documented](http://interposekit.com/), fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was [a race condition in Mac Catalyst](/posts/mac-catalyst-crash-hunt/), which required some tricky swizzling to fix, I also wrote up some [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
+InterposeKit is a modern library to swizzle elegantly in Swift. It is [well-documented](http://interposekit.com/), fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was [a race condition in Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/), which required some tricky swizzling to fix, I also wrote up some [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
 
 Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/) based on [`method_exchangeImplementations`](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations), this library replaces the implementation directly using [`class_replaceMethod`](https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod). This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
