@@ -47,22 +47,6 @@ Calling sayHi
 After Interposing <InterposeTests.TestClass: 0x7fa0b160c1e0>
 Hi there 👋 and Interpose
 ```
-## Installation
-
-Building InterposeKit requires Xcode 11.4+ or a Swift 5.2+ toolchain with the Swift Package Manager.
-
-### Swift Package Manager
-
-Add `.package(url: "https://github.com/steipete/InterposeKit.git", from: "0.0.1")` to your
-`Package.swift` file's `dependencies`.
-
-### CocoaPods
-
-Add `pod 'InterposeKit'` to your `Podfile`.
-
-### Carthage
-
-Add `github "steipete/InterposeKit"` to your `Cartfile`.
 
 ## Key Facts
 
@@ -91,6 +75,23 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 }
 ```
 
+## Installation
+
+Building InterposeKit requires Xcode 11.4+ or a Swift 5.2+ toolchain with the Swift Package Manager.
+
+### Swift Package Manager
+
+Add `.package(url: "https://github.com/steipete/InterposeKit.git", from: "0.0.1")` to your
+`Package.swift` file's `dependencies`.
+
+### CocoaPods
+
+Add `pod 'InterposeKit'` to your `Podfile`.
+
+### Carthage
+
+Add `github "steipete/InterposeKit"` to your `Cartfile`.
+
 ## Improvement Ideas
 
 - Write proposal to allow to [convert the calling convention of existing types](https://twitter.com/steipete/status/1266799174563041282?s=21).
@@ -105,7 +106,6 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 Make this happen:
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 ![CocoaPods](https://img.shields.io/cocoapods/v/SwiftyJSON.svg)
-
 
 ## License
 
