@@ -151,6 +151,19 @@ Hi there 👋 and Interpose
         <span class="p">}}</span> <span class="k">as</span> <span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">})</span>
 <span class="p">}</span>
 </code></pre>
+<h2 id='faq' class='heading'>FAQ</h2>
+<h3 id='why-didn-39-t-you-call-it-interpose-quot-kit-quot-feels-so-old-school' class='heading'>Why didn&rsquo;t you call it Interpose? &ldquo;Kit&rdquo; feels so old-school.</h3>
+
+<p>Naming it Interpose was the plan, but then <a href="https://bugs.swift.org/browse/SR-898">SR-898</a> came. While having a class with the same name as the module works <a href="https://forums.swift.org/t/frameworkname-is-not-a-member-type-of-frameworkname-errors-inside-swiftinterface/28962">in most cases</a>, <a href="https://twitter.com/BalestraPatrick/status/1260928023357878273">this breaks</a> when you enable build-for-distribution. There&rsquo;s some <a href="https://forums.swift.org/t/pitch-fully-qualified-name-syntax/28482/81">discussion</a> to get that fixed, but this will be more towards end of 2020, if even.</p>
+<h3 id='i-want-to-hook-into-swift-you-made-another-objc-swizzle-thingy-why' class='heading'>I want to hook into Swift! You made another ObjC swizzle thingy, why?</h3>
+
+<p>UIKit and AppKit won&rsquo;t go away, and the bugs won&rsquo;t go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that&rsquo;s a separate (and much more difficult!) project. </p>
+<h3 id='can-i-ship-this' class='heading'>Can I ship this?</h3>
+
+<p>Yes, absolutely. The goal for this one prokect is a simple library that doesn&rsquo;t try to be too smart. I did this in <a href="https://github.com/steipete/Aspects">Aspects</a> and while I loved this to no end, it&rsquo;s problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don&rsquo;t have to worry about conditions like &ldquo;We added New Relic to our app and now <a href="https://github.com/steipete/Aspects/issues/21">your thing crashes</a>&rdquo;.</p>
+<h3 id='it-does-not-do-x' class='heading'>It does not do X</h3>
+
+<p>Pull Requests welcome! You might wanna open a draft before to lay out what you plan, I want to keep the feature-set minimal so it stays simple and no-magic.</p>
 <h2 id='installation' class='heading'>Installation</h2>
 
 <p>Building InterposeKit requires Xcode 11.4+ or a Swift 5.2+ toolchain with the Swift Package Manager.</p>
