@@ -101,23 +101,33 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
 <p>Let&rsquo;s say you want to amend <code>sayHi</code> from <code>TestClass</code>:</p>
 <pre class="highlight swift"><code>
 <span class="kd">class</span> <span class="kt">TestClass</span><span class="p">:</span> <span class="kt">NSObject</span> <span class="p">{</span>
+    <span class="c1">// Functions need to be marked as `@objc dynamic` or written in Objective-C.</span>
     <span class="kd">@objc</span> <span class="kd">dynamic</span> <span class="kd">func</span> <span class="nf">sayHi</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span> <span class="p">{</span>
         <span class="nf">print</span><span class="p">(</span><span class="s">"Calling sayHi"</span><span class="p">)</span>
         <span class="k">return</span> <span class="s">"Hi there 👋"</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">try</span> <span class="kt">Interpose</span><span class="p">(</span><span class="kt">TestClass</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">let</span> <span class="nv">interposer</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">Interpose</span><span class="p">(</span><span class="kt">TestClass</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">try</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">hook</span><span class="p">(</span><span class="kd">#selector(</span><span class="nf">TestClass.sayHi</span><span class="kd">)</span><span class="p">,</span> <span class="p">{</span> <span class="n">store</span> <span class="k">in</span> <span class="p">{</span> <span class="p">`</span><span class="nv">self</span><span class="p">`</span> <span class="k">in</span>
+
         <span class="nf">print</span><span class="p">(</span><span class="s">"Before Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 
-        <span class="k">let</span> <span class="nv">string</span> <span class="o">=</span> <span class="nf">store</span><span class="p">((</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span>
+        <span class="c1">// Calling convention and passing selector is important!</span>
+        <span class="c1">// You're free to skip calling the original implementation.</span>
+        <span class="k">let</span> <span class="nv">origCall</span> <span class="o">=</span> <span class="nf">store</span><span class="p">((</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span>
+        <span class="k">let</span> <span class="nv">string</span> <span class="o">=</span> <span class="nf">origCall</span><span class="p">(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span>
 
         <span class="nf">print</span><span class="p">(</span><span class="s">"After Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">string</span> <span class="o">+</span> <span class="n">testSwizzleAddition</span>
-        <span class="p">}</span>
-        <span class="k">as</span> <span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">})</span>
+
+        <span class="c1">// Similar signature cast as above, but without selector.</span>
+        <span class="p">}</span> <span class="k">as</span> <span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">})</span>
 <span class="p">}</span>
+
+<span class="c1">// Don't need the hook anymore? Undo is built-in!</span>
+<span class="n">interposer</span><span class="o">.</span><span class="nf">revert</span><span class="p">()</span>
 </code></pre>
 
 <p>Here&rsquo;s what we get when calling <code>print(TestClass().sayHi())</code> </p>
