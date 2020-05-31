@@ -29,7 +29,7 @@ class TestClass: NSObject {
     }
 }
 
-try Interposer(TestClass.self) {
+try Interpose(TestClass.self) {
     try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
         print("Before Interposing \(`self`)")
 
