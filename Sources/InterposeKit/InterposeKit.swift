@@ -89,10 +89,10 @@ final public class Interpose {
     }
 }
 
-// MARK: Interpose Task Logic
+// MARK: Interpose Task
 
 extension Interpose {
-    /// Instance methods only for now
+    /// A task represents a hook to an instance method and stores both the original and new implementation.
     final public class Task {
         /// The class this tasks operates on
         public let `class`: AnyClass
@@ -193,7 +193,7 @@ extension Interpose {
     }
 }
 
-// MARK: Interpose Class Loadeer Watcher
+// MARK: Interpose Class Load Watcher
 
 extension Interpose {
     // Separate definitions to have more eleveant calling syntax when completion is not needed.
