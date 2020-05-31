@@ -304,11 +304,11 @@ extension Interpose.Task: CustomDebugStringConvertible {
 
 #if os(Linux)
 // Linux is used to create Jazzy docs
-/// Selector
+/// :nodoc: Selector
 public struct Selector {}
-/// IMP
+/// :nodoc: IMP
 public struct IMP: Equatable {}
-/// Method
+/// :nodoc: Method
 public struct Method {}
 func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
 func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
