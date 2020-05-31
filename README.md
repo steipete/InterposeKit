@@ -107,6 +107,10 @@ Make this happen:
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 ![CocoaPods](https://img.shields.io/cocoapods/v/SwiftyJSON.svg)
 
+## Thanks
+
+Special thanks to [JP Simard](https://github.com/jpsim/Yams) who did such a great job in setting up [Yams] with GitHub Actions - this was extremely helpful to build CI here fast.
+
 ## License
 
 InterposeKit is MIT Licensed.
