@@ -9,7 +9,9 @@
 
 Interpose is a modern library to swizzle elegant in Swift. Unlike the usual sample, code, this library replaces the implementation, so you avoid some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
-Since you have full control over the original implementation, it's easy to add code before, instead or after a method call - similar to my [Aspects library](https://github.com/steipete/Aspects).
+Since you have full control over the original implementation, it's easy to add code before, instead or after a method call - similar to the [Aspects library](https://github.com/steipete/Aspects).
+
+API documentation available at [steipete.github.io/InterposeKit](https://steipete.github.io/InterposeKit/)
 
 Let's say you want to amend `sayHi` from `TestClass`:
 
