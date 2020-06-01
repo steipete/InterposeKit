@@ -8,12 +8,14 @@
 <!--
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit) -->
 
-InterposeKit is a modern library to swizzle elegantly in Swift. It is fully written in Swift 5.2+ and works on `@objc dynamic` Swift functions or Objective-C instance methods. API documentation available at [interposekit.com](http://interposekit.com/), and some [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
+InterposeKit is a modern library to swizzle elegantly in Swift. It is [well-documented](http://interposekit.com/), [tested](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM), written in "pure" Swift 5.2 and works on `@objc dynamic` Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was [a race condition in Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/), which required tricky swizzling to fix, I also wrote up  [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
 
 Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/) based on [`method_exchangeImplementations`](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations), this library replaces the implementation directly using [`class_replaceMethod`](https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod). This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
 You can call the original implementation and add code before, instead or after a method call.  
 This is similar to the [Aspects library](https://github.com/steipete/Aspects), but doesn't yet do dynamic subclassing.
+
+Compare: [Swizzling a property without helper and with InterposeKit](https://gist.github.com/steipete/f955aaa0742021af15add0133d8482b9) 
 
 ## Usage
 
@@ -51,7 +53,7 @@ let interposer = try Interpose(TestClass.self) {
 interposer.revert()
 ```
 
-Here's what we get when calling `print(TestClass().sayHi())` 
+Here's what we get when calling `print(TestClass().sayHi())`
 ```
 [Interposer] Swizzled -[TestClass.sayHi] IMP: 0x000000010d9f4430 -> 0x000000010db36020
 Before Interposing <InterposeTests.TestClass: 0x7fa0b160c1e0>
@@ -62,7 +64,7 @@ Hi there 👋 and Interpose
 
 ## Key Facts
 
-- Interpose directly modifies the implementaton of a `Method`, which is [better than selector-based swizzling]((https://pspdfkit.com/blog/2019/swizzling-in-swift/)).
+- Interpose directly modifies the implementation of a `Method`, which is [better than selector-based swizzling]((https://pspdfkit.com/blog/2019/swizzling-in-swift/)).
 - Hooks can easily be undone via calling `revert()`. This also checks and errors if someone else changed stuff in between.
 - Pure Swift, no `NSInvocation`, which requires boxing and can be slow.
 - No Type checking. If you have a typo or forget a `convention` part, this will crash at runtime.
@@ -94,10 +96,10 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 Naming it Interpose was the plan, but then [SR-898](https://bugs.swift.org/browse/SR-898) came. While having a class with the same name as the module works [in most cases](https://forums.swift.org/t/frameworkname-is-not-a-member-type-of-frameworkname-errors-inside-swiftinterface/28962), [this breaks](https://twitter.com/BalestraPatrick/status/1260928023357878273) when you enable build-for-distribution. There's some [discussion](https://forums.swift.org/t/pitch-fully-qualified-name-syntax/28482/81) to get that fixed, but this will be more towards end of 2020, if even.
 
 ### I want to hook into Swift! You made another ObjC swizzle thingy, why?
-UIKit and AppKit won't go away, and the bugs won't go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that's a separate (and much more difficult!) project. 
+UIKit and AppKit won't go away, and the bugs won't go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that's a separate (and much more difficult!) project.
 
 ### Can I ship this?
-Yes, absolutely. The goal for this one prokect is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
+Yes, absolutely. The goal for this one project is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
 
 ### It does not do X!
 Pull Requests welcome! You might wanna open a draft before to lay out what you plan, I want to keep the feature-set minimal so it stays simple and no-magic.
@@ -122,12 +124,12 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 ## Improvement Ideas
 
 - Write proposal to allow to [convert the calling convention of existing types](https://twitter.com/steipete/status/1266799174563041282?s=21).
-- Use the C block struct to perfom type checking between Method type and C type (I do that in  [Aspects library](https://github.com/steipete/Aspects)), it's still a runtime crash but could be at hook time, not when we call it.
+- Use the C block struct to perform type checking between Method type and C type (I do that in  [Aspects library](https://github.com/steipete/Aspects)), it's still a runtime crash but could be at hook time, not when we call it.
 - Add object-based hooking with dynamic subclassing (Aspects again)
 - Add [dyld_dynamic_interpose](https://twitter.com/steipete/status/1258482647933870080) to hook pure C functions
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
 - Experiment with [Swift function hooking](https://github.com/rodionovd/SWRoute/wiki/Function-hooking-in-Swift)? ⚡️
-- Test against Swift Nightly as Chron Jpb
+- Test against Swift Nightly as Cron Job
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
 
 Make this happen:
