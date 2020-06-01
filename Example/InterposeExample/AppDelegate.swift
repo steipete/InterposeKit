@@ -1,4 +1,4 @@
-_dyld_register_func_for_add_image//
+//
 //  AppDelegate.swift
 //  InterposeExample
 //
