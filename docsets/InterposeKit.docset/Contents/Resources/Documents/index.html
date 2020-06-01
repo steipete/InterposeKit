@@ -122,7 +122,7 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
 
         <span class="nf">print</span><span class="p">(</span><span class="s">"After Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">string</span> <span class="o">+</span> <span class="n">testSwizzleAddition</span>
+        <span class="k">return</span> <span class="n">string</span> <span class="o">+</span> <span class="s">" and Interpose"</span>
 
         <span class="c1">// Similar signature cast as above, but without selector.</span>
         <span class="p">}</span> <span class="k">as</span> <span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">})</span>
