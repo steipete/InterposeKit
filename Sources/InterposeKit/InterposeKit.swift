@@ -239,7 +239,7 @@ extension Interpose {
 
             // Immediately try to execute task. If not there, install waiter.
             if try tryExecute() == false {
-                InterposeWatcher.globalWatchers.append(self)
+                InterposeWatcher.append(waiter: self)
             }
         }
 
@@ -257,11 +257,17 @@ extension Interpose {
 // dyld C function cannot capture class context so we pack it in a static struct.
 private struct InterposeWatcher {
     // Global list of waiters; can be multiple per class
-    fileprivate static var globalWatchers: [Interpose.Waiter] = {
+    private static var globalWatchers: [Interpose.Waiter] = {
         // Register after Swift global registers to not deadlock
         DispatchQueue.main.async { InterposeWatcher.installGlobalImageLoadWatcher() }
         return []
     }()
+
+    fileprivate static func append(waiter: Interpose.Waiter) {
+        InterposeWatcher.globalWatcherQueue.sync {
+            globalWatchers.append(waiter)
+        }
+    }
 
     // Register hook when dyld loads an image
     private static let globalWatcherQueue = DispatchQueue(label: "com.steipete.global-image-watcher")
