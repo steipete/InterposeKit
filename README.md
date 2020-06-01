@@ -43,7 +43,7 @@ let interposer = try Interpose(TestClass.self) {
 
         print("After Interposing \(`self`)")
 
-        return string + testSwizzleAddition
+        return string + " and Interpose"
 
         // Similar signature cast as above, but without selector.
         } as @convention(block) (AnyObject) -> String})
