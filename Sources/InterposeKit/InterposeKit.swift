@@ -29,6 +29,10 @@ final public class Interpose {
         }
     }
 
+    deinit {
+        tasks.forEach({ $0.cleanup() })
+    }
+
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
     @discardableResult public func hook(_ selName: String,
                                         _ implementation: (Task) -> Any) throws -> Task {
@@ -144,6 +148,18 @@ extension Interpose {
         /// Revert the interpose hoook.
         public func revert() throws {
             try execute(newState: .prepared) { try resetImplementation() }
+        }
+
+        public func cleanup() {
+            switch state {
+            case .prepared:
+                Interpose.log("Releasing -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                imp_removeBlock(replacementIMP)
+            case .interposed:
+                Interpose.log("Keeping -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+            case let .error(error):
+                Interpose.log("Leaking -[\(`class`).\(selector)] IMP: \(replacementIMP!) due to error: \(error)")
+            }
         }
 
         private func execute(newState: State, task: () throws -> Void) throws {
