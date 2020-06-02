@@ -150,6 +150,7 @@ extension Interpose {
             try execute(newState: .prepared) { try resetImplementation() }
         }
 
+        /// Release the hook block if possible.
         public func cleanup() {
             switch state {
             case .prepared:
