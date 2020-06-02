@@ -93,13 +93,13 @@ final public class Interpose {
 extension Interpose {
     /// A task represents a hook to an instance method and stores both the original and new implementation.
     final public class Task {
-        /// The class this tasks operates on
+        /// The class this tasks operates on.
         public let `class`: AnyClass
 
-        /// The selector this tasks operates on
+        /// The selector this tasks operates on.
         public let selector: Selector
 
-        /// The original implementation is set once the swizzling is complete
+        /// The original implementation is set once the swizzling is complete.
         public private(set) var origIMP: IMP? // fetched at apply time, changes late, thus class requirement
 
         /// The replacement implementation is created on initialization time.
@@ -108,9 +108,9 @@ extension Interpose {
         /// The state of the interpose operation.
         public private(set) var state = State.prepared
 
-        /// The possible task states
+        /// The possible task states.
         public enum State: Equatable {
-            /// The task is prepared to be nterposed.
+            /// The task is prepared to be interposed.
             case prepared
 
             /// The method has been successfully interposed.
@@ -129,7 +129,7 @@ extension Interpose {
             replacementIMP = imp_implementationWithBlock(implementation(self))
         }
 
-        /// Validate that the selector exists on the active class
+        /// Validate that the selector exists on the active class.
         @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
             guard let method = class_getInstanceMethod(`class`, selector) else { throw Error.methodNotFound }
             guard state == expectedState else { throw Error.invalidState }
@@ -171,7 +171,7 @@ extension Interpose {
             Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
         }
 
-        /// Convenience to call the original implementation
+        /// Convenience to call the original implementation.
         public func callAsFunction<U>(_ type: U.Type) -> U {
             unsafeBitCast(origIMP, to: type)
         }
@@ -184,7 +184,7 @@ extension Interpose {
     /// Logging uses print and is minimal.
     public static var isLoggingEnabled = true
 
-    /// Simply log wrapper for print
+    /// Simple log wrapper for print.
     fileprivate class func log(_ object: Any) {
         if isLoggingEnabled {
             print("[Interposer] \(object)")
@@ -210,7 +210,7 @@ extension Interpose {
         try whenAvailable(classParts.joined(), builder: builder, completion: completion)
     }
 
-    /// Interpose a class once available. Class is passed via `className` string..
+    /// Interpose a class once available. Class is passed via `className` string.
     @discardableResult public class func whenAvailable(_ className: String,
                                                        builder: @escaping (Interpose) throws -> Void) throws -> Waiter {
         try Waiter(className: className, builder: builder, completion: nil)
