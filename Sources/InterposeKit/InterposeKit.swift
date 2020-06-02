@@ -340,4 +340,5 @@ func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
 // swiftlint:disable:next identifier_name
 func _dyld_register_func_for_add_image(_ func: (@convention(c) (UnsafePointer<Int8>?, Int) -> Void)!) {}
 func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
+func imp_removeBlock(_ anImp: IMP) -> Bool { false }
 #endif
