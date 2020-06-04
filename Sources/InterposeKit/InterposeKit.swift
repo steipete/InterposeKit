@@ -230,7 +230,7 @@ extension Interpose {
     /// Interpose a class once available. Class is passed via `className` string.
     @discardableResult public class func whenAvailable(_ className: String,
                                                        builder: @escaping (Interpose) throws -> Void) throws -> Waiter {
-        try Waiter(className: className, builder: builder, completion: nil)
+        try whenAvailable(className, builder: builder, completion: nil)
     }
 
     /// Interpose a class once available. Class is passed via `className` string, with completion handler.
