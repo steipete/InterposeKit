@@ -151,7 +151,7 @@ extension Interpose {
         }
 
         /// Release the hook block if possible.
-        public func cleanup() {
+        fileprivate func cleanup() {
             switch state {
             case .prepared:
                 Interpose.log("Releasing -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
