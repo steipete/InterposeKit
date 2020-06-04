@@ -29,6 +29,10 @@ final public class Interpose {
         }
     }
 
+    deinit {
+        tasks.forEach({ $0.cleanup() })
+    }
+
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
     @discardableResult public func hook(_ selName: String,
                                         _ implementation: (Task) -> Any) throws -> Task {
@@ -144,6 +148,19 @@ extension Interpose {
         /// Revert the interpose hoook.
         public func revert() throws {
             try execute(newState: .prepared) { try resetImplementation() }
+        }
+
+        /// Release the hook block if possible.
+        fileprivate func cleanup() {
+            switch state {
+            case .prepared:
+                Interpose.log("Releasing -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                imp_removeBlock(replacementIMP)
+            case .interposed:
+                Interpose.log("Keeping -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+            case let .error(error):
+                Interpose.log("Leaking -[\(`class`).\(selector)] IMP: \(replacementIMP!) due to error: \(error)")
+            }
         }
 
         private func execute(newState: State, task: () throws -> Void) throws {
@@ -324,4 +341,5 @@ func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
 // swiftlint:disable:next identifier_name
 func _dyld_register_func_for_add_image(_ func: (@convention(c) (UnsafePointer<Int8>?, Int) -> Void)!) {}
 func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
+func imp_removeBlock(_ anImp: IMP) -> Bool { false }
 #endif

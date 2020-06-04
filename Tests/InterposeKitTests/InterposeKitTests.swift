@@ -10,6 +10,8 @@ class TestClass: NSObject {
         print(testClassHi)
         return testClassHi
     }
+
+    @objc dynamic func doNothing() { }
 }
 
 class TestSubclass: TestClass {
@@ -93,8 +95,100 @@ final class InterposeKitTests: XCTestCase {
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass)
     }
 
+    func testInterposedCleanup() throws {
+        var deallocated = false
+
+        try autoreleasepool {
+            let tracker = LifetimeTracker {
+                deallocated = true
+            }
+
+            // Swizzle test class
+            let interposer = try Interpose(TestClass.self) {
+                try $0.hook(#selector(TestClass.doNothing), { store in { `self` in
+                    tracker.keep()
+                    let origCall = store((@convention(c) (AnyObject, Selector) -> Void).self)
+                    return origCall(`self`, store.selector)
+                } as @convention(block) (AnyObject) -> Void })
+            }
+
+            // Dealloc interposer without removing hooks
+            _ = interposer
+        }
+
+        // Unreverted block should not be deallocated
+        XCTAssertFalse(deallocated)
+    }
+
+    func testRevertedCleanup() throws {
+        var deallocated = false
+
+        try autoreleasepool {
+            let tracker = LifetimeTracker {
+                deallocated = true
+            }
+
+            // Swizzle test class
+            let interposer = try Interpose(TestClass.self) {
+                try $0.hook(#selector(TestClass.doNothing), { store in { `self` in
+                    tracker.keep()
+                    let origCall = store((@convention(c) (AnyObject, Selector) -> Void).self)
+                    return origCall(`self`, store.selector)
+                } as @convention(block) (AnyObject) -> Void })
+            }
+
+            try interposer.revert()
+        }
+
+        // Verify that the block was deallocated
+        XCTAssertTrue(deallocated)
+    }
+
+    func testImpRemoveBlockWorks() {
+        var deallocated = false
+
+        let imp: IMP = autoreleasepool {
+            let tracker = LifetimeTracker {
+                deallocated = true
+            }
+
+            let block: @convention(block) (AnyObject) -> Void = { _ in
+                // retain `tracker` inside a block
+                tracker.keep()
+            }
+
+            return imp_implementationWithBlock(block)
+        }
+
+        // `imp` retains `block` which retains `tracker`
+        XCTAssertFalse(deallocated)
+
+        // Detach `block` from `imp`
+        imp_removeBlock(imp)
+
+        // `block` and `tracker` should be deallocated now
+        XCTAssertTrue(deallocated)
+    }
+
+    class LifetimeTracker {
+        let deinitCalled: () -> Void
+
+        init(deinitCalled: @escaping () -> Void) {
+            self.deinitCalled = deinitCalled
+        }
+
+        deinit {
+            deinitCalled()
+        }
+
+        func keep() { }
+    }
+
     static var allTests = [
         ("testClassOverrideAndRevert", testClassOverrideAndRevert),
-        ("testSubclassOverride", testSubclassOverride)
+        ("testSubclassOverride", testSubclassOverride),
+        ("testInterposedCleanup", testInterposedCleanup),
+        ("testRevertedCleanup", testRevertedCleanup),
+        ("testImpRemoveBlockWorks", testImpRemoveBlockWorks)
     ]
 }
