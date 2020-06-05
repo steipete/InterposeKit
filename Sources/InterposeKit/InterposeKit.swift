@@ -292,7 +292,7 @@ private struct InterposeWatcher {
         _dyld_register_func_for_add_image { _, _ in
             InterposeWatcher.globalWatcherQueue.sync {
                 // this is called on the thread the image is loaded.
-                InterposeWatcher.globalWatchers = InterposeWatcher.globalWatchers.filter { (waiter) -> Bool in
+                InterposeWatcher.globalWatchers = InterposeWatcher.globalWatchers.filter { waiter -> Bool in
                     do {
                         if try waiter.tryExecute() == false {
                             return true // only collect if this fails because class is not there yet
