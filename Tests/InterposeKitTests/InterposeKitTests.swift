@@ -22,6 +22,10 @@ class TestSubclass: TestClass {
 
 final class InterposeKitTests: XCTestCase {
 
+    override func setUpWithError() throws {
+        Interpose.isLoggingEnabled = true
+    }
+
     func testClassOverrideAndRevert() throws {
         let testObj = TestClass()
         XCTAssertEqual(testObj.sayHi(), testClassHi)

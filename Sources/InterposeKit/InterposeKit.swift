@@ -199,7 +199,7 @@ extension Interpose {
 
 extension Interpose {
     /// Logging uses print and is minimal.
-    public static var isLoggingEnabled = true
+    public static var isLoggingEnabled = false
 
     /// Simple log wrapper for print.
     fileprivate class func log(_ object: Any) {

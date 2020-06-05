@@ -12,6 +12,9 @@ import InterposeKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        Interpose.isLoggingEnabled = true
+
         fixMacCatalystInputSystemSessionRace()
         return true
     }
