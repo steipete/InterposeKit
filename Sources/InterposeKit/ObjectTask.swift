@@ -30,6 +30,9 @@ final public class ObjectTask: ValidatableTask {
     public private(set) var replacementIMP: IMP! // else we validate init order
     public private(set) var state = Interpose.State.prepared
 
+    // Subclass that we create on the fly
+    var dynamicSubclass: AnyClass?
+
     /// Initialize a new task to interpose an instance method.
     public init(object: AnyObject, selector: Selector, implementation: (Task) -> Any) throws {
         self.selector = selector
@@ -59,11 +62,6 @@ final public class ObjectTask: ValidatableTask {
     var kvoObserver: KVOObserver?
     private func registerKVO() {
         kvoObserver = KVOObserver(object: object)
-        //object.addObserver(self, forKeyPath: "description", options: .new, context: nil)
-//        kvoToken = observe(\.object.description, options: .new) { (obj, change) in
-//            guard let description = change.new else { return }
-//            print("New description is: \(description)")
-//        }
     }
 
     private func createSubclass() throws -> AnyClass {
@@ -104,6 +102,11 @@ final public class ObjectTask: ValidatableTask {
         _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
     }
 
+    struct objc_super_fake {
+        public var receiver: Unmanaged<AnyObject>
+        public var super_class: AnyClass
+    }
+
     private func addSuperTrampolineMethod(subclass: AnyClass, method: Method) {
         let typeEncoding = method_getTypeEncoding(method)
 
@@ -111,10 +114,20 @@ final public class ObjectTask: ValidatableTask {
         // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
         // objc_msgSendSuper2() takes the current search class, not its superclass.
         // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
+        // TODO: This should be cached.
         let sendSuper2 = dlsym(handle, "objc_msgSendSuper2");
-        let block: @convention(block) (AnyObject, va_list) -> Void = { obj, vaList in
-            let superStruct = objc_super(receiver: obj as! Unmanaged<AnyObject>, super_class: subclass)
-            unsafeBitCast(sendSuper2, to: (@convention(c) (objc_super, Selector, va_list) -> Void).self)(superStruct, self.selector, vaList)
+
+        let block: @convention(block) (AnyObject, va_list) -> AnyObject = { obj, vaList in
+            let raw = Unmanaged<AnyObject>.passUnretained(obj)
+            let superStruct = objc_super_fake(receiver: raw, super_class: subclass)
+            let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
+            // This is extremely cursed: https://bugs.swift.org/browse/SR-12945
+            // let realSuperStruct = objc_super(receiver: raw, super_class: subclass)
+            return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> AnyObject in
+                return unsafeBitCast(sendSuper2, to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> AnyObject).self)(realSuperStructPointer, self.selector, vaList)
+            }
+            // Equivalent in C:
+            // return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
         }
         class_addMethod(subclass, self.selector, imp_implementationWithBlock(block), typeEncoding)
     }
@@ -122,6 +135,7 @@ final public class ObjectTask: ValidatableTask {
     
     /// Validate that the selector exists on the active class.
     @discardableResult public func validate(expectedState: Interpose.State = .prepared) throws -> Method {
+        // We need to validate on class, not the subclass
         guard let method = class_getInstanceMethod(`class`, selector) else { throw Interpose.Error.methodNotFound }
         guard state == expectedState else { throw Interpose.Error.invalidState }
         return method
@@ -161,11 +175,17 @@ final public class ObjectTask: ValidatableTask {
     private func replaceImplementation() throws {
         let method = try validate()
 
+        // Register a KVO to work around any KVO issues with opposite order
         registerKVO()
-        let subclass: AnyClass = try createSubclass()
-        addSuperTrampolineMethod(subclass: subclass, method: method)
 
-        origIMP = class_replaceMethod(subclass, selector, replacementIMP, method_getTypeEncoding(method))
+        // Register subclass at runtime if we haven't already
+        if dynamicSubclass == nil {
+            dynamicSubclass = try createSubclass()
+        }
+        // Add empty trampoline that we then replace the IMP!
+        addSuperTrampolineMethod(subclass: dynamicSubclass!, method: method)
+
+        origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, method_getTypeEncoding(method))
         guard origIMP != nil else { throw Interpose.Error.nonExistingImplementation }
         Interpose.log("Swizzled -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
     }
@@ -173,7 +193,9 @@ final public class ObjectTask: ValidatableTask {
     private func resetImplementation() throws {
         let method = try validate(expectedState: .interposed)
         precondition(origIMP != nil)
-        let previousIMP = class_replaceMethod(`class`, selector, origIMP!, method_getTypeEncoding(method))
+        precondition(dynamicSubclass != nil)
+
+        let previousIMP = class_replaceMethod(dynamicSubclass!, selector, origIMP!, method_getTypeEncoding(method))
         guard previousIMP == replacementIMP else { throw Interpose.Error.unexpectedImplementation }
         Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
     }
