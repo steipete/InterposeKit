@@ -18,10 +18,25 @@ final public class Interpose {
     /// Lists all tasks for the current interpose class object.
     public private(set) var tasks: [Task] = []
 
+    /// If Interposing is object-based, this is set.
+    public let object: AnyObject?
+
     /// Initializes an instance of Interpose for a specific class.
     /// If `builder` is present, `apply()` is automatically called.
     public init(_ `class`: AnyClass, builder: ((Interpose) throws -> Void)? = nil) throws {
         self.class = `class`
+        self.object = nil
+
+        // Only apply if a builder is present
+        if let builder = builder {
+            try apply(builder)
+        }
+    }
+
+    /// Initialize with a single object to interpose.
+    public init(_ object: AnyObject, builder: ((Interpose) throws -> Void)? = nil) throws {
+        self.object = object
+        self.class = type(of: object)
 
         // Only apply if a builder is present
         if let builder = builder {
@@ -30,7 +45,8 @@ final public class Interpose {
     }
 
     deinit {
-        tasks.forEach({ $0.cleanup() })
+        guard let validatableTasks = tasks as? [ValidatableTask] else { return }
+        validatableTasks.forEach({ $0.cleanup() })
     }
 
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
@@ -42,7 +58,13 @@ final public class Interpose {
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
     @discardableResult public func hook(_ selector: Selector,
                                         _ implementation: (Task) -> Any) throws -> Task {
-        let task = try Task(class: `class`, selector: selector, implementation: implementation)
+
+        var task: ValidatableTask
+        if let object = self.object {
+            task = try ObjectTask(object: object, selector: selector, implementation: implementation)
+        } else {
+            task = try ClassTask(class: `class`, selector: selector, implementation: implementation)
+        }
         tasks.append(task)
         return task
     }
@@ -58,14 +80,14 @@ final public class Interpose {
     }
 
     private func execute(_ task: ((Interpose) throws -> Void)? = nil,
-                         expectedState: Task.State = .prepared,
+                         expectedState: Interpose.State = .prepared,
                          executor: ((Task) throws -> Void)) throws -> Interpose {
         // Run pre-apply code first
         if let task = task {
             try task(self)
         }
         // Validate all tasks, stop if anything is not valid
-        guard tasks.allSatisfy({
+        guard let validatableTasks = tasks as? [ValidatableTask], validatableTasks.allSatisfy({
             (try? $0.validate(expectedState: expectedState)) != nil
         }) else {
             throw Error.invalidState
@@ -87,112 +109,59 @@ final public class Interpose {
         /// This is bad, likely someone else also hooked this method. If you are in such a codebase, do not use revert.
         case unexpectedImplementation
 
+        case failedToAllocateClassPair
+
         /// Can't revert or apply if already done so.
         case invalidState
+    }
+
+    /// The possible task states.
+    public enum State: Equatable {
+        /// The task is prepared to be interposed.
+        case prepared
+
+        /// The method has been successfully interposed.
+        case interposed
+
+        /// An error happened while interposing a method.
+        case error(Interpose.Error)
     }
 }
 
 // MARK: Interpose Task
 
-extension Interpose {
-    /// A task represents a hook to an instance method and stores both the original and new implementation.
-    final public class Task {
-        /// The class this tasks operates on.
-        public let `class`: AnyClass
+public protocol Task {
+    /// The class this tasks operates on.
+    var `class`: AnyClass { get }
 
-        /// The selector this tasks operates on.
-        public let selector: Selector
+    /// If Interposing is object-based, this is set.
+    //var object: AnyObject? { get }
 
-        /// The original implementation is set once the swizzling is complete.
-        public private(set) var origIMP: IMP? // fetched at apply time, changes late, thus class requirement
+    /// The selector this tasks operates on.
+    var selector: Selector { get }
 
-        /// The replacement implementation is created on initialization time.
-        public private(set) var replacementIMP: IMP! // else we validate init order
+    /// The original implementation is set once the swizzling is complete.
+    var origIMP: IMP? { get }
 
-        /// The state of the interpose operation.
-        public private(set) var state = State.prepared
+    /// The replacement implementation is created on initialization time.
+    var replacementIMP: IMP! { get }
 
-        /// The possible task states.
-        public enum State: Equatable {
-            /// The task is prepared to be interposed.
-            case prepared
+    /// The state of the interpose operation.
+    var state: Interpose.State { get }
 
-            /// The method has been successfully interposed.
-            case interposed
+    /// Apply the interpose hook.
+    func apply() throws
 
-            /// An error happened while interposing a method.
-            case error(Error)
-        }
+    /// Revert the interpose hoook.
+    func revert() throws
 
-        /// Initialize a new task to interpose an instance method.
-        public init(`class`: AnyClass, selector: Selector, implementation: (Task) -> Any) throws {
-            self.selector = selector
-            self.class = `class`
-            // Check if method exists
-            try validate()
-            replacementIMP = imp_implementationWithBlock(implementation(self))
-        }
+    /// Convenience to call the original implementation.
+    func callAsFunction<U>(_ type: U.Type) -> U
+}
 
-        /// Validate that the selector exists on the active class.
-        @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
-            guard let method = class_getInstanceMethod(`class`, selector) else { throw Error.methodNotFound }
-            guard state == expectedState else { throw Error.invalidState }
-            return method
-        }
-
-        /// Apply the interpose hook.
-        public func apply() throws {
-            try execute(newState: .interposed) { try replaceImplementation() }
-        }
-
-        /// Revert the interpose hoook.
-        public func revert() throws {
-            try execute(newState: .prepared) { try resetImplementation() }
-        }
-
-        /// Release the hook block if possible.
-        fileprivate func cleanup() {
-            switch state {
-            case .prepared:
-                Interpose.log("Releasing -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
-                imp_removeBlock(replacementIMP)
-            case .interposed:
-                Interpose.log("Keeping -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
-            case let .error(error):
-                Interpose.log("Leaking -[\(`class`).\(selector)] IMP: \(replacementIMP!) due to error: \(error)")
-            }
-        }
-
-        private func execute(newState: State, task: () throws -> Void) throws {
-            do {
-                try task()
-                state = newState
-            } catch let error as Error {
-                state = .error(error)
-                throw error
-            }
-        }
-
-        private func replaceImplementation() throws {
-            let method = try validate()
-            origIMP = class_replaceMethod(`class`, selector, replacementIMP, method_getTypeEncoding(method))
-            guard origIMP != nil else { throw Error.nonExistingImplementation }
-            Interpose.log("Swizzled -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
-        }
-
-        private func resetImplementation() throws {
-            let method = try validate(expectedState: .interposed)
-            precondition(origIMP != nil)
-            let previousIMP = class_replaceMethod(`class`, selector, origIMP!, method_getTypeEncoding(method))
-            guard previousIMP == replacementIMP else { throw Error.unexpectedImplementation }
-            Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
-        }
-
-        /// Convenience to call the original implementation.
-        public func callAsFunction<U>(_ type: U.Type) -> U {
-            unsafeBitCast(origIMP, to: type)
-        }
-    }
+public protocol ValidatableTask: Task {
+    func validate(expectedState: Interpose.State) throws -> Method
+    func cleanup()
 }
 
 // MARK: Logging
@@ -202,7 +171,7 @@ extension Interpose {
     public static var isLoggingEnabled = false
 
     /// Simple log wrapper for print.
-    fileprivate class func log(_ object: Any) {
+    class func log(_ object: Any) {
         if isLoggingEnabled {
             print("[Interposer] \(object)")
         }
@@ -315,14 +284,6 @@ private struct InterposeWatcher {
 }
 
 // MARK: Debug Helper
-
-#if DEBUG
-extension Interpose.Task: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        return "\(selector) -> \(String(describing: origIMP))"
-    }
-}
-#endif
 
 #if os(Linux)
 // Linux is used to create Jazzy docs
