@@ -11,6 +11,7 @@
 		78C39D8F2483164500B46395 /* InterposeKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C39D8E2483164500B46395 /* InterposeKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78C39D912483165600B46395 /* InterposeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D902483165600B46395 /* InterposeKit.swift */; };
 		78C39D932483169300B46395 /* InterposeKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D922483169300B46395 /* InterposeKitTests.swift */; };
+		78EDB8D5248B9BB500D2F6C1 /* TestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		78C39DBF248317B400B46395 /* Defaults-Testing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Testing.xcconfig"; sourceTree = "<group>"; };
 		78C39DC0248317B400B46395 /* Defaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Defaults.xcconfig; sourceTree = "<group>"; };
 		78C39DC1248317B400B46395 /* Defaults-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Debug.xcconfig"; sourceTree = "<group>"; };
+		78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClass.swift; path = Tests/InterposeKitTests/TestClass.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				78C39D922483169300B46395 /* InterposeKitTests.swift */,
+				78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */,
 				78C39D7B2482CC7D00B46395 /* Info-Tests.plist */,
 			);
 			path = InterposeTests;
@@ -216,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78EDB8D5248B9BB500D2F6C1 /* TestClass.swift in Sources */,
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
