@@ -1,7 +1,7 @@
 import Foundation
 
 private enum Constants {
-    static let subclassSuffix = "_InterposeKit_"
+    static let subclassSuffix = "InterposeKit_"
 }
 
 internal enum ObjCSelector {
@@ -67,7 +67,9 @@ final public class ObjectTask: ValidatableTask {
     private func createSubclass() throws -> AnyClass {
         let perceivedClass: AnyClass = `class`
         let className = NSStringFromClass(perceivedClass)
-        let subclassName = Constants.subclassSuffix + className
+        // Right now we are wasteful. Might be able to optimize for shared IMP?
+        let uuid = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+        let subclassName = Constants.subclassSuffix + className + uuid
 
         let subclass: AnyClass? = subclassName.withCString { cString in
             if let existingClass = objc_getClass(cString) as! AnyClass? {
@@ -82,26 +84,25 @@ final public class ObjectTask: ValidatableTask {
                 }
             }
         }
-
+        
         guard let nonnullSubclass = subclass else {
             throw Interpose.Error.failedToAllocateClassPair
         }
 
         object_setClass(object, nonnullSubclass)
         return nonnullSubclass
-
     }
 
     private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
         let getClass: @convention(block) (UnsafeRawPointer?) -> AnyClass = { _ in
             perceivedClass
         }
-
         let impl = imp_implementationWithBlock(getClass as Any)
         _ = class_replaceMethod(`class`, ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
         _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
     }
 
+    // https://bugs.swift.org/browse/SR-12945
     struct objc_super_fake {
         public var receiver: Unmanaged<AnyObject>
         public var super_class: AnyClass

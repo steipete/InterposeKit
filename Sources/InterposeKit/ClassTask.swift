@@ -34,6 +34,7 @@ final public class ClassTask: ValidatableTask {
 
     /// Release the hook block if possible.
     public func cleanup() {
+        // TODO: remove subclass!
         switch state {
         case .prepared:
             Interpose.log("Releasing -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
