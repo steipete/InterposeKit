@@ -48,12 +48,8 @@ final public class ObjectTask: ValidatableTask {
             objectToObserve = object
             super.init()
 
-            observation = observe(
-                \.objectToObserve.description,
-                options: [.new]
-            ) { object, change in
-                print("myDate changed to: \(String(describing: change.newValue))")
-            }
+            // Can't use modern syntax cause https://bugs.swift.org/browse/SR-12944
+            objectToObserve.addObserver(self, forKeyPath: "description", options: .new, context: nil)
         }
     }
 
@@ -71,7 +67,7 @@ final public class ObjectTask: ValidatableTask {
     }
 
     private func createSubclass() throws -> AnyClass {
-        let perceivedClass = `class`
+        let perceivedClass: AnyClass = `class`
         let className = NSStringFromClass(perceivedClass)
         let subclassName = Constants.subclassSuffix + className
 
@@ -104,24 +100,26 @@ final public class ObjectTask: ValidatableTask {
         }
 
         let impl = imp_implementationWithBlock(getClass as Any)
-
-        _ = class_replaceMethod(`class`, ObjCSelector.getClass,
-                                impl,
-                                ObjCMethodEncoding.getClass)
-
-        _ = class_replaceMethod(object_getClass(`class`),
-                                ObjCSelector.getClass,
-                                impl,
-                                ObjCMethodEncoding.getClass)
+        _ = class_replaceMethod(`class`, ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
+        _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
     }
 
+    private func addSuperTrampolineMethod(subclass: AnyClass, method: Method) {
+        let typeEncoding = method_getTypeEncoding(method)
 
+        let handle = dlopen(nil, RTLD_LAZY);
+        // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
+        // objc_msgSendSuper2() takes the current search class, not its superclass.
+        // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
+        let sendSuper2 = dlsym(handle, "objc_msgSendSuper2");
+        let block: @convention(block) (AnyObject, va_list) -> Void = { obj, vaList in
+            let superStruct = objc_super(receiver: obj as! Unmanaged<AnyObject>, super_class: subclass)
+            unsafeBitCast(sendSuper2, to: (@convention(c) (objc_super, Selector, va_list) -> Void).self)(superStruct, self.selector, vaList)
+        }
+        class_addMethod(subclass, self.selector, imp_implementationWithBlock(block), typeEncoding)
+    }
 
-
-
-
-
-
+    
     /// Validate that the selector exists on the active class.
     @discardableResult public func validate(expectedState: Interpose.State = .prepared) throws -> Method {
         guard let method = class_getInstanceMethod(`class`, selector) else { throw Interpose.Error.methodNotFound }
@@ -164,7 +162,8 @@ final public class ObjectTask: ValidatableTask {
         let method = try validate()
 
         registerKVO()
-        let subclass = try createSubclass()
+        let subclass: AnyClass = try createSubclass()
+        addSuperTrampolineMethod(subclass: subclass, method: method)
 
         origIMP = class_replaceMethod(subclass, selector, replacementIMP, method_getTypeEncoding(method))
         guard origIMP != nil else { throw Interpose.Error.nonExistingImplementation }
