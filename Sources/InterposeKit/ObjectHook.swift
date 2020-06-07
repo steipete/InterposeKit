@@ -17,7 +17,7 @@ internal enum ObjCMethodEncoding {
 }
 
 /// A hook to an instance method of a single object, stores both the original and new implementation.
-/// TODO: Multiple hooks for one object
+/// Think about: Multiple hooks for one object
 final class ObjectHook: InternalHookable {
     public let `class`: AnyClass
     public let selector: Selector
@@ -41,7 +41,7 @@ final class ObjectHook: InternalHookable {
 
 //    /// Release the hook block if possible.
 //    public override func cleanup() {
-//        // TODO: remove subclass!
+//        // remove subclass!
 //        super.cleanup()
 //    }
 
@@ -86,7 +86,7 @@ final class ObjectHook: InternalHookable {
     }
 
     // https://bugs.swift.org/browse/SR-12945
-    struct objcSuperFake {
+    struct ObjcSuperFake {
         public var receiver: Unmanaged<AnyObject>
         public var superClass: AnyClass
     }
@@ -94,7 +94,7 @@ final class ObjectHook: InternalHookable {
     // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
     // objc_msgSendSuper2() takes the current search class, not its superclass.
     // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
-    private lazy var msgSendSuper2 : UnsafeMutableRawPointer = {
+    private lazy var msgSendSuper2: UnsafeMutableRawPointer = {
         let handle = dlopen(nil, RTLD_LAZY)
         return dlsym(handle, "objc_msgSendSuper2")
     }()
@@ -107,11 +107,12 @@ final class ObjectHook: InternalHookable {
             // let realSuperStruct = objc_super(receiver: raw, super_class: subclass)
             // https://bugs.swift.org/browse/SR-12945
             let raw = Unmanaged<AnyObject>.passUnretained(obj)
-            let superStruct = objcSuperFake(receiver: raw, superClass: subclass)
+            let superStruct = ObjcSuperFake(receiver: raw, superClass: subclass)
             let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
             // C: return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
             return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> Unmanaged<AnyObject> in
-                let msgSendSuper2 = unsafeBitCast(self.msgSendSuper2, to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>).self)
+                let msgSendSuper2 = unsafeBitCast(self.msgSendSuper2,
+                                                  to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>).self)
                 return msgSendSuper2(realSuperStructPointer, self.selector, vaList)
             }
         }
@@ -146,7 +147,7 @@ final class ObjectHook: InternalHookable {
         Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
 
         // Restore the original class of the object
-        // TODO: Does this include the KVO'ed subclass?
+        // Does this include the KVO'ed subclass?
         object_setClass(object, `class`)
 
         // Dispose of the custom dynamic subclass
@@ -196,5 +197,6 @@ extension ObjectHook: CustomDebugStringConvertible {
 
 // FB7728351: watchOS doesn't define va_list
 #if os(watchOS)
+// swiftlint:disable:nex type_name
 public typealias va_list = __darwin_va_list
 #endif
