@@ -99,36 +99,39 @@ final public class ObjectTask: ValidatableTask {
     }
 
     // https://bugs.swift.org/browse/SR-12945
-    struct objc_super_fake {
+    struct objcSuperFake {
         public var receiver: Unmanaged<AnyObject>
-        public var super_class: AnyClass
+        public var superClass: AnyClass
     }
 
-    private func addSuperTrampolineMethod(subclass: AnyClass, method: Method) {
-        let typeEncoding = method_getTypeEncoding(method)
-
-        let handle = dlopen(nil, RTLD_LAZY);
+    typealias MsgSendSuperType =  @convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>
+    private lazy var msgSendSuper2 : MsgSendSuperType = {
+        let handle = dlopen(nil, RTLD_LAZY)
         // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
         // objc_msgSendSuper2() takes the current search class, not its superclass.
         // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
         // TODO: This should be cached.
-        let sendSuper2 = dlsym(handle, "objc_msgSendSuper2");
+        let sendSuper2 = dlsym(handle, "objc_msgSendSuper2")
+        return unsafeBitCast(sendSuper2, to: MsgSendSuperType.self)
+    }()
+
+    private func addSuperTrampolineMethod(subclass: AnyClass, method: Method) {
+        let typeEncoding = method_getTypeEncoding(method)
 
         let block: @convention(block) (AnyObject, va_list) -> Unmanaged<AnyObject> = { obj, vaList in
-            let raw = Unmanaged<AnyObject>.passUnretained(obj)
-            let superStruct = objc_super_fake(receiver: raw, super_class: subclass)
-            let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
-            // This is extremely cursed: https://bugs.swift.org/browse/SR-12945
+            // This is an extremely cursed workaround for following crashing the compiler:
             // let realSuperStruct = objc_super(receiver: raw, super_class: subclass)
+            // https://bugs.swift.org/browse/SR-12945
+            let raw = Unmanaged<AnyObject>.passUnretained(obj)
+            let superStruct = objcSuperFake(receiver: raw, superClass: subclass)
+            let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
+            // C: return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
             return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> Unmanaged<AnyObject> in
-                return unsafeBitCast(sendSuper2, to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>).self)(realSuperStructPointer, self.selector, vaList)
+                return self.msgSendSuper2(realSuperStructPointer, self.selector, vaList)
             }
-            // Equivalent in C:
-            // return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
         }
         class_addMethod(subclass, self.selector, imp_implementationWithBlock(block), typeEncoding)
     }
-
     
     /// Validate that the selector exists on the active class.
     @discardableResult public func validate(expectedState: Interpose.State = .prepared) throws -> Method {
