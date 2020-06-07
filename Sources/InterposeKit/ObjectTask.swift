@@ -5,21 +5,16 @@ private enum Constants {
 }
 
 internal enum ObjCSelector {
-//    static let forwardInvocation = Selector((("forwardInvocation:")))
-//    static let methodSignatureForSelector = Selector((("methodSignatureForSelector:")))
     static let getClass = Selector((("class")))
 }
 
 internal enum ObjCMethodEncoding {
-//    static let forwardInvocation = extract("v@:@")
-//    static let methodSignatureForSelector = extract("v@::")
     static let getClass = extract("#@:")
 
     private static func extract(_ string: StaticString) -> UnsafePointer<CChar> {
         return UnsafeRawPointer(string.utf8Start).assumingMemoryBound(to: CChar.self)
     }
 }
-
 
 /// A task represents a hook to an instance method of a single object and stores both the original and new implementation.
 final public class ObjectTask: ValidatableTask {
@@ -84,7 +79,7 @@ final public class ObjectTask: ValidatableTask {
                 }
             }
         }
-        
+
         guard let nonnullSubclass = subclass else {
             throw Interpose.Error.failedToAllocateClassPair
         }
@@ -118,14 +113,14 @@ final public class ObjectTask: ValidatableTask {
         // TODO: This should be cached.
         let sendSuper2 = dlsym(handle, "objc_msgSendSuper2");
 
-        let block: @convention(block) (AnyObject, va_list) -> AnyObject = { obj, vaList in
+        let block: @convention(block) (AnyObject, va_list) -> Unmanaged<AnyObject> = { obj, vaList in
             let raw = Unmanaged<AnyObject>.passUnretained(obj)
             let superStruct = objc_super_fake(receiver: raw, super_class: subclass)
             let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
             // This is extremely cursed: https://bugs.swift.org/browse/SR-12945
             // let realSuperStruct = objc_super(receiver: raw, super_class: subclass)
-            return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> AnyObject in
-                return unsafeBitCast(sendSuper2, to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> AnyObject).self)(realSuperStructPointer, self.selector, vaList)
+            return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> Unmanaged<AnyObject> in
+                return unsafeBitCast(sendSuper2, to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>).self)(realSuperStructPointer, self.selector, vaList)
             }
             // Equivalent in C:
             // return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
