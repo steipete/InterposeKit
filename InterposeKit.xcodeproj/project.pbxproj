@@ -14,6 +14,7 @@
 		78EDB8DA248BA9B300D2F6C1 /* TestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */; };
 		78EDB8DB248BA9BB00D2F6C1 /* ObjectInterposeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */; };
 		78EDB8DD248BAA5600D2F6C1 /* ClassTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8DC248BAA5600D2F6C1 /* ClassTask.swift */; };
+		78EDB8FF248D0A9900D2F6C1 /* ObjectTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8FE248D0A9900D2F6C1 /* ObjectTask.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,7 @@
 		78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClass.swift; path = Tests/InterposeKitTests/TestClass.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ObjectInterposeTests.swift; path = Tests/InterposeKitTests/ObjectInterposeTests.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8DC248BAA5600D2F6C1 /* ClassTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ClassTask.swift; path = Sources/InterposeKit/ClassTask.swift; sourceTree = SOURCE_ROOT; };
+		78EDB8FE248D0A9900D2F6C1 /* ObjectTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ObjectTask.swift; path = Sources/InterposeKit/ObjectTask.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				78863ECA2464B2F900BA3762 /* Info.plist */,
 				78C39D8E2483164500B46395 /* InterposeKit.h */,
 				78EDB8DC248BAA5600D2F6C1 /* ClassTask.swift */,
+				78EDB8FE248D0A9900D2F6C1 /* ObjectTask.swift */,
 				78C39D902483165600B46395 /* InterposeKit.swift */,
 			);
 			path = InterposeKit;
@@ -226,6 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
+				78EDB8FF248D0A9900D2F6C1 /* ObjectTask.swift in Sources */,
 				78EDB8DD248BAA5600D2F6C1 /* ClassTask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
