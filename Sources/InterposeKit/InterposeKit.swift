@@ -1,22 +1,11 @@
-//
-//  Interpose.swift
-//  InterposeKit
-//
-//  Copyright © 2020 Peter Steinberger. All rights reserved.
-//
-
 import Foundation
-
-#if !os(Linux)
-import MachO.dyld
-#endif
 
 /// Helper to swizzle methods the right way, via replacing the IMP.
 final public class Interpose {
-    /// Stores swizzle tasks and executes them at once.
+    /// Stores swizzle hooks and executes them at once.
     public let `class`: AnyClass
-    /// Lists all tasks for the current interpose class object.
-    public private(set) var tasks: [Task] = []
+    /// Lists all hooks for the current interpose class object.
+    public private(set) var hooks: [Hookable] = []
 
     /// If Interposing is object-based, this is set.
     public let object: AnyObject?
@@ -45,55 +34,55 @@ final public class Interpose {
     }
 
     deinit {
-        guard let validatableTasks = tasks as? [ValidatableTask] else { return }
-        validatableTasks.forEach({ $0.cleanup() })
+        guard let internalHooks = hooks as? [InternalHookable] else { return }
+        internalHooks.forEach({ $0.cleanup() })
     }
 
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
     @discardableResult public func hook(_ selName: String,
-                                        _ implementation: (Task) -> Any) throws -> Task {
+                                        _ implementation: (Hookable) -> Any) throws -> Hookable {
         try hook(NSSelectorFromString(selName), implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
     @discardableResult public func hook(_ selector: Selector,
-                                        _ implementation: (Task) -> Any) throws -> Task {
+                                        _ implementation: (Hookable) -> Any) throws -> Hookable {
 
-        var task: ValidatableTask
+        var hook: InternalHookable
         if let object = self.object {
-            task = try ObjectTask(object: object, selector: selector, implementation: implementation)
+            hook = try ObjectHook(object: object, selector: selector, implementation: implementation)
         } else {
-            task = try ClassTask(class: `class`, selector: selector, implementation: implementation)
+            hook = try ClassHook(class: `class`, selector: selector, implementation: implementation)
         }
-        tasks.append(task)
-        return task
+        hooks.append(hook)
+        return hook
     }
 
     /// Apply all stored hooks.
-    @discardableResult public func apply(_ task: ((Interpose) throws -> Void)? = nil) throws -> Interpose {
-        try execute(task) { try $0.apply() }
+    @discardableResult public func apply(_ hook: ((Interpose) throws -> Void)? = nil) throws -> Interpose {
+        try execute(hook) { try $0.apply() }
     }
 
     /// Revert all stored hooks.
-    @discardableResult public func revert(_ task: ((Interpose) throws -> Void)? = nil) throws -> Interpose {
-        try execute(task, expectedState: .interposed) { try $0.revert() }
+    @discardableResult public func revert(_ hook: ((Interpose) throws -> Void)? = nil) throws -> Interpose {
+        try execute(hook, expectedState: .interposed) { try $0.revert() }
     }
 
     private func execute(_ task: ((Interpose) throws -> Void)? = nil,
                          expectedState: Interpose.State = .prepared,
-                         executor: ((Task) throws -> Void)) throws -> Interpose {
+                         executor: ((Hookable) throws -> Void)) throws -> Interpose {
         // Run pre-apply code first
         if let task = task {
             try task(self)
         }
         // Validate all tasks, stop if anything is not valid
-        guard let validatableTasks = tasks as? [ValidatableTask], validatableTasks.allSatisfy({
+        guard let internalHooks = hooks as? [InternalHookable], internalHooks.allSatisfy({
             (try? $0.validate(expectedState: expectedState)) != nil
         }) else {
             throw Error.invalidState
         }
         // Execute all tasks
-        try tasks.forEach(executor)
+        try hooks.forEach(executor)
         return self
     }
 
@@ -128,42 +117,6 @@ final public class Interpose {
     }
 }
 
-// MARK: Interpose Task
-
-public protocol Task {
-    /// The class this tasks operates on.
-    var `class`: AnyClass { get }
-
-    /// If Interposing is object-based, this is set.
-    //var object: AnyObject? { get }
-
-    /// The selector this tasks operates on.
-    var selector: Selector { get }
-
-    /// The original implementation is set once the swizzling is complete.
-    var origIMP: IMP? { get }
-
-    /// The replacement implementation is created on initialization time.
-    var replacementIMP: IMP! { get }
-
-    /// The state of the interpose operation.
-    var state: Interpose.State { get }
-
-    /// Apply the interpose hook.
-    func apply() throws
-
-    /// Revert the interpose hoook.
-    func revert() throws
-
-    /// Convenience to call the original implementation.
-    func callAsFunction<U>(_ type: U.Type) -> U
-}
-
-public protocol ValidatableTask: Task {
-    func validate(expectedState: Interpose.State) throws -> Method
-    func cleanup()
-}
-
 // MARK: Logging
 
 extension Interpose {
@@ -177,130 +130,3 @@ extension Interpose {
         }
     }
 }
-
-// MARK: Interpose Class Load Watcher
-
-extension Interpose {
-    // Separate definitions to have more eleveant calling syntax when completion is not needed.
-
-    /// Interpose a class once available. Class is passed via `classParts` string array.
-    @discardableResult public class func whenAvailable(_ classParts: [String],
-                                                       builder: @escaping (Interpose) throws -> Void) throws -> Waiter {
-        try whenAvailable(classParts, builder: builder, completion: nil)
-    }
-
-    /// Interpose a class once available. Class is passed via `classParts` string array, with completion handler.
-    @discardableResult public class func whenAvailable(_ classParts: [String],
-                                                       builder: @escaping (Interpose) throws -> Void,
-                                                       completion: (() -> Void)? = nil) throws -> Waiter {
-        try whenAvailable(classParts.joined(), builder: builder, completion: completion)
-    }
-
-    /// Interpose a class once available. Class is passed via `className` string.
-    @discardableResult public class func whenAvailable(_ className: String,
-                                                       builder: @escaping (Interpose) throws -> Void) throws -> Waiter {
-        try whenAvailable(className, builder: builder, completion: nil)
-    }
-
-    /// Interpose a class once available. Class is passed via `className` string, with completion handler.
-    @discardableResult public class func whenAvailable(_ className: String,
-                                                       builder: @escaping (Interpose) throws -> Void,
-                                                       completion: (() -> Void)? = nil) throws -> Waiter {
-        try Waiter(className: className, builder: builder, completion: completion)
-    }
-
-    /// Helper that stores tasks to a specific class and executes them once the class becomes available.
-    public struct Waiter {
-        fileprivate let className: String
-        private var builder: ((Interpose) throws -> Void)?
-        private var completion: (() -> Void)?
-
-        /// Initialize waiter object.
-        @discardableResult init(className: String,
-                                builder: @escaping (Interpose) throws -> Void,
-                                completion: (() -> Void)? = nil) throws {
-            self.className = className
-            self.builder = builder
-            self.completion = completion
-
-            // Immediately try to execute task. If not there, install waiter.
-            if try tryExecute() == false {
-                InterposeWatcher.append(waiter: self)
-            }
-        }
-
-        func tryExecute() throws -> Bool {
-            guard let `class` = NSClassFromString(className), let builder = self.builder else { return false }
-            try Interpose(`class`).apply(builder)
-            if let completion = self.completion {
-                completion()
-            }
-            return true
-        }
-    }
-}
-
-// dyld C function cannot capture class context so we pack it in a static struct.
-private struct InterposeWatcher {
-    // Global list of waiters; can be multiple per class
-    private static var globalWatchers: [Interpose.Waiter] = {
-        // Register after Swift global registers to not deadlock
-        DispatchQueue.main.async { InterposeWatcher.installGlobalImageLoadWatcher() }
-        return []
-    }()
-
-    fileprivate static func append(waiter: Interpose.Waiter) {
-        InterposeWatcher.globalWatcherQueue.sync {
-            globalWatchers.append(waiter)
-        }
-    }
-
-    // Register hook when dyld loads an image
-    private static let globalWatcherQueue = DispatchQueue(label: "com.steipete.global-image-watcher")
-    private static func installGlobalImageLoadWatcher() {
-        _dyld_register_func_for_add_image { _, _ in
-            InterposeWatcher.globalWatcherQueue.sync {
-                // this is called on the thread the image is loaded.
-                InterposeWatcher.globalWatchers = InterposeWatcher.globalWatchers.filter { waiter -> Bool in
-                    do {
-                        if try waiter.tryExecute() == false {
-                            return true // only collect if this fails because class is not there yet
-                        } else {
-                            Interpose.log("\(waiter.className) was successful.")
-                        }
-                    } catch {
-                        Interpose.log("Error while executing task: \(error).")
-                        // We can't bubble up the throw into the C context.
-                        #if DEBUG
-                        // Instead of silently eating, it's better to crash in DEBUG.
-                        fatalError("Error while executing task: \(error).")
-                        #endif
-                    }
-                    return false
-                }
-            }
-        }
-    }
-}
-
-// MARK: Debug Helper
-
-#if os(Linux)
-// Linux is used to create Jazzy docs
-/// :nodoc: Selector
-public struct Selector {}
-/// :nodoc: IMP
-public struct IMP: Equatable {}
-/// :nodoc: Method
-public struct Method {}
-func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
-func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
-// swiftlint:disable:next line_length
-func class_replaceMethod(_ cls: AnyClass?, _ name: Selector, _ imp: IMP, _ types: UnsafePointer<Int8>?) -> IMP? { IMP() }
-// swiftlint:disable:next identifier_name
-func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
-// swiftlint:disable:next identifier_name
-func _dyld_register_func_for_add_image(_ func: (@convention(c) (UnsafePointer<Int8>?, Int) -> Void)!) {}
-func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
-func imp_removeBlock(_ anImp: IMP) -> Bool { false }
-#endif
