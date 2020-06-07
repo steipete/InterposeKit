@@ -104,15 +104,12 @@ final public class ObjectTask: ValidatableTask {
         public var superClass: AnyClass
     }
 
-    typealias MsgSendSuperType =  @convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>
-    private lazy var msgSendSuper2 : MsgSendSuperType = {
+    // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
+    // objc_msgSendSuper2() takes the current search class, not its superclass.
+    // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
+    private lazy var msgSendSuper2 : UnsafeMutableRawPointer = {
         let handle = dlopen(nil, RTLD_LAZY)
-        // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
-        // objc_msgSendSuper2() takes the current search class, not its superclass.
-        // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
-        // TODO: This should be cached.
-        let sendSuper2 = dlsym(handle, "objc_msgSendSuper2")
-        return unsafeBitCast(sendSuper2, to: MsgSendSuperType.self)
+        return dlsym(handle, "objc_msgSendSuper2")
     }()
 
     private func addSuperTrampolineMethod(subclass: AnyClass, method: Method) {
@@ -127,7 +124,8 @@ final public class ObjectTask: ValidatableTask {
             let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
             // C: return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
             return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> Unmanaged<AnyObject> in
-                return self.msgSendSuper2(realSuperStructPointer, self.selector, vaList)
+                let msgSendSuper2 = unsafeBitCast(self.msgSendSuper2, to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>).self)
+                return msgSendSuper2(realSuperStructPointer, self.selector, vaList)
             }
         }
         class_addMethod(subclass, self.selector, imp_implementationWithBlock(block), typeEncoding)
