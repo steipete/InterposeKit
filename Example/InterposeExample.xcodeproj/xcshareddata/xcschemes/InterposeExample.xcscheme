@@ -39,6 +39,16 @@
                ReferencedContainer = "container:..">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7880B135248280B500AD2251"
+               BuildableName = "InterposeExampleTests.xctest"
+               BlueprintName = "InterposeExampleTests"
+               ReferencedContainer = "container:InterposeExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

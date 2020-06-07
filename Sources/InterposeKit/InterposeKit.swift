@@ -5,7 +5,7 @@ final public class Interpose {
     /// Stores swizzle hooks and executes them at once.
     public let `class`: AnyClass
     /// Lists all hooks for the current interpose class object.
-    public private(set) var hooks: [Hookable] = []
+    public private(set) var hooks: [AnyHook] = []
 
     /// If Interposing is object-based, this is set.
     public let object: AnyObject?
@@ -34,21 +34,26 @@ final public class Interpose {
     }
 
     deinit {
-        guard let internalHooks = hooks as? [InternalHookable] else { return }
-        internalHooks.forEach({ $0.cleanup() })
+        hooks.forEach({ $0.cleanup() })
     }
-
+    
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
-    @discardableResult public func hook(_ selName: String,
-                                        _ implementation: (Hookable) -> Any) throws -> Hookable {
-        try hook(NSSelectorFromString(selName), implementation)
+    @discardableResult public func hook<MethodSignature, HookSignature>(
+        _ selName: String,
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSignature.Type = HookSignature.self,
+        _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> TypedHook<MethodSignature, HookSignature>  {
+        try hook(NSSelectorFromString(selName), methodSignature: methodSignature, hookSignature: hookSignature, implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
-    @discardableResult public func hook(_ selector: Selector,
-                                        _ implementation: (Hookable) -> Any) throws -> Hookable {
+    @discardableResult public func hook<MethodSignature, HookSignature> (
+        _ selector: Selector,
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSignature.Type = HookSignature.self,
+       _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> TypedHook<MethodSignature, HookSignature> {
 
-        var hook: InternalHookable
+        var hook: TypedHook<MethodSignature, HookSignature>
         if let object = self.object {
             hook = try ObjectHook(object: object, selector: selector, implementation: implementation)
         } else {
@@ -69,14 +74,14 @@ final public class Interpose {
     }
 
     private func execute(_ task: ((Interpose) throws -> Void)? = nil,
-                         expectedState: Interpose.State = .prepared,
-                         executor: ((Hookable) throws -> Void)) throws -> Interpose {
+                         expectedState: AnyHook.State = .prepared,
+                         executor: ((AnyHook) throws -> Void)) throws -> Interpose {
         // Run pre-apply code first
         if let task = task {
             try task(self)
         }
         // Validate all tasks, stop if anything is not valid
-        guard let internalHooks = hooks as? [InternalHookable], internalHooks.allSatisfy({
+        guard hooks.allSatisfy({
             (try? $0.validate(expectedState: expectedState)) != nil
         }) else {
             throw Error.invalidState
@@ -102,18 +107,6 @@ final public class Interpose {
 
         /// Can't revert or apply if already done so.
         case invalidState
-    }
-
-    /// The possible task states.
-    public enum State: Equatable {
-        /// The task is prepared to be interposed.
-        case prepared
-
-        /// The method has been successfully interposed.
-        case interposed
-
-        /// An error happened while interposing a method.
-        case error(Interpose.Error)
     }
 }
 

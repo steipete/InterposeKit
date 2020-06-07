@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		781095BF248D8AD7008A943C /* InterposeExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095BD248D8AD7008A943C /* InterposeExampleTests.swift */; };
 		7880B124248280B300AD2251 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7880B123248280B300AD2251 /* AppDelegate.swift */; };
 		7880B126248280B300AD2251 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7880B125248280B300AD2251 /* SceneDelegate.swift */; };
 		7880B128248280B300AD2251 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7880B127248280B300AD2251 /* ViewController.swift */; };
@@ -31,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		781095BD248D8AD7008A943C /* InterposeExampleTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterposeExampleTests.swift; sourceTree = "<group>"; };
+		781095BE248D8AD7008A943C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7880B120248280B300AD2251 /* InterposeExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InterposeExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7880B123248280B300AD2251 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7880B125248280B300AD2251 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,11 +70,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		781095BC248D8AD7008A943C /* InterposeExampleTests */ = {
+			isa = PBXGroup;
+			children = (
+				781095BD248D8AD7008A943C /* InterposeExampleTests.swift */,
+				781095BE248D8AD7008A943C /* Info.plist */,
+			);
+			path = InterposeExampleTests;
+			sourceTree = "<group>";
+		};
 		7880B117248280B300AD2251 = {
 			isa = PBXGroup;
 			children = (
 				78C39DD8248335B100B46395 /* Interpose */,
 				7880B122248280B300AD2251 /* InterposeExample */,
+				781095BC248D8AD7008A943C /* InterposeExampleTests */,
 				7880B121248280B300AD2251 /* Products */,
 				7880B14E248281D000AD2251 /* Frameworks */,
 			);
@@ -242,6 +255,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				781095BF248D8AD7008A943C /* InterposeExampleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +418,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = InterposeExample/InterposeExample.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y5PE65HELJ;
 				INFOPLIST_FILE = InterposeExample/Info.plist;
@@ -423,6 +438,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = InterposeExample/InterposeExample.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y5PE65HELJ;
 				INFOPLIST_FILE = InterposeExample/Info.plist;
@@ -442,6 +458,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y5PE65HELJ;
 				INFOPLIST_FILE = InterposeExampleTests/Info.plist;
@@ -464,6 +481,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y5PE65HELJ;
 				INFOPLIST_FILE = InterposeExampleTests/Info.plist;

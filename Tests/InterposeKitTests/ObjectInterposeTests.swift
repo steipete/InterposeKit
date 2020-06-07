@@ -17,22 +17,24 @@ final class ObjectInterposeTests: XCTestCase {
 
         // Functions need to be `@objc dynamic` to be hookable.
         let interposer = try Interpose(testObj) {
-            try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
+            try $0.hook(
+                #selector(TestClass.sayHi),
+                methodSignature: (@convention(c) (AnyObject, Selector) -> String).self) { store in { `self` in
 
-                print("Before Interposing \(`self`)")
+                    print("Before Interposing \(`self`)")
 
-                // Calling convention and passing selector is important!
-                // You're free to skip calling the original implementation.
-                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
-                let string = origCall(`self`, store.selector)
+                    // Calling convention and passing selector is important!
+                    // You're free to skip calling the original implementation.
+                    let string = store.original(`self`, store.selector)
 
-                print("After Interposing \(`self`)")
+                    print("After Interposing \(`self`)")
 
-                return string + testSwizzleAddition
+                    return string + testSwizzleAddition
 
-                // Similar signature cast as above, but without selector.
-                } as @convention(block) (AnyObject) -> String})
+                    // Similar signature cast as above, but without selector.
+                    } as @convention(block) (AnyObject) -> String }
         }
+
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition)
         XCTAssertEqual(testObj2.sayHi(), testClassHi)
         try interposer.revert()
@@ -51,15 +53,13 @@ final class ObjectInterposeTests: XCTestCase {
 
         // Functions need to be `@objc dynamic` to be hookable.
         let interposer = try Interpose(testObj) {
-            try $0.hook(#selector(TestClass.returnInt), { store in { `self` in
-                // Calling convention and passing selector is important!
-                // You're free to skip calling the original implementation.
-                let origCall = store((@convention(c) (AnyObject, Selector) -> Int).self)
-                let int = origCall(`self`, store.selector)
-                return int + returnIntOverrideOffset
+            try $0.hook(#selector(TestClass.returnInt)) { (store: TypedHook<@convention(c) (AnyObject, Selector) -> Int, @convention(block) (AnyObject) -> Int>) in {
 
-                // Similar signature cast as above, but without selector.
-                } as @convention(block) (AnyObject) -> Int})
+                // You're free to skip calling the original implementation.
+                let int = store.original($0, store.selector)
+                return int + returnIntOverrideOffset
+                }
+            }
         }
         XCTAssertEqual(testObj.returnInt(), returnIntDefault + returnIntOverrideOffset)
         try interposer.revert()
@@ -82,29 +82,20 @@ final class ObjectInterposeTests: XCTestCase {
 
         // Functions need to be `@objc dynamic` to be hookable.
         let interposer = try Interpose(testObj) {
-            try $0.hook(#selector(TestClass.returnInt), { store in { `self` in
-                // Calling convention and passing selector is important!
+            try $0.hook(#selector(TestClass.returnInt)) { (store: TypedHook<@convention(c) (AnyObject, Selector) -> Int, @convention(block) (AnyObject) -> Int>) in {
                 // You're free to skip calling the original implementation.
-                let origCall = store((@convention(c) (AnyObject, Selector) -> Int).self)
-                let int = origCall(`self`, store.selector)
-                return int + returnIntOverrideOffset
-
-                // Similar signature cast as above, but without selector.
-                } as @convention(block) (AnyObject) -> Int})
+                store.original($0, store.selector) + returnIntOverrideOffset
+                }
+            }
         }
         XCTAssertEqual(testObj.returnInt(), returnIntDefault + returnIntOverrideOffset)
 
         // Interpose on TestClass itself!
         let classInterposer = try Interpose(TestClass.self) {
-            try $0.hook(#selector(TestClass.returnInt), { store in { `self` in
-                // Calling convention and passing selector is important!
-                // You're free to skip calling the original implementation.
-                let origCall = store((@convention(c) (AnyObject, Selector) -> Int).self)
-                let int = origCall(`self`, store.selector)
-                return int * returnIntClassMultiplier
-
-                // Similar signature cast as above, but without selector.
-                } as @convention(block) (AnyObject) -> Int})
+            try $0.hook(#selector(TestClass.returnInt)) { (store: TypedHook<@convention(c) (AnyObject, Selector) -> Int, @convention(block) (AnyObject) -> Int>) in {
+                store.original($0, store.selector) * returnIntClassMultiplier
+                }
+            }
         }
 
         XCTAssertEqual(testObj.returnInt(), (returnIntDefault * returnIntClassMultiplier) + returnIntOverrideOffset)

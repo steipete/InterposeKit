@@ -9,18 +9,31 @@
 /* Begin PBXBuildFile section */
 		7810959E248D43DC008A943C /* ClassHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959D248D43DC008A943C /* ClassHook.swift */; };
 		781095A0248D50C1008A943C /* Watcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959F248D50C1008A943C /* Watcher.swift */; };
+		781095A8248D6DFB008A943C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095A7248D6DFB008A943C /* AppDelegate.swift */; };
+		781095AA248D6DFB008A943C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095A9248D6DFB008A943C /* SceneDelegate.swift */; };
+		781095AC248D6DFB008A943C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095AB248D6DFB008A943C /* ViewController.swift */; };
+		781095AF248D6DFB008A943C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 781095AD248D6DFB008A943C /* Main.storyboard */; };
+		781095B1248D6DFD008A943C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 781095B0248D6DFD008A943C /* Assets.xcassets */; };
+		781095B4248D6DFD008A943C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 781095B2248D6DFD008A943C /* LaunchScreen.storyboard */; };
 		78C39D7C2482CC7D00B46395 /* InterposeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; };
 		78C39D8F2483164500B46395 /* InterposeKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C39D8E2483164500B46395 /* InterposeKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78C39D912483165600B46395 /* InterposeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D902483165600B46395 /* InterposeKit.swift */; };
 		78C39D932483169300B46395 /* InterposeKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D922483169300B46395 /* InterposeKitTests.swift */; };
 		78EDB8DA248BA9B300D2F6C1 /* TestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */; };
 		78EDB8DB248BA9BB00D2F6C1 /* ObjectInterposeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */; };
-		78EDB8DD248BAA5600D2F6C1 /* Hook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8DC248BAA5600D2F6C1 /* Hook.swift */; };
+		78EDB8DD248BAA5600D2F6C1 /* AnyHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */; };
 		78EDB8FF248D0A9900D2F6C1 /* ObjectHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */; };
 		78EDB903248D42CD00D2F6C1 /* LinuxCompileSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		781095BA248D6E10008A943C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 78863EBD2464B2F900BA3762 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 781095A4248D6DFB008A943C;
+			remoteInfo = InterposeTestHost;
+		};
 		78C39D7D2482CC7D00B46395 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78863EBD2464B2F900BA3762 /* Project object */;
@@ -33,6 +46,15 @@
 /* Begin PBXFileReference section */
 		7810959D248D43DC008A943C /* ClassHook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClassHook.swift; path = Sources/InterposeKit/ClassHook.swift; sourceTree = SOURCE_ROOT; };
 		7810959F248D50C1008A943C /* Watcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Watcher.swift; path = Sources/InterposeKit/Watcher.swift; sourceTree = SOURCE_ROOT; };
+		781095A5248D6DFB008A943C /* InterposeTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InterposeTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		781095A7248D6DFB008A943C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		781095A9248D6DFB008A943C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		781095AB248D6DFB008A943C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		781095AE248D6DFB008A943C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		781095B0248D6DFD008A943C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		781095B3248D6DFD008A943C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		781095B5248D6DFD008A943C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		781095B9248D6E0A008A943C /* InterposeTestHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InterposeTestHost.entitlements; sourceTree = "<group>"; };
 		78863EC62464B2F900BA3762 /* InterposeKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = InterposeKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78863ECA2464B2F900BA3762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = InterposeKit.xcodeproj/Info.plist; sourceTree = "<group>"; };
 		78C39D772482CC7D00B46395 /* InterposeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,12 +68,19 @@
 		78C39DC1248317B400B46395 /* Defaults-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Debug.xcconfig"; sourceTree = "<group>"; };
 		78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClass.swift; path = Tests/InterposeKitTests/TestClass.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ObjectInterposeTests.swift; path = Tests/InterposeKitTests/ObjectInterposeTests.swift; sourceTree = SOURCE_ROOT; };
-		78EDB8DC248BAA5600D2F6C1 /* Hook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Hook.swift; path = Sources/InterposeKit/Hook.swift; sourceTree = SOURCE_ROOT; };
+		78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnyHook.swift; path = Sources/InterposeKit/AnyHook.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ObjectHook.swift; path = Sources/InterposeKit/ObjectHook.swift; sourceTree = SOURCE_ROOT; };
 		78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LinuxCompileSupport.swift; path = Sources/InterposeKit/LinuxCompileSupport.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		781095A2248D6DFB008A943C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		78863EC32464B2F900BA3762 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -70,12 +99,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		781095A6248D6DFB008A943C /* InterposeTestHost */ = {
+			isa = PBXGroup;
+			children = (
+				781095B9248D6E0A008A943C /* InterposeTestHost.entitlements */,
+				781095A7248D6DFB008A943C /* AppDelegate.swift */,
+				781095A9248D6DFB008A943C /* SceneDelegate.swift */,
+				781095AB248D6DFB008A943C /* ViewController.swift */,
+				781095AD248D6DFB008A943C /* Main.storyboard */,
+				781095B0248D6DFD008A943C /* Assets.xcassets */,
+				781095B2248D6DFD008A943C /* LaunchScreen.storyboard */,
+				781095B5248D6DFD008A943C /* Info.plist */,
+			);
+			path = InterposeTestHost;
+			sourceTree = "<group>";
+		};
 		78863EBC2464B2F900BA3762 = {
 			isa = PBXGroup;
 			children = (
 				78863EC82464B2F900BA3762 /* InterposeKit */,
 				78C39D782482CC7D00B46395 /* InterposeTests */,
 				78C39DBD248317B400B46395 /* Configuration */,
+				781095A6248D6DFB008A943C /* InterposeTestHost */,
 				78863EC72464B2F900BA3762 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,6 +130,7 @@
 			children = (
 				78863EC62464B2F900BA3762 /* InterposeKit.framework */,
 				78C39D772482CC7D00B46395 /* InterposeTests.xctest */,
+				781095A5248D6DFB008A943C /* InterposeTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,7 +140,7 @@
 			children = (
 				78863ECA2464B2F900BA3762 /* Info.plist */,
 				78C39D8E2483164500B46395 /* InterposeKit.h */,
-				78EDB8DC248BAA5600D2F6C1 /* Hook.swift */,
+				78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */,
 				7810959D248D43DC008A943C /* ClassHook.swift */,
 				78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */,
 				78C39D902483165600B46395 /* InterposeKit.swift */,
@@ -140,6 +186,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		781095A4248D6DFB008A943C /* InterposeTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 781095B6248D6DFD008A943C /* Build configuration list for PBXNativeTarget "InterposeTestHost" */;
+			buildPhases = (
+				781095A1248D6DFB008A943C /* Sources */,
+				781095A2248D6DFB008A943C /* Frameworks */,
+				781095A3248D6DFB008A943C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InterposeTestHost;
+			productName = InterposeTestHost;
+			productReference = 781095A5248D6DFB008A943C /* InterposeTestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
 		78863EC52464B2F900BA3762 /* InterposeKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 78863ECE2464B2F900BA3762 /* Build configuration list for PBXNativeTarget "InterposeKit" */;
@@ -170,6 +233,7 @@
 			);
 			dependencies = (
 				78C39D7E2482CC7D00B46395 /* PBXTargetDependency */,
+				781095BB248D6E10008A943C /* PBXTargetDependency */,
 			);
 			name = InterposeTests;
 			productName = InterposeTests;
@@ -186,6 +250,9 @@
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "PSPDFKit GmbH";
 				TargetAttributes = {
+					781095A4248D6DFB008A943C = {
+						CreatedOnToolsVersion = 11.5;
+					};
 					78863EC52464B2F900BA3762 = {
 						CreatedOnToolsVersion = 11.5;
 						LastSwiftMigration = 1150;
@@ -211,11 +278,22 @@
 			targets = (
 				78863EC52464B2F900BA3762 /* InterposeKit */,
 				78C39D762482CC7D00B46395 /* InterposeTests */,
+				781095A4248D6DFB008A943C /* InterposeTestHost */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		781095A3248D6DFB008A943C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				781095B4248D6DFD008A943C /* LaunchScreen.storyboard in Resources */,
+				781095B1248D6DFD008A943C /* Assets.xcassets in Resources */,
+				781095AF248D6DFB008A943C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		78863EC42464B2F900BA3762 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -233,6 +311,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		781095A1248D6DFB008A943C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				781095AC248D6DFB008A943C /* ViewController.swift in Sources */,
+				781095A8248D6DFB008A943C /* AppDelegate.swift in Sources */,
+				781095AA248D6DFB008A943C /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		78863EC22464B2F900BA3762 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -242,7 +330,7 @@
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
 				78EDB8FF248D0A9900D2F6C1 /* ObjectHook.swift in Sources */,
 				78EDB903248D42CD00D2F6C1 /* LinuxCompileSupport.swift in Sources */,
-				78EDB8DD248BAA5600D2F6C1 /* Hook.swift in Sources */,
+				78EDB8DD248BAA5600D2F6C1 /* AnyHook.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +347,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		781095BB248D6E10008A943C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 781095A4248D6DFB008A943C /* InterposeTestHost */;
+			targetProxy = 781095BA248D6E10008A943C /* PBXContainerItemProxy */;
+		};
 		78C39D7E2482CC7D00B46395 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 78863EC52464B2F900BA3762 /* InterposeKit */;
@@ -266,7 +359,82 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		781095AD248D6DFB008A943C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				781095AE248D6DFB008A943C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		781095B2248D6DFD008A943C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				781095B3248D6DFD008A943C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		781095B7248D6DFD008A943C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGN_ENTITLEMENTS = InterposeTestHost/InterposeTestHost.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Y5PE65HELJ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = InterposeTestHost/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.steipete.InterposeTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		781095B8248D6DFD008A943C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGN_ENTITLEMENTS = InterposeTestHost/InterposeTestHost.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y5PE65HELJ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = InterposeTestHost/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.steipete.InterposeTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		78863ECC2464B2F900BA3762 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 78C39DC1248317B400B46395 /* Defaults-Debug.xcconfig */;
@@ -461,6 +629,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		781095B6248D6DFD008A943C /* Build configuration list for PBXNativeTarget "InterposeTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				781095B7248D6DFD008A943C /* Debug */,
+				781095B8248D6DFD008A943C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		78863EC02464B2F900BA3762 /* Build configuration list for PBXProject "InterposeKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

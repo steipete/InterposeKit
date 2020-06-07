@@ -1,5 +1,7 @@
 import Foundation
 
+extension Interpose {
+
 private enum Constants {
     static let subclassSuffix = "InterposeKit_"
 }
@@ -18,25 +20,17 @@ internal enum ObjCMethodEncoding {
 
 /// A hook to an instance method of a single object, stores both the original and new implementation.
 /// Think about: Multiple hooks for one object
-final class ObjectHook: InternalHookable {
-    public let `class`: AnyClass
-    public let selector: Selector
-    public internal(set) var origIMP: IMP? // fetched at apply time, changes late, thus class requirement
-    public private(set) var replacementIMP: IMP! // else we validate init order
-    public internal(set) var state = Interpose.State.prepared
+final class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
 
     public let object: AnyObject
     /// Subclass that we create on the fly
     var dynamicSubclass: AnyClass?
 
     /// Initialize a new hook to interpose an instance method.
-    public init(object: AnyObject, selector: Selector, implementation: (Hookable) -> Any) throws {
+    public init(object: AnyObject, selector: Selector, implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
         self.object = object
-        self.selector = selector
-        self.class = type(of: object)
-        // Check if method exists
-        try validate()
-        replacementIMP = imp_implementationWithBlock(implementation(self))
+        try super.init(class: type(of: object), selector: selector)
+        replacementIMP = imp_implementationWithBlock(implementation(self) as Any)
     }
 
 //    /// Release the hook block if possible.
@@ -119,7 +113,7 @@ final class ObjectHook: InternalHookable {
         class_addMethod(subclass, self.selector, imp_implementationWithBlock(block), typeEncoding)
     }
 
-    func replaceImplementation() throws {
+    override func replaceImplementation() throws {
         let method = try validate()
 
         // Register a KVO to work around any KVO issues with opposite order
@@ -137,7 +131,7 @@ final class ObjectHook: InternalHookable {
         Interpose.log("Swizzled -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
     }
 
-    func resetImplementation() throws {
+    override func resetImplementation() throws {
         let method = try validate(expectedState: .interposed)
         precondition(origIMP != nil)
         guard let dynamicSubclass = self.dynamicSubclass else { preconditionFailure("No dynamic subclass set") }
@@ -157,6 +151,7 @@ final class ObjectHook: InternalHookable {
         // Remove KVO after restoring class as last step.
         deregisterKVO()
     }
+
 
 // MARK: KVO Helper
 
@@ -186,17 +181,12 @@ final class ObjectHook: InternalHookable {
         kvoObserver = nil
     }
 }
+}
 
 #if DEBUG
-extension ObjectHook: CustomDebugStringConvertible {
+extension Interpose.ObjectHook: CustomDebugStringConvertible {
     public var debugDescription: String {
         return "\(selector) of \(object) -> \(String(describing: origIMP))"
     }
 }
-#endif
-
-// FB7728351: watchOS doesn't define va_list
-#if os(watchOS)
-// swiftlint:disable:nex type_name
-public typealias va_list = __darwin_va_list
 #endif

@@ -13,21 +13,20 @@ final class InterposeKitTests: XCTestCase {
 
         // Functions need to be `@objc dynamic` to be hookable.
         let interposer = try Interpose(TestClass.self) {
-            try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
+            try $0.hook(
+                #selector(TestClass.sayHi),
+                methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+                hookSignature: (@convention(block) (AnyObject) -> String).self) {
+                    store in { `self` in
 
-                print("Before Interposing \(`self`)")
+                        // You're free to skip calling the original implementation.
+                        print("Before Interposing \(`self`)")
+                        let string = store.original(`self`, store.selector)
+                        print("After Interposing \(`self`)")
 
-                // Calling convention and passing selector is important!
-                // You're free to skip calling the original implementation.
-                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
-                let string = origCall(`self`, store.selector)
-
-                print("After Interposing \(`self`)")
-
-                return string + testSwizzleAddition
-
-                // Similar signature cast as above, but without selector.
-                } as @convention(block) (AnyObject) -> String})
+                        return string + testSwizzleAddition
+                    }
+            }
         }
 
         print(TestClass().sayHi())
@@ -53,10 +52,14 @@ final class InterposeKitTests: XCTestCase {
 
         // Swizzle test class
         let interposed = try Interpose(TestClass.self) {
-            try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
-                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
-                return origCall(`self`, store.selector) + testSwizzleAddition
-                } as @convention(block) (AnyObject) -> String})
+            try $0.hook(
+                #selector(TestClass.sayHi),
+                methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+                hookSignature: (@convention(block) (AnyObject) -> String).self) {
+                    store in { `self` in
+                        return store.original(`self`, store.selector) + testSwizzleAddition
+                    }
+            }
         }
 
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass)
@@ -67,10 +70,14 @@ final class InterposeKitTests: XCTestCase {
 
         // Swizzle subclass, automatically applys
         let interposedSubclass = try Interpose(TestSubclass.self) {
-            try $0.hook(#selector(TestSubclass.sayHi), { store in { blockSelf in
-                let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
-                return origCall(blockSelf, store.selector) + testSwizzleAddition
-                } as @convention(block) (AnyObject) -> String})
+            try $0.hook(
+                #selector(TestSubclass.sayHi),
+                methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+                hookSignature: (@convention(block) (AnyObject) -> String).self) {
+                    store in { `self` in
+                        return store.original(`self`, store.selector) + testSwizzleAddition
+                    }
+            }
         }
 
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass + testSwizzleAddition)
@@ -90,11 +97,15 @@ final class InterposeKitTests: XCTestCase {
 
             // Swizzle test class
             let interposer = try Interpose(TestClass.self) {
-                try $0.hook(#selector(TestClass.doNothing), { store in { `self` in
-                    tracker.keep()
-                    let origCall = store((@convention(c) (AnyObject, Selector) -> Void).self)
-                    return origCall(`self`, store.selector)
-                } as @convention(block) (AnyObject) -> Void })
+                try $0.hook(
+                    #selector(TestClass.doNothing),
+                    methodSignature: (@convention(c) (AnyObject, Selector) -> Void).self,
+                    hookSignature: (@convention(block) (AnyObject) -> Void).self) {
+                        store in { `self` in
+                            tracker.keep()
+                            return store.original(`self`, store.selector)
+                        }
+                }
             }
 
             // Dealloc interposer without removing hooks
@@ -115,11 +126,15 @@ final class InterposeKitTests: XCTestCase {
 
             // Swizzle test class
             let interposer = try Interpose(TestClass.self) {
-                try $0.hook(#selector(TestClass.doNothing), { store in { `self` in
-                    tracker.keep()
-                    let origCall = store((@convention(c) (AnyObject, Selector) -> Void).self)
-                    return origCall(`self`, store.selector)
-                } as @convention(block) (AnyObject) -> Void })
+                try $0.hook(
+                    #selector(TestClass.doNothing),
+                    methodSignature: (@convention(c) (AnyObject, Selector) -> Void).self,
+                    hookSignature: (@convention(block) (AnyObject) -> Void).self) {
+                        store in { `self` in
+                            tracker.keep()
+                            return store.original(`self`, store.selector)
+                        }
+                }
             }
 
             try interposer.revert()
