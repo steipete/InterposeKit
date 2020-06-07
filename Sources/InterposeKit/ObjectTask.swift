@@ -67,6 +67,7 @@ final public class ObjectTask: ValidatableTask {
         let subclassName = Constants.subclassSuffix + className + uuid
 
         let subclass: AnyClass? = subclassName.withCString { cString in
+            // swiftlint:disable:next force_cast
             if let existingClass = objc_getClass(cString) as! AnyClass? {
                 return existingClass
             } else {
