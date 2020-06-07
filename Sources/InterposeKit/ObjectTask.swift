@@ -210,3 +210,8 @@ extension ObjectTask: CustomDebugStringConvertible {
     }
 }
 #endif
+
+// FB7728351: watchOS doesn't define va_list
+#if os(watchOS)
+public typealias va_list = __darwin_va_list
+#endif
