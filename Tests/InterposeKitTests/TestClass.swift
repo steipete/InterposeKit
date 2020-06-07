@@ -11,6 +11,10 @@ class TestClass: NSObject {
     }
 
     @objc dynamic func doNothing() { }
+
+    @objc dynamic func returnInt() -> Int {
+        7
+    }
 }
 
 class TestSubclass: TestClass {
