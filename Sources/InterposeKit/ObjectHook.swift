@@ -20,14 +20,13 @@ internal enum ObjCMethodEncoding {
 
 /// A hook to an instance method of a single object, stores both the original and new implementation.
 /// Think about: Multiple hooks for one object
-final class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
-
+final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
     public let object: AnyObject
     /// Subclass that we create on the fly
     var dynamicSubclass: AnyClass?
 
     /// Initialize a new hook to interpose an instance method.
-    public init(object: AnyObject, selector: Selector, implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+    public init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
         self.object = object
         try super.init(class: type(of: object), selector: selector)
         replacementIMP = imp_implementationWithBlock(implementation(self) as Any)
@@ -80,37 +79,21 @@ final class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignatur
     }
 
     // https://bugs.swift.org/browse/SR-12945
-    struct ObjcSuperFake {
+    public struct ObjcSuperFake {
         public var receiver: Unmanaged<AnyObject>
         public var superClass: AnyClass
     }
 
-    // https://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-abi.h
-    // objc_msgSendSuper2() takes the current search class, not its superclass.
-    // OBJC_EXPORT id objc_msgSendSuper2(struct objc_super *super, SEL op, ...)
-    private lazy var msgSendSuper2: UnsafeMutableRawPointer = {
+    private lazy var addSuperImpl: @convention(c) (AnyClass, Selector) -> Bool = {
         let handle = dlopen(nil, RTLD_LAZY)
-        return dlsym(handle, "objc_msgSendSuper2")
+        let imp = dlsym(handle, "IKTAddSuperImplementationToClass")
+        return unsafeBitCast(imp, to: (@convention(c) (AnyClass, Selector) -> Bool).self)
     }()
 
-    private func addSuperTrampolineMethod(subclass: AnyClass, method: Method) {
-        let typeEncoding = method_getTypeEncoding(method)
-
-        let block: @convention(block) (AnyObject, va_list) -> Unmanaged<AnyObject> = { obj, vaList in
-            // This is an extremely cursed workaround for following crashing the compiler:
-            // let realSuperStruct = objc_super(receiver: raw, super_class: subclass)
-            // https://bugs.swift.org/browse/SR-12945
-            let raw = Unmanaged<AnyObject>.passUnretained(obj)
-            let superStruct = ObjcSuperFake(receiver: raw, superClass: subclass)
-            let realSuperStruct = unsafeBitCast(superStruct, to: objc_super.self)
-            // C: return ((id(*)(struct objc_super *, SEL, va_list))objc_msgSendSuper2)(&super, selector, argp);
-            return withUnsafePointer(to: realSuperStruct) { realSuperStructPointer -> Unmanaged<AnyObject> in
-                let msgSendSuper2 = unsafeBitCast(self.msgSendSuper2,
-                                                  to: (@convention(c) (UnsafePointer<objc_super>, Selector, va_list) -> Unmanaged<AnyObject>).self)
-                return msgSendSuper2(realSuperStructPointer, self.selector, vaList)
-            }
+    private func addSuperTrampolineMethod(subclass: AnyClass) {
+        if addSuperImpl(subclass, self.selector) == false {
+            Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]")
         }
-        class_addMethod(subclass, self.selector, imp_implementationWithBlock(block), typeEncoding)
     }
 
     override func replaceImplementation() throws {
@@ -123,8 +106,9 @@ final class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignatur
         if dynamicSubclass == nil {
             dynamicSubclass = try createDynamicSubclass()
         }
+
         // Add empty trampoline that we then replace the IMP!
-        addSuperTrampolineMethod(subclass: dynamicSubclass!, method: method)
+        addSuperTrampolineMethod(subclass: dynamicSubclass!)
 
         origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, method_getTypeEncoding(method))
         guard origIMP != nil else { throw Interpose.Error.nonExistingImplementation }

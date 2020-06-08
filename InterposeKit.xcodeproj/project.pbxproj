@@ -10,11 +10,14 @@
 		7810959E248D43DC008A943C /* ClassHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959D248D43DC008A943C /* ClassHook.swift */; };
 		781095A0248D50C1008A943C /* Watcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959F248D50C1008A943C /* Watcher.swift */; };
 		781095A8248D6DFB008A943C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095A7248D6DFB008A943C /* AppDelegate.swift */; };
-		781095AA248D6DFB008A943C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095A9248D6DFB008A943C /* SceneDelegate.swift */; };
 		781095AC248D6DFB008A943C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095AB248D6DFB008A943C /* ViewController.swift */; };
 		781095AF248D6DFB008A943C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 781095AD248D6DFB008A943C /* Main.storyboard */; };
 		781095B1248D6DFD008A943C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 781095B0248D6DFD008A943C /* Assets.xcassets */; };
 		781095B4248D6DFD008A943C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 781095B2248D6DFD008A943C /* LaunchScreen.storyboard */; };
+		781095F5248E7C91008A943C /* InterposeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; };
+		781095F6248E7C91008A943C /* InterposeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		781095FF248E83D7008A943C /* ITKAddSuperMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 781095FD248E83D7008A943C /* ITKAddSuperMethod.h */; };
+		78109600248E83D7008A943C /* ITKAddSuperMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 781095FE248E83D7008A943C /* ITKAddSuperMethod.m */; };
 		78C39D7C2482CC7D00B46395 /* InterposeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; };
 		78C39D8F2483164500B46395 /* InterposeKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C39D8E2483164500B46395 /* InterposeKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78C39D912483165600B46395 /* InterposeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D902483165600B46395 /* InterposeKit.swift */; };
@@ -34,6 +37,13 @@
 			remoteGlobalIDString = 781095A4248D6DFB008A943C;
 			remoteInfo = InterposeTestHost;
 		};
+		781095F1248E7C72008A943C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 78863EBD2464B2F900BA3762 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 78863EC52464B2F900BA3762;
+			remoteInfo = InterposeKit;
+		};
 		78C39D7D2482CC7D00B46395 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78863EBD2464B2F900BA3762 /* Project object */;
@@ -43,21 +53,36 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		781095F7248E7C91008A943C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				781095F6248E7C91008A943C /* InterposeKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		7810959D248D43DC008A943C /* ClassHook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClassHook.swift; path = Sources/InterposeKit/ClassHook.swift; sourceTree = SOURCE_ROOT; };
 		7810959F248D50C1008A943C /* Watcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Watcher.swift; path = Sources/InterposeKit/Watcher.swift; sourceTree = SOURCE_ROOT; };
 		781095A5248D6DFB008A943C /* InterposeTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InterposeTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		781095A7248D6DFB008A943C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		781095A9248D6DFB008A943C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		781095AB248D6DFB008A943C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		781095AE248D6DFB008A943C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		781095B0248D6DFD008A943C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		781095B3248D6DFD008A943C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		781095B5248D6DFD008A943C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		781095B9248D6E0A008A943C /* InterposeTestHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InterposeTestHost.entitlements; sourceTree = "<group>"; };
+		781095FD248E83D7008A943C /* ITKAddSuperMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITKAddSuperMethod.h; sourceTree = "<group>"; };
+		781095FE248E83D7008A943C /* ITKAddSuperMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITKAddSuperMethod.m; sourceTree = "<group>"; };
 		78863EC62464B2F900BA3762 /* InterposeKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = InterposeKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78863ECA2464B2F900BA3762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = InterposeKit.xcodeproj/Info.plist; sourceTree = "<group>"; };
-		78C39D772482CC7D00B46395 /* InterposeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		78C39D772482CC7D00B46395 /* InterposeKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C39D7B2482CC7D00B46395 /* Info-Tests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "Info-Tests.plist"; path = "InterposeKit.xcodeproj/Info-Tests.plist"; sourceTree = "<group>"; };
 		78C39D8E2483164500B46395 /* InterposeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterposeKit.h; path = Sources/InterposeKit/InterposeKit.h; sourceTree = SOURCE_ROOT; };
 		78C39D902483165600B46395 /* InterposeKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InterposeKit.swift; path = Sources/InterposeKit/InterposeKit.swift; sourceTree = SOURCE_ROOT; };
@@ -78,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				781095F5248E7C91008A943C /* InterposeKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +130,6 @@
 			children = (
 				781095B9248D6E0A008A943C /* InterposeTestHost.entitlements */,
 				781095A7248D6DFB008A943C /* AppDelegate.swift */,
-				781095A9248D6DFB008A943C /* SceneDelegate.swift */,
 				781095AB248D6DFB008A943C /* ViewController.swift */,
 				781095AD248D6DFB008A943C /* Main.storyboard */,
 				781095B0248D6DFD008A943C /* Assets.xcassets */,
@@ -114,14 +139,33 @@
 			path = InterposeTestHost;
 			sourceTree = "<group>";
 		};
+		781095F3248E7C76008A943C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		781095FC248E83D7008A943C /* ITKAddSuperMethod */ = {
+			isa = PBXGroup;
+			children = (
+				781095FD248E83D7008A943C /* ITKAddSuperMethod.h */,
+				781095FE248E83D7008A943C /* ITKAddSuperMethod.m */,
+			);
+			name = ITKAddSuperMethod;
+			path = Sources/ITKAddSuperMethod;
+			sourceTree = "<group>";
+		};
 		78863EBC2464B2F900BA3762 = {
 			isa = PBXGroup;
 			children = (
+				781095FC248E83D7008A943C /* ITKAddSuperMethod */,
 				78863EC82464B2F900BA3762 /* InterposeKit */,
 				78C39D782482CC7D00B46395 /* InterposeTests */,
 				78C39DBD248317B400B46395 /* Configuration */,
 				781095A6248D6DFB008A943C /* InterposeTestHost */,
 				78863EC72464B2F900BA3762 /* Products */,
+				781095F3248E7C76008A943C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -129,7 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				78863EC62464B2F900BA3762 /* InterposeKit.framework */,
-				78C39D772482CC7D00B46395 /* InterposeTests.xctest */,
+				78C39D772482CC7D00B46395 /* InterposeKitTests.xctest */,
 				781095A5248D6DFB008A943C /* InterposeTestHost.app */,
 			);
 			name = Products;
@@ -179,6 +223,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				781095FF248E83D7008A943C /* ITKAddSuperMethod.h in Headers */,
 				78C39D8F2483164500B46395 /* InterposeKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,10 +238,12 @@
 				781095A1248D6DFB008A943C /* Sources */,
 				781095A2248D6DFB008A943C /* Frameworks */,
 				781095A3248D6DFB008A943C /* Resources */,
+				781095F7248E7C91008A943C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				781095F2248E7C72008A943C /* PBXTargetDependency */,
 			);
 			name = InterposeTestHost;
 			productName = InterposeTestHost;
@@ -221,9 +268,9 @@
 			productReference = 78863EC62464B2F900BA3762 /* InterposeKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		78C39D762482CC7D00B46395 /* InterposeTests */ = {
+		78C39D762482CC7D00B46395 /* InterposeKitTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 78C39D7F2482CC7D00B46395 /* Build configuration list for PBXNativeTarget "InterposeTests" */;
+			buildConfigurationList = 78C39D7F2482CC7D00B46395 /* Build configuration list for PBXNativeTarget "InterposeKitTests" */;
 			buildPhases = (
 				78C39D732482CC7D00B46395 /* Sources */,
 				78C39D742482CC7D00B46395 /* Frameworks */,
@@ -235,9 +282,9 @@
 				78C39D7E2482CC7D00B46395 /* PBXTargetDependency */,
 				781095BB248D6E10008A943C /* PBXTargetDependency */,
 			);
-			name = InterposeTests;
+			name = InterposeKitTests;
 			productName = InterposeTests;
-			productReference = 78C39D772482CC7D00B46395 /* InterposeTests.xctest */;
+			productReference = 78C39D772482CC7D00B46395 /* InterposeKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -260,6 +307,7 @@
 					78C39D762482CC7D00B46395 = {
 						CreatedOnToolsVersion = 11.5;
 						LastSwiftMigration = 1150;
+						TestTargetID = 781095A4248D6DFB008A943C;
 					};
 				};
 			};
@@ -277,7 +325,7 @@
 			projectRoot = "";
 			targets = (
 				78863EC52464B2F900BA3762 /* InterposeKit */,
-				78C39D762482CC7D00B46395 /* InterposeTests */,
+				78C39D762482CC7D00B46395 /* InterposeKitTests */,
 				781095A4248D6DFB008A943C /* InterposeTestHost */,
 			);
 		};
@@ -317,7 +365,6 @@
 			files = (
 				781095AC248D6DFB008A943C /* ViewController.swift in Sources */,
 				781095A8248D6DFB008A943C /* AppDelegate.swift in Sources */,
-				781095AA248D6DFB008A943C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +372,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78109600248E83D7008A943C /* ITKAddSuperMethod.m in Sources */,
 				781095A0248D50C1008A943C /* Watcher.swift in Sources */,
 				7810959E248D43DC008A943C /* ClassHook.swift in Sources */,
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
@@ -351,6 +399,11 @@
 			isa = PBXTargetDependency;
 			target = 781095A4248D6DFB008A943C /* InterposeTestHost */;
 			targetProxy = 781095BA248D6E10008A943C /* PBXContainerItemProxy */;
+		};
+		781095F2248E7C72008A943C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 78863EC52464B2F900BA3762 /* InterposeKit */;
+			targetProxy = 781095F1248E7C72008A943C /* PBXContainerItemProxy */;
 		};
 		78C39D7E2482CC7D00B46395 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -386,6 +439,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = InterposeTestHost/InterposeTestHost.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -401,6 +455,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steipete.InterposeTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -414,6 +470,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = InterposeTestHost/InterposeTestHost.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -429,6 +486,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steipete.InterposeTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -466,6 +525,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -523,6 +583,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -593,7 +654,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y5PE65HELJ;
 				INFOPLIST_FILE = "$(SRCROOT)/InterposeKit.xcodeproj/Info-Tests.plist";
@@ -604,7 +668,10 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.steipete.InterposeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InterposeTestHost.app/InterposeTestHost";
 			};
 			name = Debug;
 		};
@@ -612,7 +679,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y5PE65HELJ;
 				INFOPLIST_FILE = "$(SRCROOT)/InterposeKit.xcodeproj/Info-Tests.plist";
@@ -623,6 +693,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.steipete.InterposeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InterposeTestHost.app/InterposeTestHost";
 			};
 			name = Release;
 		};
@@ -656,7 +729,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		78C39D7F2482CC7D00B46395 /* Build configuration list for PBXNativeTarget "InterposeTests" */ = {
+		78C39D7F2482CC7D00B46395 /* Build configuration list for PBXNativeTarget "InterposeKitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				78C39D802482CC7D00B46395 /* Debug */,

@@ -21,4 +21,8 @@ class TestSubclass: TestClass {
     override func sayHi() -> String {
         return super.sayHi() + testSubclass
     }
+
+    override func doNothing() {
+        super.doNothing()
+    }
 }
