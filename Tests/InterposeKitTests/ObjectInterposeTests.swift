@@ -144,4 +144,21 @@ final class ObjectInterposeTests: XCTestCase {
         XCTAssertEqual(testObj.calculate2(var1: 1, var2: 2, var3: 3, var4: 4, var5: 5, var6: 6),  1 + 2 + 3 + 4 + 5 + 6 + 1)
         try interposer.revert()
     }
+
+    func testObjectCallReturn() throws {
+        let testObj = TestClass()
+        let str = "foo"
+        XCTAssertEqual(testObj.doubleString(string: str), str + str)
+
+        // Functions need to be `@objc dynamic` to be hookable.
+        let interposer = try Interpose(testObj) {
+            try $0.hook(#selector(TestClass.doubleString)) { (store: TypedHook<@convention(c) (AnyObject, Selector, String) -> String, @convention(block) (AnyObject, String) -> String>) in {
+                store.original($0, store.selector, $1) + str
+                }
+            }
+        }
+        XCTAssertEqual(testObj.doubleString(string: str), str + str + str)
+        try interposer.revert()
+        XCTAssertEqual(testObj.doubleString(string: str), str + str)
+    }
 }

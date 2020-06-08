@@ -12,6 +12,10 @@ class TestClass: NSObject {
 
     @objc dynamic func doNothing() { }
 
+    @objc dynamic func doubleString(string: String) -> String {
+        string + string
+    }
+
     @objc dynamic func returnInt() -> Int {
         7
     }
