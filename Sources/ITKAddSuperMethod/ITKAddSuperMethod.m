@@ -42,30 +42,63 @@ void msgSendSuperTrampoline(void) {
 
 #elif defined(__x86_64__)
 
+// Arguments passed: rdi, rsi, rdx, rcx, r8, r9
 __attribute__((__naked__))
 void msgSendSuperTrampoline(void) {
     asm volatile (
+                  // stack: ret(rbp) | self 8 | _cmd 16 | super_class 24 | self?? 32
+                  // 40: rdx 48: rcx 56 r8
                   "pushq   %%rbp                 # push frame pointer \n\t"
+
                   "movq    %%rsp, %%rbp          # set stack to frame pointer \n\t"
-                  "subq    $32, %%rsp            # reserve 32 byte on the stack (need 16 byte alignment) \n\t"
+                  "subq    $64, %%rsp            # reserve 64 byte on the stack (need 16 byte alignment) \n\t"
+
+                  "movq    %%rdx, -40(%%rbp) \n\t"
+                  "movq    %%rcx, -48(%%rbp) \n\t"
+                  "movq    %%r8,  -56(%%rbp) \n\t"
+
                   "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n\t"
                   "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n\t"
                   "movq    -8(%%rbp), %%rax      # load self to rax \n\t"
                   "movq    %%rax, -32(%%rbp)     # store self to stack[4] \n\t"
                   "movq    -8(%%rbp), %%rdi      # load self to rdi-first parameter \n\t"
                   "callq    _objc_opt_class      # call objc_opt_class(self) \n\t"
-                  "#movq    %%rax, %%rdi          # move result to rdi-first parameter  \n\t"
-                  "#callq    _class_getSuperclass # call class_getSuperclass(self) \n\t"
                   "movq    %%rax, -24(%%rbp)     # move result to stack[3] \n\t"
+
+                  // alloc memory for the super struct
+                  "movl    $16, %%edi \n\t"
+                  "callq    _malloc \n\t"
+
+                  // save the malloc memory in r11
+                  "movq %%rax, %%r11 \n\t"
+
+                  // copy objc_super: self (rbx), later: super_class (rsp)
+                  "movq    -8(%%rbp), %%rax \n\t"
+                  "movq    %%rax, (%%r11) \n\t"
+                  "movq    -24(%%rbp), %%rax \n\t"
+                  "movq    %%rax, 8(%%r11)      # set super_class \n\t"
+
                   "movq    -16(%%rbp), %%rsi     # copy _cmd to #rsi \n\t"
-                  "xorl    %%ecx, %%ecx          # nill out rcx?  \n\t"
-                  "leaq    -32(%%rbp), %%rdi     # load address of objc_super struct to rdi-first param \n\t"
-                  "movb    %%cl, %%al            # nill ot rax/rcx? \n\t"
-                  "callq _objc_msgSendSuper     # regular call \n\t"
-                  "movq    %%rax, %%rdi \n\t"
-                  "addq    $32, %%rsp            # remove 32 byte from stack \n\t"
+
+                  "#xorl    %%ecx, %%ecx          # nil out rcx?  \n\t"
+                  "#leaq    -32(%%rbp), %%rdi     # load address of objc_super struct to rdi-first param \n\t"
+                  "#movb    %%cl, %%al            # nill ot rax/rcx? \n\t"
+
+                  // rdi needs to point to the address of the struct
+                  "leaq    (%%r11), %%rdi \n\t"
+
+                  "movq    -40(%%rbp), %%rdx \n\t"
+                  "movq    -48(%%rbp), %%rcx \n\t"
+                  "movq    -56(%%rbp), %%r8  \n\t"
+
+                  "addq    $64, %%rsp            # remove 64 byte from stack \n\t"
+
                   "popq    %%rbp                 # pop frame pointer \n\t"
-                  "retq\n\r"
+
+                  "jmp _objc_msgSendSuper     # regular call \n\t"
+                  "#movq    %%rax, %%rdi \n\t"
+
+                  "#retq\n\r"
                   : : : "rsi", "rdi");
 }
 
