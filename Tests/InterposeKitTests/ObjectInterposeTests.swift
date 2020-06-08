@@ -109,4 +109,39 @@ final class ObjectInterposeTests: XCTestCase {
         try classInterposer.revert()
         XCTAssertEqual(testObj.returnInt(), returnIntDefault)
     }
+
+    func test3IntParameters() throws {
+        let testObj = TestClass()
+        XCTAssertEqual(testObj.calculate(var1: 1, var2: 2, var3: 3), 1 + 2 + 3)
+
+        // Functions need to be `@objc dynamic` to be hookable.
+        let interposer = try Interpose(testObj) {
+            try $0.hook(#selector(TestClass.calculate)) { (store: TypedHook<@convention(c) (AnyObject, Selector, Int, Int, Int) -> Int, @convention(block) (AnyObject, Int, Int, Int) -> Int>) in {
+                // You're free to skip calling the original implementation.
+                let orig = store.original($0, store.selector, $1, $2, $3)
+                return orig + 1
+                }
+            }
+        }
+        XCTAssertEqual(testObj.calculate(var1: 1, var2: 2, var3: 3), 1 + 2 + 3 + 1)
+        try interposer.revert()
+    }
+
+    func test6IntParameters() throws {
+        let testObj = TestClass()
+
+        XCTAssertEqual(testObj.calculate2(var1: 1, var2: 2, var3: 3, var4: 4, var5: 5, var6: 6), 1 + 2 + 3 + 4 + 5 + 6)
+
+        // Functions need to be `@objc dynamic` to be hookable.
+        let interposer = try Interpose(testObj) {
+            try $0.hook(#selector(TestClass.calculate2)) { (store: TypedHook<@convention(c) (AnyObject, Selector, Int, Int, Int, Int, Int, Int) -> Int, @convention(block) (AnyObject, Int, Int, Int, Int, Int, Int) -> Int>) in {
+                // You're free to skip calling the original implementation.
+                let orig = store.original($0, store.selector, $1, $2, $3, $4, $5, $6)
+                return orig + 1
+                }
+            }
+        }
+        XCTAssertEqual(testObj.calculate2(var1: 1, var2: 2, var3: 3, var4: 4, var5: 5, var6: 6),  1 + 2 + 3 + 4 + 5 + 6 + 1)
+        try interposer.revert()
+    }
 }

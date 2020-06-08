@@ -15,6 +15,14 @@ class TestClass: NSObject {
     @objc dynamic func returnInt() -> Int {
         7
     }
+
+    @objc dynamic func calculate(var1: Int, var2: Int, var3: Int) -> Int {
+        var1 + var2 + var3
+    }
+
+    @objc dynamic func calculate2(var1: Int, var2: Int, var3: Int, var4: Int, var5: Int, var6: Int) -> Int {
+        var1 + var2 + var3 + var4 + var5 + var6
+    }
 }
 
 class TestSubclass: TestClass {
