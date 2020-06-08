@@ -84,14 +84,14 @@ final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodS
         public var superClass: AnyClass
     }
 
-    private lazy var addSuperImpl: @convention(c) (AnyClass, Selector) -> Bool = {
+    private lazy var addSuperImpl: @convention(c) (AnyObject, AnyClass, Selector) -> Bool = {
         let handle = dlopen(nil, RTLD_LAZY)
         let imp = dlsym(handle, "IKTAddSuperImplementationToClass")
-        return unsafeBitCast(imp, to: (@convention(c) (AnyClass, Selector) -> Bool).self)
+        return unsafeBitCast(imp, to: (@convention(c) (AnyObject, AnyClass, Selector) -> Bool).self)
     }()
 
     private func addSuperTrampolineMethod(subclass: AnyClass) {
-        if addSuperImpl(subclass, self.selector) == false {
+        if addSuperImpl(self.object, subclass, self.selector) == false {
             Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]")
         }
     }

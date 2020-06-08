@@ -15,6 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
  @note This uses inline assembly to forward the parameters to objc_msgSendSuper.
 */
-BOOL IKTAddSuperImplementationToClass(Class klass, SEL selector);
+BOOL IKTAddSuperImplementationToClass(id self, Class klass, SEL selector);
 
 NS_ASSUME_NONNULL_END

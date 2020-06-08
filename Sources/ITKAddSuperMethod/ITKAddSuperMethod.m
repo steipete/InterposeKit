@@ -15,6 +15,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 void msgSendSuperTrampoline(void);
 
+struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL cmd);
+struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL cmd) {
+    struct objc_super *_super = malloc(sizeof(_super));
+    _super->receiver = obj;
+    _super->super_class = [obj class];
+
+    // TODO: Inefficient
+    dispatch_async(dispatch_get_main_queue(), ^{
+        free(_super);
+    });
+
+    return _super;
+}
+
 #if defined(__arm64__)
 
 __attribute__((__naked__))
@@ -56,6 +70,7 @@ void msgSendSuperTrampoline(void) {
                   "movq    %%rdx, -40(%%rbp) \n\t"
                   "movq    %%rcx, -48(%%rbp) \n\t"
                   "movq    %%r8,  -56(%%rbp) \n\t"
+                  "movq    %%r9,  -64(%%rbp) \n\t"
 
                   "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n\t"
                   "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n\t"
@@ -66,8 +81,12 @@ void msgSendSuperTrampoline(void) {
                   "movq    %%rax, -24(%%rbp)     # move result to stack[3] \n\t"
 
                   // alloc memory for the super struct
-                  "movl    $16, %%edi \n\t"
-                  "callq    _malloc \n\t"
+//                //"movl    $16, %%edi \n\t"
+                  //"callq    _malloc \n\t"
+
+                  "movq    -8(%%rbp), %%rdi \n\t"
+                  "movq    -16(%%rbp), %%rsi \n\t"
+                  "callq    _ITKReturnThreadSuper \n\t"
 
                   // save the malloc memory in r11
                   "movq %%rax, %%r11 \n\t"
@@ -80,25 +99,20 @@ void msgSendSuperTrampoline(void) {
 
                   "movq    -16(%%rbp), %%rsi     # copy _cmd to #rsi \n\t"
 
-                  "#xorl    %%ecx, %%ecx          # nil out rcx?  \n\t"
-                  "#leaq    -32(%%rbp), %%rdi     # load address of objc_super struct to rdi-first param \n\t"
-                  "#movb    %%cl, %%al            # nill ot rax/rcx? \n\t"
-
                   // rdi needs to point to the address of the struct
                   "leaq    (%%r11), %%rdi \n\t"
+                  //"leaq    -24(%%rbp), %%rdi \n\t"
 
                   "movq    -40(%%rbp), %%rdx \n\t"
                   "movq    -48(%%rbp), %%rcx \n\t"
                   "movq    -56(%%rbp), %%r8  \n\t"
+                  "movq    -64(%%rbp), %%r9  \n\t"
 
                   "addq    $64, %%rsp            # remove 64 byte from stack \n\t"
 
                   "popq    %%rbp                 # pop frame pointer \n\t"
 
-                  "jmp _objc_msgSendSuper     # regular call \n\t"
-                  "#movq    %%rax, %%rdi \n\t"
-
-                  "#retq\n\r"
+                  "jmp _objc_msgSendSuper        # tail call \n\t"
                   : : : "rsi", "rdi");
 }
 
@@ -124,7 +138,7 @@ static DispatchMode IKTGetDispatchMode(const char * typeEncoding) {
     return dispatchMode;
 }
 
-BOOL IKTAddSuperImplementationToClass(Class klass, SEL selector) {
+BOOL IKTAddSuperImplementationToClass(id self, Class klass, SEL selector) {
     Class originalClass = klass;
 
     Class superClass = class_getSuperclass(originalClass);
