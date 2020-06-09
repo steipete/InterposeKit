@@ -25,6 +25,22 @@ struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj) {
     return _super;
 }
 
+/**
+ Assembly is hard, here are some useful resources:
+ https://azeria-labs.com/functions-and-the-stack-part-7/
+ https://github.com/DavidGoldman/InspectiveC/blob/master/InspectiveCarm64.mm
+ https://blog.nelhage.com/2010/10/amd64-and-va_arg/
+ https://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html
+ https://c9x.me/compile/bib/abi-arm64.pdf
+ http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0801a/BABBDBAD.html
+ https://community.arm.com/developer/ip-products/processors/b/processors-ip-blog/posts/using-the-stack-in-aarch64-implementing-push-and-pop
+ https://www.cs.yale.edu/flint/cs421/papers/x86-asm/asm.html
+ https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64
+ https://en.wikipedia.org/wiki/Calling_convention#x86_(32-bit)
+ https://bob.cs.sonoma.edu/IntroCompOrg-RPi/sec-varstack.html
+ https://azeria-labs.com/functions-and-the-stack-part-7/
+ */
+
 #if defined(__arm64__)
 
 __attribute__((__naked__))
