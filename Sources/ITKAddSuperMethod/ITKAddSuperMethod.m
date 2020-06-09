@@ -14,6 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 void msgSendSuperTrampoline(void);
+void msgSendSuperStretTrampoline(void);
 
 _Thread_local struct objc_super _threadSuperStorage;
 
@@ -75,6 +76,9 @@ void msgSendSuperTrampoline(void) {
                   : : : "x0", "x1");
 }
 
+// arm64 doesn't use _stret variants.
+void msgSendSuperStretTrampoline(void) {}
+
 #elif defined(__x86_64__)
 
 __attribute__((__naked__))
@@ -84,7 +88,7 @@ void msgSendSuperTrampoline(void) {
                   "movq    %%rsp, %%rbp          # set stack to frame pointer \n"
                   "subq    $48, %%rsp            # reserve 48 byte on the stack (need 16 byte alignment) \n"
 
-                  // Save call params: rax(for va_arg) rdi, rsi, rdx, rcx, r8, r9
+                  // Save call params: rdi, rsi, rdx, rcx, r8, r9
                   "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n" // po *(id *)
                   "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n" // p (SEL)$rsi
                   "movq    %%rdx, -24(%%rbp) \n"
@@ -113,22 +117,67 @@ void msgSendSuperTrampoline(void) {
                   : : : "rsi", "rdi");
 }
 
+
+__attribute__((__naked__))
+void msgSendSuperStretTrampoline(void) {
+    asm volatile (
+                  "pushq   %%rbp                 # push frame pointer \n"
+                  "movq    %%rsp, %%rbp          # set stack to frame pointer \n"
+                  "subq    $48, %%rsp            # reserve 48 byte on the stack (need 16 byte alignment) \n"
+
+                  // Save call params: rax(for va_arg) rdi, rsi, rdx, rcx, r8, r9
+                  "movq    %%rdi, -8(%%rbp) \n"  // struct return
+                  "movq    %%rsi, -16(%%rbp) \n" // self
+                  "movq    %%rdx, -24(%%rbp) \n" // _cmd
+                  "movq    %%rcx, -32(%%rbp) \n" // param 1
+                  "movq    %%r8,  -40(%%rbp) \n" // param 2
+                  "movq    %%r9,  -48(%%rbp) \n" // param 3
+
+                  // fetch filled struct objc_super, call with self + _cmd
+                  // Since stret offsets, we move back by one
+                  "movq     -16(%%rbp), %%rdi \n"
+                  "movq     -24(%%rbp), %%rdx \n"
+                  "callq    _ITKReturnThreadSuper \n"
+                  // second param is now struct objc_super
+                  "movq %%rax, %%rsi \n"
+                  // First is our struct return
+
+                  // Restore call params
+                  "movq     -8(%%rbp), %%rdi \n"
+                  //"movq    -16(%%rbp), %%rsi \n"
+                  "movq    -24(%%rbp), %%rdx \n"
+                  "movq    -32(%%rbp), %%rcx \n"
+                  "movq    -40(%%rbp), %%r8  \n"
+                  "movq    -48(%%rbp), %%r9  \n"
+
+                  // remove everything to prepare tail call
+                  // debug stack via print  *(int *)  ($rsp+8)
+                  "addq    $48, %%rsp            # remove 64 byte from stack \n"
+                  "popq    %%rbp                 # pop frame pointer \n"
+
+                  "jmp _objc_msgSendSuper_stret   # tail call \n"
+                  : : : "rsi", "rdi");
+}
+
 #endif
 
 typedef NS_ENUM(NSInteger, DispatchMode) {
-    DispatchMode_Normal,
-    DispatchMode_Stret,
+    DispatchModeNormal,
+    DispatchModeStret,
 };
 
-static DispatchMode IKTGetDispatchMode(const char * typeEncoding) {
-    DispatchMode dispatchMode = DispatchMode_Normal;
+static DispatchMode IKTGetDispatchMode(const char *typeEncoding) {
+    DispatchMode dispatchMode = DispatchModeNormal;
 #if defined (__arm64__)
-    // ARM64 doesn't use stret dispatch
+    // ARM64 doesn't use stret dispatch. Yay!
 #elif defined (__x86_64__)
-    // On x86-64, stret dispatch is used whenever return type doesn't fit into two registers
+    // On x86-64, stret dispatch is ~used whenever return type doesn't fit into two registers
+    //
+    // http://www.sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html
+    // x86_64 is more complicated, including rules for returning floating-point struct fields in FPU registers, and ppc64's rules and exceptions will make your head spin. The gory details are documented in the Mac OS X ABI Guide, though as usual if the documentation and the compiler disagree then the documentation is wrong.
     NSUInteger returnTypeActualSize = 0;
     NSGetSizeAndAlignment(typeEncoding, &returnTypeActualSize, NULL);
-    dispatchMode = returnTypeActualSize > (sizeof(void *) * 2) ? DispatchMode_Stret : DispatchMode_Normal;
+    dispatchMode = returnTypeActualSize > (sizeof(void *) * 2) ? DispatchModeStret : DispatchModeNormal;
 #else
 #error - Unknown architecture
 #endif
@@ -150,12 +199,9 @@ BOOL IKTAddSuperImplementationToClass(id self, Class klass, SEL selector) {
         return NO;
     }
     const char *typeEncoding = method_getTypeEncoding(method);
-    // Need to write asm for x64
-    __unused DispatchMode dispatchMode = IKTGetDispatchMode(typeEncoding);
-    BOOL methodAdded = class_addMethod(klass,
-                                       selector,
-                                       msgSendSuperTrampoline,
-                                       typeEncoding);
+    const BOOL isNormalDispatch = IKTGetDispatchMode(typeEncoding) == DispatchModeNormal;
+    IMP trampoline = isNormalDispatch ? msgSendSuperTrampoline : msgSendSuperStretTrampoline;
+    BOOL methodAdded = class_addMethod(klass, selector, trampoline, typeEncoding);
     if (!methodAdded) {
         NSLog(@"Failed to add method for selector %@ to class %@",
               NSStringFromSelector(selector),

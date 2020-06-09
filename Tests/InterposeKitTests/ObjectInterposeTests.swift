@@ -161,4 +161,26 @@ final class ObjectInterposeTests: XCTestCase {
         try interposer.revert()
         XCTAssertEqual(testObj.doubleString(string: str), str + str)
     }
+
+    func testLargeStructReturn() throws {
+        let testObj = TestClass()
+        let transform = CATransform3D()
+        XCTAssertEqual(testObj.invert3DTransform(transform), transform.inverted)
+
+        func transformMatrix(_ matrix: CATransform3D) -> CATransform3D {
+            matrix.translated(x: 10, y: 5, z: 2)
+        }
+
+        // Functions need to be `@objc dynamic` to be hookable.
+        let interposer = try Interpose(testObj) {
+            try $0.hook(#selector(TestClass.invert3DTransform)) { (store: TypedHook<@convention(c) (AnyObject, Selector, CATransform3D) -> CATransform3D, @convention(block) (AnyObject, CATransform3D) -> CATransform3D>) in {
+                let matrix = store.original($0, store.selector, $1)
+                return transformMatrix(matrix)
+                }
+            }
+        }
+        XCTAssertEqual(testObj.invert3DTransform(transform), transformMatrix(transform.inverted))
+        try interposer.revert()
+        XCTAssertEqual(testObj.invert3DTransform(transform), transform.inverted)
+    }
 }
