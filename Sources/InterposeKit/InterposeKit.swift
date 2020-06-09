@@ -84,29 +84,62 @@ final public class Interpose {
         guard hooks.allSatisfy({
             (try? $0.validate(expectedState: expectedState)) != nil
         }) else {
-            throw Error.invalidState
+            throw InterposeError.invalidState(expectedState: expectedState)
         }
         // Execute all tasks
         try hooks.forEach(executor)
         return self
     }
+}
 
-    /// The list of errors while hooking a method.
-    public enum Error: Swift.Error {
-        /// The method couldn't be found. Usually happens for when you use stringified selectors that do not exist.
-        case methodNotFound
+/// The list of errors while hooking a method.
+public enum InterposeError: LocalizedError {
+    /// The method couldn't be found. Usually happens for when you use stringified selectors that do not exist.
+    case methodNotFound(AnyClass, Selector)
 
-        /// The implementation could not be found. Class must be in a weird state for this to happen.
-        case nonExistingImplementation
+    /// The implementation could not be found. Class must be in a weird state for this to happen.
+    case nonExistingImplementation(AnyClass, Selector)
 
-        /// Someone else changed the implementation; reverting removed this implementation.
-        /// This is bad, likely someone else also hooked this method. If you are in such a codebase, do not use revert.
-        case unexpectedImplementation
+    /// Someone else changed the implementation; reverting removed this implementation.
+    /// This is bad, likely someone else also hooked this method. If you are in such a codebase, do not use revert.
+    case unexpectedImplementation(AnyClass, Selector, IMP?)
 
-        case failedToAllocateClassPair
+    /// Unable to register subclass for object-based interposing.
+    case failedToAllocateClassPair(class: AnyClass, subclassName: String)
 
-        /// Can't revert or apply if already done so.
-        case invalidState
+    /// Unable to add method  for object-based interposing.
+    case unableToAddMethod(AnyClass, Selector)
+
+    /// Can't revert or apply if already done so.
+    case invalidState(expectedState: AnyHook.State)
+}
+
+extension InterposeError: Equatable {
+    // Lazy equating via string compare
+    public static func == (lhs: InterposeError, rhs: InterposeError) -> Bool {
+        return lhs.errorDescription == rhs.errorDescription
+    }
+
+    public var errorDescription: String? {
+        switch self {
+        case .methodNotFound(let klass, let selector):
+            return "Method not found: -[\(klass) \(selector)]"
+        case .nonExistingImplementation(let klass, let selector):
+            return "Implementation not found: -[\(klass) \(selector)]"
+        case .unexpectedImplementation(let klass, let selector, let IMP):
+            return "Unexpected Implementation in -[\(klass) \(selector)]: \(String(describing: IMP))"
+        case .failedToAllocateClassPair(let klass, let subclassName):
+            return "Failed to allocate class pair: \(klass), \(subclassName)"
+        case .unableToAddMethod(let klass, let selector):
+            return "Unable to add method: -[\(klass) \(selector)]"
+        case .invalidState(let expectedState):
+            return "Invalid State. Expected: \(expectedState)"
+        }
+    }
+
+    @discardableResult func log() -> InterposeError {
+        Interpose.log(self.errorDescription!)
+        return self
     }
 }
 

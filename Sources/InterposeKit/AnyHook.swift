@@ -5,8 +5,6 @@ public class AnyHook {
     public let `class`: AnyClass
     public let selector: Selector
     public internal(set) var state = State.prepared
-    // fetched at apply time, changes late, thus class requirement
-    public internal(set) var origIMP: IMP?
     // else we validate init order
     public internal(set) var replacementIMP: IMP!
     
@@ -19,7 +17,7 @@ public class AnyHook {
         case interposed
         
         /// An error happened while interposing a method.
-        case error(Interpose.Error)
+        indirect case error(InterposeError)
     }
     
     init(`class`: AnyClass, selector: Selector) throws {
@@ -38,7 +36,6 @@ public class AnyHook {
         preconditionFailure("Not implemented")
     }
     
-    
     /// Apply the interpose hook.
     public func apply() throws {
         try execute(newState: .interposed) { try replaceImplementation() }
@@ -55,8 +52,8 @@ public class AnyHook {
     
     /// Validate that the selector exists on the active class.
     @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
-        guard let method = class_getInstanceMethod(`class`, selector) else { throw Interpose.Error.methodNotFound }
-        guard state == expectedState else { throw Interpose.Error.invalidState }
+        guard let method = class_getInstanceMethod(`class`, selector) else { throw InterposeError.methodNotFound(`class`, selector)}
+        guard state == expectedState else { throw InterposeError.invalidState(expectedState: expectedState) }
         return method
     }
     
@@ -64,7 +61,7 @@ public class AnyHook {
         do {
             try task()
             state = newState
-        } catch let error as Interpose.Error {
+        } catch let error as InterposeError {
             state = .error(error)
             throw error
         }
@@ -86,6 +83,6 @@ public class AnyHook {
 
 public class TypedHook<MethodSignature, HookSignature>: AnyHook {
     public var original: MethodSignature {
-        unsafeBitCast(origIMP, to: MethodSignature.self)
+        preconditionFailure("Always override")
     }
 }
