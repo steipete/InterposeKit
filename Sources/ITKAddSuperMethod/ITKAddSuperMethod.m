@@ -68,8 +68,7 @@ void msgSendSuperTrampoline(void) {
                   "movq    %%rsp, %%rbp          # set stack to frame pointer \n"
                   "subq    $48, %%rsp            # reserve 48 byte on the stack (need 16 byte alignment) \n"
 
-                  // TODO: save rax for va_arg?
-                  // Save call params: rdi, rsi, rdx, rcx, r8, r9
+                  // Save call params: rax(for va_arg) rdi, rsi, rdx, rcx, r8, r9
                   "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n" // po *(id *)
                   "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n" // p (SEL)$rsi
                   "movq    %%rdx, -24(%%rbp) \n"
