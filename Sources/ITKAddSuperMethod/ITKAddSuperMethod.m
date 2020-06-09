@@ -15,17 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 void msgSendSuperTrampoline(void);
 
-struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL cmd);
-struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL cmd) {
-    struct objc_super *_super = malloc(sizeof(_super));
+_Thread_local struct objc_super _threadSuperStorage;
+
+struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj);
+struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj) {
+    struct objc_super *_super = &_threadSuperStorage;
     _super->receiver = obj;
     _super->super_class = [obj class];
-
-    // TODO: Inefficient
-    dispatch_async(dispatch_get_main_queue(), ^{
-        free(_super);
-    });
-
     return _super;
 }
 
@@ -68,37 +64,37 @@ void msgSendSuperTrampoline(void) {
 __attribute__((__naked__))
 void msgSendSuperTrampoline(void) {
     asm volatile (
-                  "pushq   %%rbp                 # push frame pointer \n\t"
-                  "movq    %%rsp, %%rbp          # set stack to frame pointer \n\t"
-                  "subq    $48, %%rsp            # reserve 48 byte on the stack (need 16 byte alignment) \n\t"
+                  "pushq   %%rbp                 # push frame pointer \n"
+                  "movq    %%rsp, %%rbp          # set stack to frame pointer \n"
+                  "subq    $48, %%rsp            # reserve 48 byte on the stack (need 16 byte alignment) \n"
 
                   // TODO: save rax for va_arg?
                   // Save call params: rdi, rsi, rdx, rcx, r8, r9
-                  "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n\t" // po *(id *)
-                  "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n\t" // p (SEL)$rsi
-                  "movq    %%rdx, -24(%%rbp) \n\t"
-                  "movq    %%rcx, -32(%%rbp) \n\t"
-                  "movq    %%r8,  -40(%%rbp) \n\t"
-                  "movq    %%r9,  -48(%%rbp) \n\t"
+                  "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n" // po *(id *)
+                  "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n" // p (SEL)$rsi
+                  "movq    %%rdx, -24(%%rbp) \n"
+                  "movq    %%rcx, -32(%%rbp) \n"
+                  "movq    %%r8,  -40(%%rbp) \n"
+                  "movq    %%r9,  -48(%%rbp) \n"
 
                   // fetch filled struct objc_super, call with self + _cmd
-                  "callq    _ITKReturnThreadSuper \n\t"
+                  "callq    _ITKReturnThreadSuper \n"
                   // first param is now struct objc_super
-                  "movq %%rax, %%rdi \n\t"
+                  "movq %%rax, %%rdi \n"
 
                   // Restore call params
-                  "movq    -16(%%rbp), %%rsi \n\t"
-                  "movq    -24(%%rbp), %%rdx \n\t"
-                  "movq    -32(%%rbp), %%rcx \n\t"
-                  "movq    -40(%%rbp), %%r8  \n\t"
-                  "movq    -48(%%rbp), %%r9  \n\t"
+                  "movq    -16(%%rbp), %%rsi \n"
+                  "movq    -24(%%rbp), %%rdx \n"
+                  "movq    -32(%%rbp), %%rcx \n"
+                  "movq    -40(%%rbp), %%r8  \n"
+                  "movq    -48(%%rbp), %%r9  \n"
 
                   // remove everything to prepare tail call
                   // debug stack via print  *(int *)  ($rsp+8)
-                  "addq    $48, %%rsp            # remove 64 byte from stack \n\t"
-                  "popq    %%rbp                 # pop frame pointer \n\t"
+                  "addq    $48, %%rsp            # remove 64 byte from stack \n"
+                  "popq    %%rbp                 # pop frame pointer \n"
 
-                  "jmp _objc_msgSendSuper        # tail call \n\t"
+                  "jmp _objc_msgSendSuper        # tail call \n"
                   : : : "rsi", "rdi");
 }
 
