@@ -34,29 +34,37 @@ struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL cmd) {
 __attribute__((__naked__))
 void msgSendSuperTrampoline(void) {
     asm volatile (
-                  " sub    sp, sp, #48             ; =48  \n\t"
-                  " stp    x29, x30, [sp, #32]     ; 16-byte Folded Spill  \n\t"
-                  " add    x29, sp, #32            ; =32  \n\t"
-                  " stur    x0, [x29, #-8]  \n\t"
-                  " str    x1, [sp, #16]  \n\t"
-                  " ldur    x8, [x29, #-8]  \n\t"
-                  " str    x8, [sp]  \n\t"
-                  " ldur    x0, [x29, #-8] \n\t"
-                  " bl    _objc_opt_class \n\t"
-                  " str    x0, [sp, #8] \n\t"
-                  " ldr    x1, [sp, #16] \n\t"
-                  " mov    x0, sp \n\t"
-                  " bl    _objc_msgSendSuper  \n\t"
-                  " mov    x29, x29    ; marker for objc_retainAutoreleaseReturnValue \n\t"
-                  " ldp    x29, x30, [sp, #32]     ; 16-byte Folded Reload \n\t"
-                  " add    sp, sp, #48             ; =48 \n\t"
-                  " ret \n\t"
+                  // push {x0-x8, lr} (call params are: x0-x7)
+                  // stp: store pair of registers: from, from, to, via indexed write
+                  "stp x8, lr, [sp, #-16]!\n" // push lr (link register == x30), then x8
+                  "stp x6, x7, [sp, #-16]!\n"
+                  "stp x4, x5, [sp, #-16]!\n"
+                  "stp x2, x3, [sp, #-16]!\n" // push x3, then x2
+                  "stp x0, x1, [sp, #-16]!\n" // push x1, then x0
+
+                  // fetch filled struct objc_super, call with self + _cmd
+                  "bl _ITKReturnThreadSuper \n"
+
+                  // first param is now struct objc_super (x0)
+                  // protect returned new value when we restore the pairs
+                  "mov x9, x0\n"
+
+                  // pop {x0-x8, lr}
+                  "ldp x0, x1, [sp], #16\n"
+                  "ldp x2, x3, [sp], #16\n"
+                  "ldp x4, x5, [sp], #16\n"
+                  "ldp x6, x7, [sp], #16\n"
+                  "ldp x8, lr, [sp], #16\n"
+
+                  // get new return (adr of the objc_super class)
+                  "mov x0, x9\n"
+                  // tail call
+                  "b _objc_msgSendSuper \n"
                   : : : "x0", "x1");
 }
 
 #elif defined(__x86_64__)
 
-// Arguments passed: rdi, rsi, rdx, rcx, r8, r9
 __attribute__((__naked__))
 void msgSendSuperTrampoline(void) {
     asm volatile (
@@ -64,9 +72,10 @@ void msgSendSuperTrampoline(void) {
                   "movq    %%rsp, %%rbp          # set stack to frame pointer \n\t"
                   "subq    $48, %%rsp            # reserve 48 byte on the stack (need 16 byte alignment) \n\t"
 
-                  // Save call params
-                  "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n\t"
-                  "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n\t"
+                  // TODO: save rax for va_arg?
+                  // Save call params: rdi, rsi, rdx, rcx, r8, r9
+                  "movq    %%rdi, -8(%%rbp)      # copy self to stack[1] \n\t" // po *(id *)
+                  "movq    %%rsi, -16(%%rbp)     # copy _cmd to stack[2] \n\t" // p (SEL)$rsi
                   "movq    %%rdx, -24(%%rbp) \n\t"
                   "movq    %%rcx, -32(%%rbp) \n\t"
                   "movq    %%r8,  -40(%%rbp) \n\t"
@@ -85,6 +94,7 @@ void msgSendSuperTrampoline(void) {
                   "movq    -48(%%rbp), %%r9  \n\t"
 
                   // remove everything to prepare tail call
+                  // debug stack via print  *(int *)  ($rsp+8)
                   "addq    $48, %%rsp            # remove 64 byte from stack \n\t"
                   "popq    %%rbp                 # pop frame pointer \n\t"
 
