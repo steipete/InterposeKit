@@ -25,6 +25,12 @@ extension Interpose {
         /// Subclass that we create on the fly
         var dynamicSubclass: AnyClass?
 
+        // fetched at apply time, changes late, thus class requirement
+        public internal(set) var origIMP: IMP?
+
+        // Logic switch to use super builder
+        let generatesSuperIMP = true
+
         /// Initialize a new hook to interpose an instance method.
         public init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
             self.object = object
@@ -92,12 +98,20 @@ extension Interpose {
 
         private func addSuperTrampolineMethod(subclass: AnyClass) {
             if addSuperImpl(subclass, self.selector) == false {
+                // TODO: use error log!
                 Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]")
+            } else {
+                Interpose.log("Added super for -[\(`class`).\(selector)]")
             }
         }
 
         /// The original implementation is looked up at runtime .
         public override var original: MethodSignature {
+            // If we switched implementations, return stored.
+            if let savedOrigIMP = origIMP {
+                return unsafeBitCast(savedOrigIMP, to: MethodSignature.self)
+            }
+            // Else, perform a dynamic lookup
             guard let origIMP = lookupOrigIMP else { InterposeError.nonExistingImplementation(`class`, selector).log()
                 preconditionFailure("IMP must be found for call")
             }
@@ -129,25 +143,29 @@ extension Interpose {
                 dynamicSubclass = try createDynamicSubclass()
             }
 
-            /*
-             // Add empty trampoline that we then replace the IMP!
-             addSuperTrampolineMethod(subclass: dynamicSubclass!)
-             origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, method_getTypeEncoding(method))
-             guard origIMP != nil else { throw InterposeError.nonExistingImplementation }
-             */
-
             guard lookupOrigIMP != nil else {
                 throw InterposeError.nonExistingImplementation(`class`, selector).log()
             }
 
-            // Since we are creating a dynamic subclass, there cannot be an existing method
             let encoding = method_getTypeEncoding(method)
-            let didAddMethod = class_addMethod(dynamicSubclass!, selector, replacementIMP, encoding)
-            if didAddMethod {
-                Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+            if self.generatesSuperIMP {
+                // Add empty trampoline that we then replace the IMP!
+                addSuperTrampolineMethod(subclass: dynamicSubclass!)
+
+                origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                guard origIMP != nil else { throw InterposeError.nonExistingImplementation(dynamicSubclass!, selector) }
+
+                Interpose.log("Added -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
             } else {
-                Interpose.log("Unable to add: -[\(`class`).\(selector)] IMP: \(replacementIMP!) - method already set?")
-                throw InterposeError.unableToAddMethod(`class`, selector)
+                // Since we are creating a dynamic subclass, there cannot be an existing method
+                // TODO: think about hooking twice!!
+                let didAddMethod = class_addMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                if didAddMethod {
+                    Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                } else {
+                    Interpose.log("Unable to add: -[\(`class`).\(selector)] IMP: \(replacementIMP!) - method already set?")
+                    throw InterposeError.unableToAddMethod(`class`, selector)
+                }
             }
         }
 

@@ -56,6 +56,8 @@ typedef NS_ERROR_ENUM(SuperBuilderErrorDomain, SuperBuilderErrorCode) {
  4) This uses inline assembly to forward the parameters to objc_msgSendSuper2 and objc_msgSendSuper2_stret.
    This is currently implemented architectures are x86_64 and arm64.
    armv7 was dropped in OS 11 and i386 with macOS Catalina.
+
+ @see https://steipete.com/posts/calling-super-at-runtime/
  */
 + (BOOL)addSuperInstanceMethodToClass:(Class)originalClass selector:(SEL)selector error:(NSError **)error;
 
