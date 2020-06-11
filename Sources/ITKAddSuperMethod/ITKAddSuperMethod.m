@@ -54,9 +54,8 @@ if (error) { *error = [NSError errorWithDomain:SuperBuilderErrorDomain code:CODE
         let msg = [NSString stringWithFormat:@"No dynamically dispatched method with selector %@ is available on any of the superclasses of %@", NSStringFromSelector(selector), NSStringFromClass(originalClass)];
         ERROR_AND_RETURN(SuperBuilderErrorCodeNoDynamicallyDispatchedMethodAvailable, msg)
     }
-    const char *typeEncoding = method_getTypeEncoding(method);
-    let isNormalDispatch = IKTGetDispatchMode(typeEncoding) == DispatchModeNormal;
-    IMP trampoline = isNormalDispatch ? msgSendSuperTrampoline : msgSendSuperStretTrampoline;
+    let typeEncoding = method_getTypeEncoding(method);
+    let trampoline = ITKGetTrampolineForTypeEncoding(typeEncoding);
     let methodAdded = class_addMethod(originalClass, selector, trampoline, typeEncoding);
     if (!methodAdded) {
         let msg = [NSString stringWithFormat:@"Failed to add method for selector %@ to class %@", NSStringFromSelector(selector), NSStringFromClass(originalClass)];
@@ -66,6 +65,11 @@ if (error) { *error = [NSError errorWithDomain:SuperBuilderErrorDomain code:CODE
 }
 
 @end
+
+// Control if the trampoline should also push/pop the floating point registers.
+// This is slightly slower and not needed for our simple implementation
+// However, even if you just use memcpy, you will want to enable this.
+#define PROTECT_FLOATING_POINT_REGISTERS 0
 
 // One thread local per thread should be enough
 _Thread_local struct objc_super _threadSuperStorage;
@@ -103,6 +107,15 @@ struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj) {
 __attribute__((__naked__))
 void msgSendSuperTrampoline(void) {
     asm volatile (
+
+#if PROTECT_FLOATING_POINT_REGISTERS
+                  // push {q0-q7} floating point registers
+                  "stp q6, q7, [sp, #-32]!\n"
+                  "stp q4, q5, [sp, #-32]!\n"
+                  "stp q2, q3, [sp, #-32]!\n"
+                  "stp q0, q1, [sp, #-32]!\n"
+#endif
+
                   // push {x0-x8, lr} (call params are: x0-x7)
                   // stp: store pair of registers: from, from, to, via indexed write
                   "stp x8, lr, [sp, #-16]!\n" // push lr (link register == x30), then x8
@@ -125,6 +138,14 @@ void msgSendSuperTrampoline(void) {
                   "ldp x6, x7, [sp], #16\n"
                   "ldp x8, lr, [sp], #16\n"
 
+#if PROTECT_FLOATING_POINT_REGISTERS
+                  // pop {q0-q7}
+                  "ldp q6, q7, [sp], #32\n"
+                  "ldp q4, q5, [sp], #32\n"
+                  "ldp q2, q3, [sp], #32\n"
+                  "ldp q0, q1, [sp], #32\n"
+#endif
+
                   // get new return (adr of the objc_super class)
                   "mov x0, x9\n"
                   // tail call
@@ -144,8 +165,19 @@ void msgSendSuperTrampoline(void) {
                   "pushq %%rbp \n"
                   // set stack to frame pointer
                   "movq %%rsp, %%rbp \n"
+
+#if PROTECT_FLOATING_POINT_REGISTERS
+                  // reserve 48+4*16 = 112 byte on the stack (need 16 byte alignment)
+                  "subq $112, %%rsp \n"
+
+                  "movdqu %%xmm0,  -64(%%rbp) \n"
+                  "movdqu %%xmm1,  -80(%%rbp) \n"
+                  "movdqu %%xmm2,  -96(%%rbp) \n"
+                  "movdqu %%xmm3, -112(%%rbp) \n"
+#else
                   // reserve 48 byte on the stack (need 16 byte alignment)
                   "subq $48, %%rsp \n"
+#endif
 
                   // Save call params: rdi, rsi, rdx, rcx, r8, r9
                   "movq %%rdi, -8(%%rbp)  \n" // self po *(id *)
@@ -160,6 +192,13 @@ void msgSendSuperTrampoline(void) {
                   // first param is now struct objc_super
                   "movq %%rax, %%rdi \n"
 
+#if PROTECT_FLOATING_POINT_REGISTERS
+                  "movdqu -64(%%rbp),  %%xmm0 \n"
+                  "movdqu -80(%%rbp),  %%xmm1 \n"
+                  "movdqu -96(%%rbp),  %%xmm2 \n"
+                  "movdqu -112(%%rbp), %%xmm3 \n"
+#endif
+
                   // Restore call params
                   // do not restore first parameter: super class
                   "movq -16(%%rbp), %%rsi \n"
@@ -169,8 +208,12 @@ void msgSendSuperTrampoline(void) {
                   "movq -48(%%rbp), %%r9  \n"
 
                   // debug stack via print  *(int *)  ($rsp+8)
-                  // remove 64 byte from stack
+                  // remove 112/48 byte from stack
+#if PROTECT_FLOATING_POINT_REGISTERS
+                  "addq $112, %%rsp \n"
+#else
                   "addq $48, %%rsp \n"
+#endif
                   // pop frame pointer
                   "popq  %%rbp \n"
 
