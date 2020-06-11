@@ -1,11 +1,3 @@
-//
-//  ITKAddSuperMethod.m
-//  InterposeKit
-//
-//  Created by Peter Steinberger on 08.06.20.
-//  Copyright © 2020 PSPDFKit GmbH. All rights reserved.
-//
-
 #import "ITKAddSuperMethod.h"
 
 @import ObjectiveC.message;
@@ -18,30 +10,26 @@ NSString *const PSPDFErrorDomain = @"com.steipete.superbuilder";
 void msgSendSuperTrampoline(void);
 void msgSendSuperStretTrampoline(void);
 
-typedef NS_ENUM(NSInteger, DispatchMode) {
-    DispatchModeNormal,
-    DispatchModeStret,
-};
-
 #define let const __auto_type
 #define var __auto_type
 
-static DispatchMode IKTGetDispatchMode(const char *typeEncoding) {
-    DispatchMode dispatchMode = DispatchModeNormal;
-#if defined (__arm64__)
+static IMP ITKGetTrampolineForTypeEncoding(__unused const char *typeEncoding) {
+    BOOL requiresStructDispatch = NO;
+    #if defined (__arm64__)
     // ARM64 doesn't use stret dispatch. Yay!
-#elif defined (__x86_64__)
-    // On x86-64, stret dispatch is ~used whenever return type doesn't fit into two registers
-    //
-    // http://www.sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html
-    // x86_64 is more complicated, including rules for returning floating-point struct fields in FPU registers, and ppc64's rules and exceptions will make your head spin. The gory details are documented in the Mac OS X ABI Guide, though as usual if the documentation and the compiler disagree then the documentation is wrong.
-    NSUInteger returnTypeActualSize = 0;
-    NSGetSizeAndAlignment(typeEncoding, &returnTypeActualSize, NULL);
-    dispatchMode = returnTypeActualSize > (sizeof(void *) * 2) ? DispatchModeStret : DispatchModeNormal;
-#else
-#error - Unknown architecture
-#endif
-    return dispatchMode;
+    #elif defined (__x86_64__)
+        // On x86-64, stret dispatch is ~used whenever return type doesn't fit into two registers
+        //
+        // http://www.sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html
+        // x86_64 is more complicated, including rules for returning floating-point struct fields in FPU registers, and ppc64's rules and exceptions will make your head spin. The gory details are documented in the Mac OS X ABI Guide, though as usual if the documentation and the compiler disagree then the documentation is wrong.
+        NSUInteger returnTypeActualSize = 0;
+        NSGetSizeAndAlignment(typeEncoding, &returnTypeActualSize, NULL);
+        requiresStructDispatch = returnTypeActualSize > (sizeof(void *) * 2);
+    #else
+    #error - Unknown architecture
+    #endif
+
+    return requiresStructDispatch ? msgSendSuperStretTrampoline : msgSendSuperTrampoline;
 }
 
 // Helper for binding with Swift
