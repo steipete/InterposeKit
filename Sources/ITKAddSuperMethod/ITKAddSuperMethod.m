@@ -180,7 +180,10 @@ void msgSendSuperTrampoline(void) {
 #endif
 
                   // Save call params: rdi, rsi, rdx, rcx, r8, r9
-                  "movq %%rdi, -8(%%rbp)  \n" // self po *(id *)
+                  //
+                  // First parameter can be avoided,
+                  // but we need to keep the stack 16-byte algined.
+                  //"movq %%rdi, -8(%%rbp)  \n" // self po *(id *)
                   "movq %%rsi, -16(%%rbp) \n" // _cmd p (SEL)$rsi
                   "movq %%rdx, -24(%%rbp) \n" // param 1
                   "movq %%rcx, -32(%%rbp) \n" // param 2
@@ -233,7 +236,7 @@ void msgSendSuperStretTrampoline(void) {
                   // reserve 48 byte on the stack (need 16 byte alignment)
                   "subq $48, %%rsp \n"
 
-                  // Save call params: rax(for va_arg) rdi, rsi, rdx, rcx, r8, r9
+                  // Save call params: rdi, rsi, rdx, rcx, r8, r9
                   "movq %%rdi, -8(%%rbp) \n"  // struct return
                   "movq %%rsi, -16(%%rbp) \n" // self
                   "movq %%rdx, -24(%%rbp) \n" // _cmd
