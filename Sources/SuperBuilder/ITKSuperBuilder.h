@@ -1,3 +1,4 @@
+#if __APPLE__
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -71,3 +72,4 @@ typedef NS_ERROR_ENUM(SuperBuilderErrorDomain, SuperBuilderErrorCode) {
 };
 
 NS_ASSUME_NONNULL_END
+#endif

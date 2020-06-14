@@ -1,3 +1,4 @@
+#if __APPLE__
 #import "ITKSuperBuilder.h"
 
 @import ObjectiveC.message;
@@ -344,3 +345,4 @@ void msgSendSuperStretTrampoline(void) {}
 #endif
 
 NS_ASSUME_NONNULL_END
+#endif
