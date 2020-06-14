@@ -2,11 +2,7 @@ import Foundation
 import XCTest
 @testable import InterposeKit
 
-final class ObjectInterposeTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        Interpose.isLoggingEnabled = true
-    }
+final class ObjectInterposeTests: InterposeKitTestCase {
 
     func testInterposeSingleObject() throws {
         let testObj = TestClass()
@@ -29,19 +25,19 @@ final class ObjectInterposeTests: XCTestCase {
 
                     print("After Interposing \(`self`)")
 
-                    return string + testSwizzleAddition
+                    return string + testString
 
                     // Similar signature cast as above, but without selector.
                     } as @convention(block) (AnyObject) -> String }
         }
 
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString)
         XCTAssertEqual(testObj2.sayHi(), testClassHi)
         try interposer.revert()
         XCTAssertEqual(testObj.sayHi(), testClassHi)
         XCTAssertEqual(testObj2.sayHi(), testClassHi)
         try interposer.apply()
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString)
         XCTAssertEqual(testObj2.sayHi(), testClassHi)
     }
 

@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString *const PSPDFErrorDomain = @"com.steipete.superbuilder";
+NSString *const SuperBuilderErrorDomain = @"com.steipete.superbuilder";
 
 void msgSendSuperTrampoline(void);
 void msgSendSuperStretTrampoline(void);
@@ -74,11 +74,42 @@ if (error) { *error = [NSError errorWithDomain:SuperBuilderErrorDomain code:CODE
 // One thread local per thread should be enough
 _Thread_local struct objc_super _threadSuperStorage;
 
-struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj);
-struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj) {
+static BOOL ITKMethodIsSuperTrampoline(Method method) {
+    let methodIMP = method_getImplementation(method);
+    return methodIMP == msgSendSuperTrampoline || methodIMP == msgSendSuperStretTrampoline;
+}
+
+struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd);
+struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd) {
+    /**
+     Assume you have a class hierarchy made of four classes `Level1` <- `Level2` <- `Level3` <- `Level4`,
+     with `Level1` implementing a method called `-sayHello`, not implemented elsewhere in descendants classes.
+
+     If you use: `[SuperBuilder addSuperInstanceMethodToClass:Level2.class selector:@selector(sayHello) error:NULL];`
+     to inject a _dummy_ implementation at `Level2`, the following will happen:
+
+     - Calling `-[Level2 sayHello]` works. The trampoline is called, the `super_class ` is found to be `Level1`, and the `-sayHello` parent implementation is called.
+     - Calling `-[LevelN sayHello]` for any N > 2 ends in an infinite recursion. Since the `obj` passed to the trampoline is a descendant of `Level2`, `objc_msgSendSuper2` will of course call the injected implementation on `Level2`, which in turn will call itself with the same arguments, again and again.
+
+     This is fixed by walking up the hierarchy until we find the class implementing the method.
+
+     Looking at the method implementation we can also skip subsequent super calls.
+     */
+    Class clazz = object_getClass(obj);
+    Class superclazz = class_getSuperclass(clazz);
+    do {
+        let superclassMethod = class_getInstanceMethod(superclazz, _cmd);
+        let sameMethods = class_getInstanceMethod(clazz, _cmd) == superclassMethod;
+        if (!sameMethods && !ITKMethodIsSuperTrampoline(superclassMethod)) {
+            break;
+        }
+        clazz = superclazz;
+        superclazz = class_getSuperclass(clazz);
+    }while (1);
+
     struct objc_super *_super = &_threadSuperStorage;
     _super->receiver = obj;
-    _super->super_class = object_getClass(obj);
+    _super->super_class = clazz;
     return _super;
 }
 
@@ -247,7 +278,7 @@ void msgSendSuperStretTrampoline(void) {
                   // fetch filled struct objc_super, call with self + _cmd
                   // Since stret offsets, we move back by one
                   "movq -16(%%rbp), %%rdi \n"
-                  "movq -24(%%rbp), %%rdx \n"
+                  "movq -24(%%rbp), %%rsi \n"
                   "callq _ITKReturnThreadSuper \n"
                   // second param is now struct objc_super
                   "movq %%rax, %%rsi \n"

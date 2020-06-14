@@ -4,9 +4,6 @@ extension Interpose {
     /// A hook to an instance method and stores both the original and new implementation.
     final public class ClassHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
 
-        // fetched at apply time, changes late, thus class requirement
-        public internal(set) var origIMP: IMP?
-
         /// Initialize a new hook to interpose an instance method.
         // TODO: report compiler crash
         public init(`class`: AnyClass, selector: Selector, implementation:(ClassHook<MethodSignature, HookSignature>) -> HookSignature?)  /* This must be optional or swift runtime will crash. Or swiftc may segfault. Compiler bug? */ throws {
@@ -22,11 +19,7 @@ extension Interpose {
         }
 
         override func resetImplementation() throws {
-            let method = try validate(expectedState: .interposed)
-            precondition(origIMP != nil)
-            let previousIMP = class_replaceMethod(`class`, selector, origIMP!, method_getTypeEncoding(method))
-            guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(`class`, selector, previousIMP) }
-            Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
+            try restorePreviousIMP(exactClass: `class`)
         }
 
         /// The original implementation is cached at hook time.

@@ -18,6 +18,8 @@
 		781095F6248E7C91008A943C /* InterposeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		781095FF248E83D7008A943C /* ITKAddSuperMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 781095FD248E83D7008A943C /* ITKAddSuperMethod.h */; };
 		78109600248E83D7008A943C /* ITKAddSuperMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 781095FE248E83D7008A943C /* ITKAddSuperMethod.m */; };
+		78A2F265249635B100F5AC5F /* KVOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F264249635B100F5AC5F /* KVOTests.swift */; };
+		78A2F26724964AF200F5AC5F /* InterposeKitTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */; };
 		78C39D7C2482CC7D00B46395 /* InterposeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; };
 		78C39D8F2483164500B46395 /* InterposeKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C39D8E2483164500B46395 /* InterposeKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78C39D912483165600B46395 /* InterposeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D902483165600B46395 /* InterposeKit.swift */; };
@@ -83,6 +85,8 @@
 		781095FE248E83D7008A943C /* ITKAddSuperMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITKAddSuperMethod.m; sourceTree = "<group>"; };
 		78863EC62464B2F900BA3762 /* InterposeKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = InterposeKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78863ECA2464B2F900BA3762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = InterposeKit.xcodeproj/Info.plist; sourceTree = "<group>"; };
+		78A2F264249635B100F5AC5F /* KVOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KVOTests.swift; path = Tests/InterposeKitTests/KVOTests.swift; sourceTree = SOURCE_ROOT; };
+		78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InterposeKitTestCase.swift; path = Tests/InterposeKitTests/InterposeKitTestCase.swift; sourceTree = SOURCE_ROOT; };
 		78C39D772482CC7D00B46395 /* InterposeKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C39D7B2482CC7D00B46395 /* Info-Tests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "Info-Tests.plist"; path = "InterposeKit.xcodeproj/Info-Tests.plist"; sourceTree = "<group>"; };
 		78C39D8E2483164500B46395 /* InterposeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterposeKit.h; path = Sources/InterposeKit/InterposeKit.h; sourceTree = SOURCE_ROOT; };
@@ -199,11 +203,13 @@
 		78C39D782482CC7D00B46395 /* InterposeTests */ = {
 			isa = PBXGroup;
 			children = (
-				78C39D922483169300B46395 /* InterposeKitTests.swift */,
 				78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */,
+				78C39D922483169300B46395 /* InterposeKitTests.swift */,
 				78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */,
-				78C39D7B2482CC7D00B46395 /* Info-Tests.plist */,
 				78C5A4A72494D75100EE9756 /* MultipleInterposing.swift */,
+				78C39D7B2482CC7D00B46395 /* Info-Tests.plist */,
+				78A2F264249635B100F5AC5F /* KVOTests.swift */,
+				78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */,
 			);
 			path = InterposeTests;
 			sourceTree = "<group>";
@@ -393,6 +399,8 @@
 				78C5A4A82494D75100EE9756 /* MultipleInterposing.swift in Sources */,
 				78EDB8DA248BA9B300D2F6C1 /* TestClass.swift in Sources */,
 				78EDB8DB248BA9BB00D2F6C1 /* ObjectInterposeTests.swift in Sources */,
+				78A2F26724964AF200F5AC5F /* InterposeKitTestCase.swift in Sources */,
+				78A2F265249635B100F5AC5F /* KVOTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

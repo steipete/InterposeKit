@@ -1,6 +1,23 @@
 import Foundation
 
-/// Helper to swizzle methods the right way, via replacing the IMP.
+private var interposeKey: Character = "_"
+
+struct AssociatedKeys {
+    static var interposeObject: UInt8 = 0
+}
+
+extension NSObject {
+    /// Access an existing Interpose container, if available.
+    var interpose: Interpose? {
+        get { objc_getAssociatedObject(self, &AssociatedKeys.interposeObject) as? Interpose }
+        set { objc_setAssociatedObject(self, &AssociatedKeys.interposeObject, newValue, .OBJC_ASSOCIATION_RETAIN) }
+    }
+}
+
+/// Interpose is a modern library to swizzle elegantly in Swift.
+///
+/// Methods are hooked via replacing the implementation, instead of the usual exchange.
+/// Supports both swizzling classes and individual objects.
 final public class Interpose {
     /// Stores swizzle hooks and executes them at once.
     public let `class`: AnyClass
@@ -9,6 +26,22 @@ final public class Interpose {
 
     /// If Interposing is object-based, this is set.
     public let object: AnyObject?
+
+    // Checks if a object is posing as a different class
+    // via implementing 'class' and returning something else.
+    private func checkObjectPosingAsDifferentClass(_ object: AnyObject) -> AnyClass? {
+        let perceivedClass: AnyClass = type(of: object)
+        let actualClass: AnyClass = object_getClass(object)!
+        if actualClass != perceivedClass {
+            return actualClass
+        }
+        return nil
+    }
+
+    // This is based on observation, there is no documented way
+    private func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
+        NSStringFromClass(klass).hasPrefix("NSKVO")
+    }
 
     /// Initializes an instance of Interpose for a specific class.
     /// If `builder` is present, `apply()` is automatically called.
@@ -23,14 +56,25 @@ final public class Interpose {
     }
 
     /// Initialize with a single object to interpose.
-    public init(_ object: AnyObject, builder: ((Interpose) throws -> Void)? = nil) throws {
+    public init(_ object: NSObject, builder: ((Interpose) throws -> Void)? = nil) throws {
         self.object = object
         self.class = type(of: object)
+
+        if let actualClass = checkObjectPosingAsDifferentClass(object) {
+            if isKVORuntimeGeneratedClass(actualClass) {
+                throw InterposeError.keyValueObservationDetected(object)
+            } else {
+                throw InterposeError.objectPosingAsDifferentClass(object, actualClass: actualClass)
+            }
+        }
 
         // Only apply if a builder is present
         if let builder = builder {
             try apply(builder)
         }
+
+        // Store interpose on object
+        object.interpose = self
     }
 
     deinit {
@@ -110,6 +154,18 @@ public enum InterposeError: LocalizedError {
     /// Unable to add method  for object-based interposing.
     case unableToAddMethod(AnyClass, Selector)
 
+    /// Object-based hooking does not work if an object is using KVO.
+    /// The KVO mechanism also uses subclasses created at runtime but doesn't check for additional overrides.
+    /// Adding a hook eventually crashes the KVO management code so we reject hooking altogether in this case.
+    case keyValueObservationDetected(AnyObject)
+
+    /// Object is lying about it's actual class metadata.
+    /// This usually happens when other swizzling libraries (like Aspects) also interfere with a class.
+    /// While this might just work, it's not worth risking a crash, so similar to KVO this case is rejected.
+    ///
+    /// @note Printing classes in Swift uses the class posing mechanism. Use `NSClassFromString` to get the correct name.
+    case objectPosingAsDifferentClass(AnyObject, actualClass: AnyClass)
+
     /// Can't revert or apply if already done so.
     case invalidState(expectedState: AnyHook.State)
 }
@@ -132,6 +188,10 @@ extension InterposeError: Equatable {
             return "Failed to allocate class pair: \(klass), \(subclassName)"
         case .unableToAddMethod(let klass, let selector):
             return "Unable to add method: -[\(klass) \(selector)]"
+        case .keyValueObservationDetected(let obj):
+            return "Unable to hook object that uses Key Value Observing: \(obj)"
+        case .objectPosingAsDifferentClass(let obj, let actualClass):
+            return "Unable to hook object posing as different class. Expected: \(type(of: obj)) Is: \(NSStringFromClass(actualClass))/"
         case .invalidState(let expectedState):
             return "Invalid State. Expected: \(expectedState)"
         }

@@ -25,9 +25,6 @@ extension Interpose {
         /// Subclass that we create on the fly
         var dynamicSubclass: AnyClass?
 
-        // fetched at apply time, changes late, thus class requirement
-        public internal(set) var origIMP: IMP?
-
         // Logic switch to use super builder
         let generatesSuperIMP = true
 
@@ -46,7 +43,16 @@ extension Interpose {
 
         /// Creates a unique dynamic subclass of the current object
         private func createDynamicSubclass() throws -> AnyClass {
+
+            // If the class has been altered (e.g. via NSKVONotifying_ KVO logic)
+            // then perceived and actual class don't match.
+            //
+            // Making KVO and Object-based hooking work at the same time is difficult.
+            // If we make a dynamic subclass over KVO, invalidating the token crashes in cache_getImp.
+
             let perceivedClass: AnyClass = `class`
+            let actualClass: AnyClass = object_getClass(object)!
+
             let className = NSStringFromClass(perceivedClass)
             // Right now we are wasteful. Might be able to optimize for shared IMP?
             let uuid = UUID().uuidString.replacingOccurrences(of: "-", with: "")
@@ -57,7 +63,7 @@ extension Interpose {
                 if let existingClass = objc_getClass(cString) as! AnyClass? {
                     return existingClass
                 } else {
-                    if let subclass: AnyClass = objc_allocateClassPair(perceivedClass, cString, 0) {
+                    if let subclass: AnyClass = objc_allocateClassPair(actualClass, cString, 0) {
                         replaceGetClass(in: subclass, decoy: perceivedClass)
                         objc_registerClassPair(subclass)
                         return subclass
@@ -72,6 +78,7 @@ extension Interpose {
             }
 
             object_setClass(object, nonnullSubclass)
+            Interpose.log("Generated \(NSStringFromClass(nonnullSubclass)) for object (was: \(NSStringFromClass(class_getSuperclass(object_getClass(object)!)!)))")
             return nonnullSubclass
         }
 
@@ -82,12 +89,6 @@ extension Interpose {
             let impl = imp_implementationWithBlock(getClass as Any)
             _ = class_replaceMethod(`class`, ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
             _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
-        }
-
-        // https://bugs.swift.org/browse/SR-12945
-        public struct ObjcSuperFake {
-            public var receiver: Unmanaged<AnyObject>
-            public var superClass: AnyClass
         }
 
         private lazy var addSuperImpl: @convention(c) (AnyClass, Selector) -> Bool = {
@@ -101,7 +102,8 @@ extension Interpose {
                 // TODO: use error log!
                 Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]")
             } else {
-                Interpose.log("Added super for -[\(`class`).\(selector)]")
+                let imp = class_getMethodImplementation(subclass, self.selector)!
+                Interpose.log("Added super for -[\(`class`).\(selector)]: \(imp)")
             }
         }
 
@@ -132,11 +134,22 @@ extension Interpose {
             return nil
         }
 
+        /// Looks for an instance method in the exact class, without looking up the hierarchy.
+        func exactClassImplementsSelector(_ klass: AnyClass, _ selector: Selector) -> Bool {
+            var methodCount : CUnsignedInt = 0
+            guard let methodsInAClass = class_copyMethodList(klass, &methodCount) else { return false }
+            defer { free(methodsInAClass) }
+            for i in 0 ..< Int(methodCount) {
+                let method = methodsInAClass[i]
+                if method_getName(method) == selector {
+                    return true
+                }
+            }
+            return false
+        }
+
         override func replaceImplementation() throws {
             let method = try validate()
-
-            // Register a KVO to work around any KVO issues with opposite order
-            registerKVO()
 
             // Register subclass at runtime if we haven't already
             if dynamicSubclass == nil {
@@ -148,23 +161,40 @@ extension Interpose {
             }
 
             let encoding = method_getTypeEncoding(method)
+            //  This function searches superclasses for implementations
+            let hasExistingMethod = exactClassImplementsSelector(dynamicSubclass!, selector)
+
             if self.generatesSuperIMP {
-                // Add empty trampoline that we then replace the IMP!
-                addSuperTrampolineMethod(subclass: dynamicSubclass!)
 
+                // If the subclass is empty, we create a super trampoline first.
+                // If a hook already exists, we must skip this.
+                if !hasExistingMethod {
+                    addSuperTrampolineMethod(subclass: dynamicSubclass!)
+                }
+
+                // Replace IMP (by now we guarantee that it exists)
                 origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, encoding)
-                guard origIMP != nil else { throw InterposeError.nonExistingImplementation(dynamicSubclass!, selector) }
-
+                guard origIMP != nil else {
+                    throw InterposeError.nonExistingImplementation(dynamicSubclass!, selector)
+                }
                 Interpose.log("Added -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
             } else {
-                // Since we are creating a dynamic subclass, there cannot be an existing method
-                // TODO: think about hooking twice!!
-                let didAddMethod = class_addMethod(dynamicSubclass!, selector, replacementIMP, encoding)
-                if didAddMethod {
-                    Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                if hasExistingMethod {
+                    origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                    if origIMP != nil {
+                        Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!) via replacement")
+                    } else {
+                        Interpose.log("Unable to replace: -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                        throw InterposeError.unableToAddMethod(`class`, selector)
+                    }
                 } else {
-                    Interpose.log("Unable to add: -[\(`class`).\(selector)] IMP: \(replacementIMP!) - method already set?")
-                    throw InterposeError.unableToAddMethod(`class`, selector)
+                    let didAddMethod = class_addMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                    if didAddMethod {
+                        Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                    } else {
+                        Interpose.log("Unable to add: -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
+                        throw InterposeError.unableToAddMethod(`class`, selector)
+                    }
                 }
             }
         }
@@ -172,64 +202,24 @@ extension Interpose {
         override func resetImplementation() throws {
             _ = try validate(expectedState: .interposed)
 
-            guard let dynamicSubclass = self.dynamicSubclass else { preconditionFailure("No dynamic subclass set") }
-
-            // Removing methods at runtime is not supported.
-            // https://stackoverflow.com/questions/1315169/how-do-i-remove-instance-methods-at-runtime-in-objective-c-2-0
-
-            // Instead, we have to recreate the whole subclass
-            // Temporary, to remove objc override
-            _ = try createDynamicSubclass()
-
-            // Dispose of the custom dynamic subclass
-            objc_disposeClassPair(dynamicSubclass)
-            self.dynamicSubclass = nil
-
-
-
-            // TODO: recreate subclass completely
-            /*
-            let previousIMP = class_replaceMethod(dynamicSubclass, selector, _objc_msgForward, method_getTypeEncoding(method))
-            guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(`class`, selector, previousIMP) }
-            Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
-
-            // Restore the original class of the object
-            // Does this include the KVO'ed subclass?
-            object_setClass(object, `class`)
-            */
-
-//
-//            // Remove KVO after restoring class as last step.
-//            deregisterKVO()
-        }
-
-
-        // MARK: KVO Helper
-
-        var kvoObserver: KVOObserver?
-
-        class KVOObserver: NSObject {
-            @objc var objectToObserve: AnyObject
-            var observation: NSKeyValueObservation?
-
-            init(object: AnyObject) {
-                objectToObserve = object
-                super.init()
-
-                // Can't use modern syntax cause https://bugs.swift.org/browse/SR-12944
-                objectToObserve.addObserver(self, forKeyPath: "description", options: .new, context: nil)
+            if super.origIMP != nil {
+                try restorePreviousIMP(exactClass: dynamicSubclass!)
+            } else {
+                // Removing methods at runtime is not supported.
+                // https://stackoverflow.com/questions/1315169/how-do-i-remove-instance-methods-at-runtime-in-objective-c-2-0
+                //
+                // This codepath will be hit if the super helper is missing.
+                // We could recreate the whole class at runtime and rebuild all hooks,
+                // but that seesm excessive when we have a trampoline at our disposal.
+                Interpose.log("Reset of -[\(`class`).\(selector)] not supported. No Original IMP")
             }
-        }
 
-        // Before creating our subclass, we trigger KVO.
-        // KVO also creates a subclass at runtime. If we do this prior, then KVO fails.
-        // If KVO runs prior, and then we sub-subclass, everything works.
-        private func registerKVO() {
-            kvoObserver = KVOObserver(object: object)
-        }
-
-        private func deregisterKVO() {
-            kvoObserver = nil
+            // TODO: remove class pair!
+            // This might fail if we get KVO observed.
+            // objc_disposeClassPair does not return a bool but logs if it fails.
+            //
+            // objc_disposeClassPair(dynamicSubclass)
+            // self.dynamicSubclass = nil
         }
     }
 }

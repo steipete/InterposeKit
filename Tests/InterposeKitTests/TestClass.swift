@@ -2,7 +2,8 @@ import Foundation
 import QuartzCore
 
 let testClassHi = "Hi from TestClass!"
-let testSwizzleAddition = " and Interpose"
+let testString = " and Interpose"
+let testString2 = " testString2"
 let testSubclass = "Subclass is here!"
 
 public func ==(lhs: CATransform3D, rhs: CATransform3D) -> Bool {
@@ -23,6 +24,10 @@ public extension CATransform3D {
 }
 
 class TestClass: NSObject {
+
+    @objc dynamic var age: Int = 1
+    @objc dynamic var name: String = "Tim Apple"
+
     @objc dynamic func sayHi() -> String {
         print(testClassHi)
         return testClassHi

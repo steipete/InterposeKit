@@ -7,6 +7,9 @@ public class AnyHook {
     public internal(set) var state = State.prepared
     // else we validate init order
     public internal(set) var replacementIMP: IMP!
+
+    // fetched at apply time, changes late, thus class requirement
+    public internal(set) var origIMP: IMP?
     
     /// The possible task states
     public enum State: Equatable {
@@ -23,9 +26,9 @@ public class AnyHook {
     init(`class`: AnyClass, selector: Selector) throws {
         self.selector = selector
         self.class = `class`
+
         // Check if method exists
         try validate()
-        // replacementIMP = imp_implementationWithBlock(implementation(self))
     }
     
     func replaceImplementation() throws {
@@ -45,10 +48,10 @@ public class AnyHook {
     public func revert() throws {
         try execute(newState: .prepared) { try resetImplementation() }
     }
-    
-    //    public func callAsFunction<U>(_ type: U.Type) -> U {
-    //        unsafeBitCast(origIMP, to: type)
-    //    }
+
+    public func callAsFunction<U>(_ type: U.Type) -> U {
+        unsafeBitCast(origIMP, to: type)
+    }
     
     /// Validate that the selector exists on the active class.
     @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
@@ -78,6 +81,15 @@ public class AnyHook {
         case let .error(error):
             Interpose.log("Leaking -[\(`class`).\(selector)] IMP: \(replacementIMP!) due to error: \(error)")
         }
+    }
+
+    /// Internal: Restores the previous implementation if one is set.
+    func restorePreviousIMP(exactClass: AnyClass) throws {
+        let method = try validate(expectedState: .interposed)
+        precondition(origIMP != nil)
+        let previousIMP = class_replaceMethod(exactClass, selector, origIMP!, method_getTypeEncoding(method))
+        guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(exactClass, selector, previousIMP) }
+        Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
     }
 }
 

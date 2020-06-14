@@ -1,7 +1,7 @@
 import XCTest
 @testable import InterposeKit
 
-final class InterposeKitTests: XCTestCase {
+final class InterposeKitTests: InterposeKitTestCase {
 
     override func setUpWithError() throws {
         Interpose.isLoggingEnabled = true
@@ -24,7 +24,7 @@ final class InterposeKitTests: XCTestCase {
                         let string = store.original(`self`, store.selector)
                         print("After Interposing \(`self`)")
 
-                        return string + testSwizzleAddition
+                        return string + testString
                     }
             }
         }
@@ -32,11 +32,11 @@ final class InterposeKitTests: XCTestCase {
         print(TestClass().sayHi())
 
         // Test various apply/revert's
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString)
         try interposer.revert()
         XCTAssertEqual(testObj.sayHi(), testClassHi)
         try interposer.apply()
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString)
         XCTAssertThrowsError(try interposer.apply())
         XCTAssertThrowsError(try interposer.apply())
         try interposer.revert()
@@ -57,16 +57,16 @@ final class InterposeKitTests: XCTestCase {
                 methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
                 hookSignature: (@convention(block) (AnyObject) -> String).self) {
                     store in { `self` in
-                        return store.original(`self`, store.selector) + testSwizzleAddition
+                        return store.original(`self`, store.selector) + testString
                     }
             }
         }
 
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString + testSubclass)
         try interposed.revert()
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass)
         try interposed.apply()
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString + testSubclass)
 
         // Swizzle subclass, automatically applys
         let interposedSubclass = try Interpose(TestSubclass.self) {
@@ -75,14 +75,14 @@ final class InterposeKitTests: XCTestCase {
                 methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
                 hookSignature: (@convention(block) (AnyObject) -> String).self) {
                     store in { `self` in
-                        return store.original(`self`, store.selector) + testSwizzleAddition
+                        return store.original(`self`, store.selector) + testString
                     }
             }
         }
 
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSwizzleAddition + testSubclass + testSwizzleAddition)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString + testSubclass + testString)
         try interposed.revert()
-        XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass + testSwizzleAddition)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass + testString)
         try interposedSubclass.revert()
         XCTAssertEqual(testObj.sayHi(), testClassHi + testSubclass)
     }
