@@ -1,6 +1,6 @@
 //
 //  ITKAddSuperMethod.h
-//  InterposeKit
+//  SuperBuilder
 //
 //  Created by Peter Steinberger on 08.06.20.
 //
@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 NSString *const SuperBuilderErrorDomain;
 
 typedef NS_ERROR_ENUM(SuperBuilderErrorDomain, SuperBuilderErrorCode) {
+    SuperBuilderErrorCodeArchitectureNotSupported,
     SuperBuilderErrorCodeNoSuperClass,
     SuperBuilderErrorCodeNoDynamicallyDispatchedMethodAvailable,
     SuperBuilderErrorCodeFailedToAddMethod
@@ -60,6 +61,17 @@ typedef NS_ERROR_ENUM(SuperBuilderErrorDomain, SuperBuilderErrorCode) {
  @see https://steipete.com/posts/calling-super-at-runtime/
  */
 + (BOOL)addSuperInstanceMethodToClass:(Class)originalClass selector:(SEL)selector error:(NSError **)error;
+
+/// Check if the instance method in `originalClass` is a super trampoline.
++ (BOOL)isSuperTrampolineForClass:(Class)originalClass selector:(SEL)selector;
+
+/// x86-64 and ARM64 are currently supported.
+@property(class, readonly) BOOL isSupportedArchitecure;
+
+#if defined (__arm64__) || defined (__x86_64__)
+/// Helper that does not exist if architecture is not supported.
++ (BOOL)isCompileTimeSupportedArchitecure;
+#endif
 
 @end
 

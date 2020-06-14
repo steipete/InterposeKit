@@ -26,7 +26,9 @@ static IMP ITKGetTrampolineForTypeEncoding(__unused const char *typeEncoding) {
         NSGetSizeAndAlignment(typeEncoding, &returnTypeActualSize, NULL);
         requiresStructDispatch = returnTypeActualSize > (sizeof(void *) * 2);
     #else
-    #error - Unknown architecture
+    // Unknown architecture
+    // https://devblogs.microsoft.com/xamarin/apple-new-processor-architecture/
+    // watchOS uses arm64_32 since series 4, before armv7k. watch Simulator uses i386.
     #endif
 
     return requiresStructDispatch ? msgSendSuperStretTrampoline : msgSendSuperTrampoline;
@@ -43,17 +45,47 @@ if (error) { *error = [NSError errorWithDomain:SuperBuilderErrorDomain code:CODE
 
 @implementation SuperBuilder
 
++ (BOOL)isSupportedArchitecure {
+#if defined (__arm64__) || defined (__x86_64__)
+    return YES;
+#else
+    return NO;
+#endif
+}
+
+#if defined (__arm64__) || defined (__x86_64__)
++ (BOOL)isCompileTimeSupportedArchitecure {
+    return [self isSupportedArchitecure];
+}
+#endif
+
++ (BOOL)isSuperTrampolineForClass:(Class)originalClass selector:(SEL)selector {
+    // No architecture check needed - will just be NO.
+    let method = class_getInstanceMethod(originalClass, selector);
+    return ITKMethodIsSuperTrampoline(method);
+}
+
 + (BOOL)addSuperInstanceMethodToClass:(Class)originalClass selector:(SEL)selector error:(NSError **)error {
+    if (!self.isSupportedArchitecure) {
+        let msg = @"Unsupported Architecture. (Support includes ARM64 and x86-64 )";
+        ERROR_AND_RETURN(SuperBuilderErrorCodeArchitectureNotSupported, msg)
+    }
+
+    // Check that class has a superclass
     let superClass = class_getSuperclass(originalClass);
     if (superClass == nil) {
         let msg = [NSString stringWithFormat:@"Unable to find superclass for %@", NSStringFromClass(originalClass)];
         ERROR_AND_RETURN(SuperBuilderErrorCodeNoSuperClass, msg)
     }
+
+    // Fetch method called with super
     let method = class_getInstanceMethod(superClass, selector);
     if (method == NULL) {
         let msg = [NSString stringWithFormat:@"No dynamically dispatched method with selector %@ is available on any of the superclasses of %@", NSStringFromSelector(selector), NSStringFromClass(originalClass)];
         ERROR_AND_RETURN(SuperBuilderErrorCodeNoDynamicallyDispatchedMethodAvailable, msg)
     }
+
+    // Add trampoline
     let typeEncoding = method_getTypeEncoding(method);
     let trampoline = ITKGetTrampolineForTypeEncoding(typeEncoding);
     let methodAdded = class_addMethod(originalClass, selector, trampoline, typeEncoding);
@@ -64,12 +96,11 @@ if (error) { *error = [NSError errorWithDomain:SuperBuilderErrorDomain code:CODE
     return methodAdded;
 }
 
-@end
-
 // Control if the trampoline should also push/pop the floating point registers.
 // This is slightly slower and not needed for our simple implementation
 // However, even if you just use memcpy, you will want to enable this.
-#define PROTECT_FLOATING_POINT_REGISTERS 0
+// We keep this enabled to be doubly safe.
+#define PROTECT_FLOATING_POINT_REGISTERS 1
 
 // One thread local per thread should be enough
 _Thread_local struct objc_super _threadSuperStorage;
@@ -112,6 +143,8 @@ struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd) {
     _super->super_class = clazz;
     return _super;
 }
+
+@end
 
 /**
  Inline assembly is used to perfectly forward all parameters to objc_msgSendSuper,
@@ -304,7 +337,9 @@ void msgSendSuperStretTrampoline(void) {
 }
 
 #else
-#error - Unknown architecture - time to write some assembly :)
+// Unknown architecture - time to write some assembly :)
+void msgSendSuperTrampoline(void) {}
+void msgSendSuperStretTrampoline(void) {}
 #endif
 
 NS_ASSUME_NONNULL_END
