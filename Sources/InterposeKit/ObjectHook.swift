@@ -6,11 +6,11 @@ extension Interpose {
         static let subclassSuffix = "InterposeKit_"
     }
 
-    internal enum ObjCSelector {
+    enum ObjCSelector {
         static let getClass = Selector((("class")))
     }
 
-    internal enum ObjCMethodEncoding {
+    enum ObjCMethodEncoding {
         static let getClass = extract("#@:")
 
         private static func extract(_ string: StaticString) -> UnsafePointer<CChar> {

@@ -1,10 +1,10 @@
 import Foundation
 
-
 public class AnyHook {
     public let `class`: AnyClass
     public let selector: Selector
     public internal(set) var state = State.prepared
+
     // else we validate init order
     public internal(set) var replacementIMP: IMP!
 
