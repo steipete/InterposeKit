@@ -1,4 +1,4 @@
-#import "ITKAddSuperMethod.h"
+#import "ITKSuperBuilder.h"
 
 @import ObjectiveC.message;
 @import ObjectiveC.runtime;

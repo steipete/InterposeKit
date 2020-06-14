@@ -82,15 +82,6 @@ public class AnyHook {
             Interpose.log("Leaking -[\(`class`).\(selector)] IMP: \(replacementIMP!) due to error: \(error)")
         }
     }
-
-    /// Internal: Restores the previous implementation if one is set.
-    func restorePreviousIMP(exactClass: AnyClass) throws {
-        let method = try validate(expectedState: .interposed)
-        precondition(origIMP != nil)
-        let previousIMP = class_replaceMethod(exactClass, selector, origIMP!, method_getTypeEncoding(method))
-        guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(exactClass, selector, previousIMP) }
-        Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
-    }
 }
 
 public class TypedHook<MethodSignature, HookSignature>: AnyHook {

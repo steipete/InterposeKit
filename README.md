@@ -8,7 +8,7 @@
 <!--
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit) -->
 
-InterposeKit is a modern library to swizzle elegantly in Swift. It is [well-documented](http://interposekit.com/), [tested](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM), written in "pure" Swift 5.2 and works on `@objc dynamic` Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was [a race condition in Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/), which required tricky swizzling to fix, I also wrote up  [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
+InterposeKit is a modern library to swizzle elegantly in Swift, supporting hooks on classes and individual objects. It is [well-documented](http://interposekit.com/), [tested](https://github.com/jsteipete/InterposeKit/actions?query=workflow%3ASwiftPM), written in "pure" Swift 5.2 and works on `@objc dynamic` Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was [a race condition in Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/), which required tricky swizzling to fix, I also wrote up  [implementation thoughts on my blog](https://steipete.com/posts/interposekit/).
 
 Instead of [adding new methods and exchanging implementations](https://nshipster.com/method-swizzling/) based on [`method_exchangeImplementations`](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations), this library replaces the implementation directly using [`class_replaceMethod`](https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod). This avoids some of [the usual problems with swizzling](https://pspdfkit.com/blog/2019/swizzling-in-swift/).
 
@@ -32,21 +32,20 @@ class TestClass: NSObject {
 }
 
 let interposer = try Interpose(TestClass.self) {
-    try $0.hook(#selector(TestClass.sayHi), { store in { `self` in
+    try $0.hook(
+        #selector(TestClass.sayHi),
+        methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+        hookSignature: (@convention(block) (AnyObject) -> String).self) {
+            store in { `self` in
 
-        print("Before Interposing \(`self`)")
+                // You're free to skip calling the original implementation.
+                print("Before Interposing \(`self`)")
+                let string = store.original(`self`, store.selector)
+                print("After Interposing \(`self`)")
 
-        // Calling convention and passing selector is important!
-        // You're free to skip calling the original implementation.
-        let origCall = store((@convention(c) (AnyObject, Selector) -> String).self)
-        let string = origCall(`self`, store.selector)
-
-        print("After Interposing \(`self`)")
-
-        return string + " and Interpose"
-
-        // Similar signature cast as above, but without selector.
-        } as @convention(block) (AnyObject) -> String})
+                return string + "and Interpose"
+            }
+    }
 }
 
 // Don't need the hook anymore? Undo is built-in!
@@ -62,13 +61,14 @@ After Interposing <InterposeTests.TestClass: 0x7fa0b160c1e0>
 Hi there 👋 and Interpose
 ```
 
-## Key Facts
+## Key Features
 
-- Interpose directly modifies the implementation of a `Method`, which is [better than selector-based swizzling]((https://pspdfkit.com/blog/2019/swizzling-in-swift/)).
+- Interpose directly modifies the implementation of a `Method`, which is [safer than selector-based swizzling]((https://pspdfkit.com/blog/2019/swizzling-in-swift/)).
+- Interpose works on classes and individual objects.
 - Hooks can easily be undone via calling `revert()`. This also checks and errors if someone else changed stuff in between.
-- Pure Swift, no `NSInvocation`, which requires boxing and can be slow.
+- Mostly Swift, no `NSInvocation`, which requires boxing and can be slow.
 - No Type checking. If you have a typo or forget a `convention` part, this will crash at runtime.
-- Yes, you have to type the resulting type twice This is a tradeoff, else we need NSInvocation or assembly.
+- Yes, you have to type the resulting type twice This is a tradeoff, else we need `NSInvocation`.
 - Delayed Interposing helps when a class is loaded at runtime. This is useful for [Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/).
 
 ## Delayed Hooking

@@ -1,7 +1,5 @@
 import Foundation
 
-private var interposeKey: Character = "_"
-
 struct AssociatedKeys {
     static var interposeObject: UInt8 = 0
 }
@@ -168,6 +166,12 @@ public enum InterposeError: LocalizedError {
 
     /// Can't revert or apply if already done so.
     case invalidState(expectedState: AnyHook.State)
+
+    /// Unable to remove hook.
+    case resetUnsupported(_ reason: String)
+
+    /// Generic failure
+    case unknownError(_ reason: String)
 }
 
 extension InterposeError: Equatable {
@@ -194,6 +198,10 @@ extension InterposeError: Equatable {
             return "Unable to hook object posing as different class. Expected: \(type(of: obj)) Is: \(NSStringFromClass(actualClass))/"
         case .invalidState(let expectedState):
             return "Invalid State. Expected: \(expectedState)"
+        case .resetUnsupported(let reason):
+            return "Reset Unsupported: \(reason)"
+        case .unknownError(let reason):
+            return reason
         }
     }
 

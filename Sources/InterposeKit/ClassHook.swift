@@ -17,7 +17,11 @@ extension Interpose {
         }
 
         override func resetImplementation() throws {
-            try restorePreviousIMP(exactClass: `class`)
+            let method = try validate(expectedState: .interposed)
+            precondition(origIMP != nil)
+            let previousIMP = class_replaceMethod(`class`, selector, origIMP!, method_getTypeEncoding(method))
+            guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(`class`, selector, previousIMP) }
+            Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
         }
 
         /// The original implementation is cached at hook time.

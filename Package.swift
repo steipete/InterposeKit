@@ -1,5 +1,4 @@
 // swift-tools-version:5.0
-
 import PackageDescription
 
 let package = Package(
@@ -11,11 +10,11 @@ let package = Package(
        .watchOS(.v5)
      ],
     products: [
-        .library(name: "InterposeKit",targets: ["InterposeKit"]),
+        .library(name: "InterposeKit", targets: ["InterposeKit"]),
     ],
     targets: [
-        .target(name: "ITKAddSuperMethod"),
-        .target(name: "InterposeKit", dependencies: ["ITKAddSuperMethod"]),
+        .target(name: "SuperBuilder"),
+        .target(name: "InterposeKit", dependencies: ["SuperBuilder"]),
         .testTarget(name: "InterposeKitTests", dependencies: ["InterposeKit"]),
     ]
 )
