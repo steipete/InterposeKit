@@ -1,5 +1,6 @@
 #if __APPLE__
 #import <Foundation/Foundation.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,7 +56,7 @@ There are a few important details:
 /// x86-64 and ARM64 are currently supported.
 @property(class, readonly) BOOL isSupportedArchitecure;
 
-#if defined (__arm64__) || defined (__x86_64__)
+#if (defined (__arm64__) || defined (__x86_64__)) && __APPLE__
 /// Helper that does not exist if architecture is not supported.
 + (BOOL)isCompileTimeSupportedArchitecure;
 #endif
@@ -72,4 +73,3 @@ typedef NS_ERROR_ENUM(SuperBuilderErrorDomain, SuperBuilderErrorCode) {
 };
 
 NS_ASSUME_NONNULL_END
-#endif
