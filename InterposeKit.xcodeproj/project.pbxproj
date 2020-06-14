@@ -33,13 +33,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		781095BA248D6E10008A943C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 78863EBD2464B2F900BA3762 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 781095A4248D6DFB008A943C;
-			remoteInfo = InterposeTestHost;
-		};
 		781095F1248E7C72008A943C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78863EBD2464B2F900BA3762 /* Project object */;
@@ -289,7 +282,6 @@
 			);
 			dependencies = (
 				78C39D7E2482CC7D00B46395 /* PBXTargetDependency */,
-				781095BB248D6E10008A943C /* PBXTargetDependency */,
 			);
 			name = InterposeKitTests;
 			productName = InterposeTests;
@@ -406,11 +398,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		781095BB248D6E10008A943C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 781095A4248D6DFB008A943C /* InterposeTestHost */;
-			targetProxy = 781095BA248D6E10008A943C /* PBXContainerItemProxy */;
-		};
 		781095F2248E7C72008A943C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 78863EC52464B2F900BA3762 /* InterposeKit */;
