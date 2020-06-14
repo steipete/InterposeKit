@@ -71,6 +71,42 @@ Hi there 👋 and Interpose
 - Yes, you have to type the resulting type twice This is a tradeoff, else we need `NSInvocation`.
 - Delayed Interposing helps when a class is loaded at runtime. This is useful for [Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/).
 
+## Object Hooking
+
+InterposeKit can hook classes and object. Class hooking is similar to swizzling, but object-based hooking offers a variety of new ways to set hooks. This is achieved via creating a dynamic subclass at runtime. 
+
+Caveat: Hooking will fail with an error if the object uses KVO. The KVO machinery is fragile and it's to easy to cause a crash. Using KVO after a hook was created is supported and will not cause issues.
+
+## Various ways to define the signature
+
+Next to using  `methodSignature` and `hookSignature`, following variants to define the signature are also possible:
+
+### methodSignature + casted block
+```
+let interposer = try Interpose(testObj) {
+    try $0.hook(
+        #selector(TestClass.sayHi),
+        methodSignature: (@convention(c) (AnyObject, Selector) -> String).self) { store in { `self` in
+            let string = store.original(`self`, store.selector)
+            return string + testString
+            } as @convention(block) (AnyObject) -> String }
+}
+```
+
+### Define type via store object
+```
+// Functions need to be `@objc dynamic` to be hookable.
+let interposer = try Interpose(testObj) {
+    try $0.hook(#selector(TestClass.returnInt)) { (store: TypedHook<@convention(c) (AnyObject, Selector) -> Int, @convention(block) (AnyObject) -> Int>) in {
+
+        // You're free to skip calling the original implementation.
+        let int = store.original($0, store.selector)
+        return int + returnIntOverrideOffset
+        }
+    }
+}
+```
+
 ## Delayed Hooking
 
 Sometimes it can be necessary to hook a class deep in a system framework, which is loaded at a later time. Interpose has a solution for this and uses a hook in the dynamic linker to be notified whenever new classes are loaded.
@@ -89,6 +125,7 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
         }} as @convention(block) (AnyObject, AnyObject) -> Void})
 }
 ```
+
 
 ## FAQ
 
