@@ -40,13 +40,15 @@ public class AnyHook {
     }
     
     /// Apply the interpose hook.
-    public func apply() throws {
+    @discardableResult public func apply() throws -> AnyHook {
         try execute(newState: .interposed) { try replaceImplementation() }
+        return self
     }
     
     /// Revert the interpose hoook.
-    public func revert() throws {
+    @discardableResult public func revert() throws -> AnyHook {
         try execute(newState: .prepared) { try resetImplementation() }
+        return self
     }
 
     public func callAsFunction<U>(_ type: U.Type) -> U {
