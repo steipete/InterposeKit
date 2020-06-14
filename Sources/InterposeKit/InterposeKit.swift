@@ -10,6 +10,20 @@ extension NSObject {
         get { objc_getAssociatedObject(self, &AssociatedKeys.interposeObject) as? Interpose }
         set { objc_setAssociatedObject(self, &AssociatedKeys.interposeObject, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
+
+    /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
+    @discardableResult public func hook<MethodSignature, HookSignature> (
+        _ selector: Selector,
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSignature.Type = HookSignature.self,
+       _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
+
+        if let klass = self as? AnyClass {
+            return try Interpose.ClassHook(class: klass, selector: selector, implementation: implementation).apply()
+        } else {
+            return try Interpose.ObjectHook(object: self, selector: selector, implementation: implementation).apply()
+        }
+    }
 }
 
 /// Interpose is a modern library to swizzle elegantly in Swift.
