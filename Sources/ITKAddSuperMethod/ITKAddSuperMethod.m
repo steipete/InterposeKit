@@ -29,6 +29,7 @@ static IMP ITKGetTrampolineForTypeEncoding(__unused const char *typeEncoding) {
     // Unknown architecture
     // https://devblogs.microsoft.com/xamarin/apple-new-processor-architecture/
     // watchOS uses arm64_32 since series 4, before armv7k. watch Simulator uses i386.
+    // See ILP32: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dai0490a/ar01s01.html
     #endif
 
     return requiresStructDispatch ? msgSendSuperStretTrampoline : msgSendSuperTrampoline;
