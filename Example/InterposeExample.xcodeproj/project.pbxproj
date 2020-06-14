@@ -15,10 +15,6 @@
 		7880B12D248280B500AD2251 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12C248280B500AD2251 /* Assets.xcassets */; };
 		7880B130248280B500AD2251 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7880B12E248280B500AD2251 /* LaunchScreen.storyboard */; };
 		78C39DDC2483363300B46395 /* InterposeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 78C39DDB2483363300B46395 /* InterposeKit */; };
-		78C39DE22483366B00B46395 /* Defaults-Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DDE2483366B00B46395 /* Defaults-Release.xcconfig */; };
-		78C39DE32483366B00B46395 /* Defaults-Testing.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DDF2483366B00B46395 /* Defaults-Testing.xcconfig */; };
-		78C39DE42483366B00B46395 /* Defaults.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DE02483366B00B46395 /* Defaults.xcconfig */; };
-		78C39DE52483366B00B46395 /* Defaults-Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 78C39DE12483366B00B46395 /* Defaults-Debug.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -183,7 +179,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1160;
 				ORGANIZATIONNAME = "PSPDFKit GmbH";
 				TargetAttributes = {
 					7880B11F248280B300AD2251 = {
@@ -223,10 +219,6 @@
 			files = (
 				7880B130248280B500AD2251 /* LaunchScreen.storyboard in Resources */,
 				7880B12D248280B500AD2251 /* Assets.xcassets in Resources */,
-				78C39DE22483366B00B46395 /* Defaults-Release.xcconfig in Resources */,
-				78C39DE52483366B00B46395 /* Defaults-Debug.xcconfig in Resources */,
-				78C39DE32483366B00B46395 /* Defaults-Testing.xcconfig in Resources */,
-				78C39DE42483366B00B46395 /* Defaults.xcconfig in Resources */,
 				7880B12B248280B300AD2251 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
