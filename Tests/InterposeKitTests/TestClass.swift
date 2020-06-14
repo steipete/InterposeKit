@@ -14,6 +14,7 @@ extension CATransform3D: Equatable { }
 
 public extension CATransform3D {
 
+    // swiftlint:disable:next identifier_name
     func translated(x: CGFloat = 0, y: CGFloat = 0, z: CGFloat = 0) -> CATransform3D {
         return CATransform3DTranslate(self, x, y, z)
     }

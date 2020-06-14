@@ -91,16 +91,16 @@ extension Interpose {
             _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
         }
 
-        private lazy var addSuperImpl: @convention(c) (AnyClass, Selector) -> Bool = {
+        private lazy var addSuperImpl: @convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool = {
             let handle = dlopen(nil, RTLD_LAZY)
             let imp = dlsym(handle, "IKTAddSuperImplementationToClass")
-            return unsafeBitCast(imp, to: (@convention(c) (AnyClass, Selector) -> Bool).self)
+            return unsafeBitCast(imp, to: (@convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool).self)
         }()
 
         private func addSuperTrampolineMethod(subclass: AnyClass) {
-            if addSuperImpl(subclass, self.selector) == false {
-                // TODO: use error log!
-                Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]")
+            var error: NSError?
+            if addSuperImpl(subclass, self.selector, &error) == false {
+                Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]: \(error!)")
             } else {
                 let imp = class_getMethodImplementation(subclass, self.selector)!
                 Interpose.log("Added super for -[\(`class`).\(selector)]: \(imp)")
@@ -139,8 +139,8 @@ extension Interpose {
             var methodCount : CUnsignedInt = 0
             guard let methodsInAClass = class_copyMethodList(klass, &methodCount) else { return false }
             defer { free(methodsInAClass) }
-            for i in 0 ..< Int(methodCount) {
-                let method = methodsInAClass[i]
+            for index in 0 ..< Int(methodCount) {
+                let method = methodsInAClass[index]
                 if method_getName(method) == selector {
                     return true
                 }
