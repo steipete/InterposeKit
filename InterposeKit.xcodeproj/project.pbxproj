@@ -207,9 +207,9 @@
 				78C39D922483169300B46395 /* InterposeKitTests.swift */,
 				78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */,
 				78C5A4A72494D75100EE9756 /* MultipleInterposing.swift */,
-				78C39D7B2482CC7D00B46395 /* Info-Tests.plist */,
 				78A2F264249635B100F5AC5F /* KVOTests.swift */,
 				78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */,
+				78C39D7B2482CC7D00B46395 /* Info-Tests.plist */,
 			);
 			path = InterposeTests;
 			sourceTree = "<group>";
@@ -316,7 +316,6 @@
 					78C39D762482CC7D00B46395 = {
 						CreatedOnToolsVersion = 11.5;
 						LastSwiftMigration = 1150;
-						TestTargetID = 781095A4248D6DFB008A943C;
 					};
 				};
 			};
@@ -666,7 +665,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
@@ -683,7 +681,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InterposeTestHost.app/InterposeTestHost";
 			};
 			name = Debug;
 		};
@@ -691,7 +688,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
@@ -707,7 +703,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InterposeTestHost.app/InterposeTestHost";
 			};
 			name = Release;
 		};

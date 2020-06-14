@@ -8,13 +8,14 @@ class InterposeKitTestCase: XCTestCase {
 }
 
 extension InterposeKitTestCase {
-    // https://www.swiftbysundell.com/articles/testing-error-code-paths-in-swift/
+    /// Assert that a specific error is thrown.
     func assert<T, E: Error & Equatable>(
         _ expression: @autoclosure () throws -> T,
         throws error: E,
         in file: StaticString = #file,
         line: UInt = #line
     ) {
+        // https://www.swiftbysundell.com/articles/testing-error-code-paths-in-swift/
         var thrownError: Error?
 
         XCTAssertThrowsError(try expression(),
