@@ -214,7 +214,7 @@ extension Interpose {
                 Interpose.log("Reset of -[\(`class`).\(selector)] not supported. No Original IMP")
             }
 
-            // TODO: remove class pair!
+            // FUTURE: remove class pair!
             // This might fail if we get KVO observed.
             // objc_disposeClassPair does not return a bool but logs if it fails.
             //
