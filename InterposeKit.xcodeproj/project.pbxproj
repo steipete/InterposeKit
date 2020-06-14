@@ -20,6 +20,7 @@
 		78A2F26724964AF200F5AC5F /* InterposeKitTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */; };
 		78A2F26B24967DB500F5AC5F /* ITKSuperBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F26924967DB500F5AC5F /* ITKSuperBuilder.m */; };
 		78A2F26C24967DB500F5AC5F /* ITKSuperBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 78A2F26A24967DB500F5AC5F /* ITKSuperBuilder.h */; };
+		78A2F26E2496B54B00F5AC5F /* InterposeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F26D2496B54B00F5AC5F /* InterposeError.swift */; };
 		78C39D7C2482CC7D00B46395 /* InterposeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; };
 		78C39D8F2483164500B46395 /* InterposeKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 78C39D8E2483164500B46395 /* InterposeKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78C39D912483165600B46395 /* InterposeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D902483165600B46395 /* InterposeKit.swift */; };
@@ -80,6 +81,7 @@
 		78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InterposeKitTestCase.swift; path = Tests/InterposeKitTests/InterposeKitTestCase.swift; sourceTree = SOURCE_ROOT; };
 		78A2F26924967DB500F5AC5F /* ITKSuperBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITKSuperBuilder.m; sourceTree = "<group>"; };
 		78A2F26A24967DB500F5AC5F /* ITKSuperBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITKSuperBuilder.h; sourceTree = "<group>"; };
+		78A2F26D2496B54B00F5AC5F /* InterposeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InterposeError.swift; path = Tests/InterposeKitTests/InterposeError.swift; sourceTree = SOURCE_ROOT; };
 		78C39D772482CC7D00B46395 /* InterposeKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterposeKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C39D7B2482CC7D00B46395 /* Info-Tests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "Info-Tests.plist"; path = "InterposeKit.xcodeproj/Info-Tests.plist"; sourceTree = "<group>"; };
 		78C39D8E2483164500B46395 /* InterposeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterposeKit.h; path = Sources/InterposeKit/InterposeKit.h; sourceTree = SOURCE_ROOT; };
@@ -174,6 +176,7 @@
 				78863ECA2464B2F900BA3762 /* Info.plist */,
 				78C39D8E2483164500B46395 /* InterposeKit.h */,
 				78C39D902483165600B46395 /* InterposeKit.swift */,
+				78A2F26D2496B54B00F5AC5F /* InterposeError.swift */,
 				78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */,
 				7810959D248D43DC008A943C /* ClassHook.swift */,
 				78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */,
@@ -374,6 +377,7 @@
 			files = (
 				781095A0248D50C1008A943C /* Watcher.swift in Sources */,
 				78A2F26B24967DB500F5AC5F /* ITKSuperBuilder.m in Sources */,
+				78A2F26E2496B54B00F5AC5F /* InterposeError.swift in Sources */,
 				7810959E248D43DC008A943C /* ClassHook.swift in Sources */,
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
 				78EDB8FF248D0A9900D2F6C1 /* ObjectHook.swift in Sources */,
