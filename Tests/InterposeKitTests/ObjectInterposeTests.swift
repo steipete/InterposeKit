@@ -48,24 +48,23 @@ final class ObjectInterposeTests: InterposeKitTestCase {
         XCTAssertEqual(testObj.returnInt(), returnIntDefault)
 
         // Functions need to be `@objc dynamic` to be hookable.
-        let interposer = try Interpose(testObj) {
-            try $0.hook(#selector(TestClass.returnInt)) { (store: TypedHook<@convention(c) (AnyObject, Selector) -> Int, @convention(block) (AnyObject) -> Int>) in {
+        let hook = try testObj.hook(#selector(TestClass.returnInt)) { (store: TypedHook<@convention(c) (AnyObject, Selector) -> Int, @convention(block) (AnyObject) -> Int>) in {
 
-                // You're free to skip calling the original implementation.
-                let int = store.original($0, store.selector)
-                return int + returnIntOverrideOffset
-                }
+            // You're free to skip calling the original implementation.
+            let int = store.original($0, store.selector)
+            return int + returnIntOverrideOffset
             }
         }
+
         XCTAssertEqual(testObj.returnInt(), returnIntDefault + returnIntOverrideOffset)
-        try interposer.revert()
+        try hook.revert()
         XCTAssertEqual(testObj.returnInt(), returnIntDefault)
-        try interposer.apply()
+        try hook.apply()
         // ensure we really don't leak into another object
         let testObj2 = TestClass()
         XCTAssertEqual(testObj2.returnInt(), returnIntDefault)
         XCTAssertEqual(testObj.returnInt(), returnIntDefault + returnIntOverrideOffset)
-        try interposer.revert()
+        try hook.revert()
         XCTAssertEqual(testObj.returnInt(), returnIntDefault)
     }
 
