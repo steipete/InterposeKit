@@ -36,11 +36,9 @@ let interposer = try Interpose(TestClass.self) {
         methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
         hookSignature: (@convention(block) (AnyObject) -> String).self) {
             store in { `self` in
-            
                 print("Before Interposing \(`self`)")
                 let string = store.original(`self`, store.selector) // free to skip
                 print("After Interposing \(`self`)")
-
                 return string + "and Interpose"
             }
     }
