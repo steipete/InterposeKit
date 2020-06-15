@@ -52,7 +52,7 @@ interposer.revert()
 
 Want to hook just a single instance? No problem!
 
-```
+```swift
 let hook = try testObj.hook(
     #selector(TestClass.sayHi),
     methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
