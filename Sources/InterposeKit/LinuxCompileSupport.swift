@@ -11,10 +11,15 @@ public struct Selector {
 public struct IMP: Equatable {}
 /// :nodoc: Method
 public struct Method {}
-func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector() }
+func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector("") }
 func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
+func class_getMethodImplementation(_ cls: AnyClass?, _ name: Selector) -> IMP? { return nil }
 // swiftlint:disable:next line_length
 func class_replaceMethod(_ cls: AnyClass?, _ name: Selector, _ imp: IMP, _ types: UnsafePointer<Int8>?) -> IMP? { IMP() }
+func class_addMethod(_ cls: AnyClass?, _ name: Selector, _ imp: IMP, _ types: UnsafePointer<Int8>?) -> Bool { return false }
+func class_copyMethodList(_ cls: AnyClass?, _ outCount: UnsafeMutablePointer<UInt32>?) -> UnsafeMutablePointer<Method>? { return nil }
+func object_getClass(_ obj: Any?) -> AnyClass? { return nil }
+func class_getSuperclass(_ cls: AnyClass?) -> AnyClass? { return nil }
 // swiftlint:disable:next identifier_name
 func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
 // swiftlint:disable:next identifier_name
@@ -23,13 +28,13 @@ func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
 func imp_getBlock(_ anImp: IMP) -> Any? { return nil }
 func imp_removeBlock(_ anImp: IMP) -> Bool { false }
 class NSError : NSObject {}
-public typealias NSErrorPointer = AutoreleasingUnsafeMutablePointer<NSError?>?
+typealias NSErrorPointer = AutoreleasingUnsafeMutablePointer<NSError?>?
 extension NSObject {
     open func value(forKey key: String) -> Any?
 }
 /// :nodoc: objc_AssociationPolicy
 // swiftlint:disable:next type_name
-public enum objc_AssociationPolicy : UInt {
+enum objc_AssociationPolicy : UInt {
     // swiftlint:disable:next identifier_name
     case OBJC_ASSOCIATION_ASSIGN = 0
     // swiftlint:disable:next identifier_name
@@ -43,4 +48,5 @@ public enum objc_AssociationPolicy : UInt {
 }
 public func objc_setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer, _ value: Any?, _ policy: objc_AssociationPolicy) {}
 public func objc_getAssociatedObject(_ object: Any, _ key: UnsafeRawPointer) -> Any? { return nil }
+struct AutoreleasingUnsafeMutablePointer<Pointee> {}
 #endif
