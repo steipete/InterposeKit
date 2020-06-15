@@ -22,7 +22,6 @@ final class KVOTests: InterposeKitTestCase {
         }
     }
 
-
     func testBasicKVO() throws {
         let testObj = TestClass()
 
@@ -38,19 +37,18 @@ final class KVOTests: InterposeKitTestCase {
         }
 
         // Hook without KVO!
-        let interpose = try Interpose(testObj) {
-            try $0.hook(#selector(getter: TestClass.age),
-                        methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
-                        hookSignature: (@convention(block) (AnyObject) -> Int).self) {
-                            store in { `self` in
-                                return 3
-                            }
-            }
+        let hook = try testObj.hook(
+            #selector(getter: TestClass.age),
+            methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
+            hookSignature: (@convention(block) (AnyObject) -> Int).self) {
+                store in { `self` in
+                    return 3
+                }
         }
         XCTAssertEqual(testObj.age, 3)
-        try interpose.revert()
+        try hook.revert()
         XCTAssertEqual(testObj.age, 2)
-        try interpose.apply()
+        try hook.apply()
         XCTAssertEqual(testObj.age, 3)
 
         // Now we KVO after hooking!
