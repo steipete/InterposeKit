@@ -37,7 +37,7 @@ func objc_getClass(_: UnsafePointer<Int8>!) -> Any! { return nil }
 func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
 func imp_getBlock(_ anImp: IMP) -> Any? { return nil }
 @discardableResult func imp_removeBlock(_ anImp: IMP) -> Bool { false }
-class NSError: NSObject {}
+@objc class NSError: NSObject {}
 // AutoreleasingUnsafeMutablePointer is not available on Linux.
 typealias NSErrorPointer = UnsafeMutablePointer<NSError?>?
 extension NSObject {
