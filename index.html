@@ -140,11 +140,9 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
         <span class="nv">methodSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
         <span class="nv">hookSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">store</span> <span class="k">in</span> <span class="p">{</span> <span class="p">`</span><span class="nv">self</span><span class="p">`</span> <span class="k">in</span>
-
                 <span class="nf">print</span><span class="p">(</span><span class="s">"Before Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
                 <span class="k">let</span> <span class="nv">string</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="nf">original</span><span class="p">(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span> <span class="c1">// free to skip</span>
                 <span class="nf">print</span><span class="p">(</span><span class="s">"After Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
-
                 <span class="k">return</span> <span class="n">string</span> <span class="o">+</span> <span class="s">"and Interpose"</span>
             <span class="p">}</span>
     <span class="p">}</span>
@@ -155,13 +153,13 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
 </code></pre>
 
 <p>Want to hook just a single instance? No problem!</p>
-<pre class="highlight plaintext"><code>let hook = try testObj.hook(
-    #selector(TestClass.sayHi),
-    methodSignature: (@convention(c) (AnyObject, Selector) -&gt; String).self,
-    hookSignature:(@convention(block) (AnyObject) -&gt; String).self) { store in { `self` in
-        return store.original(`self`, store.selector) + "just this instance"
-        }
-}
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">hook</span> <span class="o">=</span> <span class="k">try</span> <span class="n">testObj</span><span class="o">.</span><span class="nf">hook</span><span class="p">(</span>
+    <span class="cp">#selector(TestClass.sayHi),</span>
+    <span class="nv">methodSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
+    <span class="nv">hookSignature</span><span class="p">:(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span> <span class="n">store</span> <span class="k">in</span> <span class="p">{</span> <span class="p">`</span><span class="nv">self</span><span class="p">`</span> <span class="k">in</span>
+        <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="nf">original</span><span class="p">(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span> <span class="o">+</span> <span class="s">"just this instance"</span>
+        <span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>Here&rsquo;s what we get when calling <code>print(TestClass().sayHi())</code></p>
