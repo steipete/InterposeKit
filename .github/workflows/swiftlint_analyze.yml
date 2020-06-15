@@ -8,12 +8,16 @@ on:
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
+      - '!Tests/**/*.swift'
+      - '!Tests/LinuxMain.swift'
   pull_request:
     paths:
       - '.github/workflows/swiftlint_analyze.yml'
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
+      - '!Tests/**/*.swift'
+      - '!Tests/LinuxMain.swift'
 
 jobs:
   Analyze:
