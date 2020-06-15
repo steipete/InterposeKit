@@ -22,7 +22,6 @@ Compare: [Swizzling a property without helper and with InterposeKit](https://gis
 Let's say you want to amend `sayHi` from `TestClass`:
 
 ```swift
-
 class TestClass: NSObject {
     // Functions need to be marked as `@objc dynamic` or written in Objective-C.
     @objc dynamic func sayHi() -> String {
@@ -37,10 +36,9 @@ let interposer = try Interpose(TestClass.self) {
         methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
         hookSignature: (@convention(block) (AnyObject) -> String).self) {
             store in { `self` in
-
-                // You're free to skip calling the original implementation.
+            
                 print("Before Interposing \(`self`)")
-                let string = store.original(`self`, store.selector)
+                let string = store.original(`self`, store.selector) // free to skip
                 print("After Interposing \(`self`)")
 
                 return string + "and Interpose"
@@ -50,8 +48,11 @@ let interposer = try Interpose(TestClass.self) {
 
 // Don't need the hook anymore? Undo is built-in!
 interposer.revert()
+```
 
-// Want to hook just a single instance? No problem!
+Want to hook just a single instance? No problem!
+
+```
 let hook = try testObj.hook(
     #selector(TestClass.sayHi),
     methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
