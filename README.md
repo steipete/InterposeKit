@@ -170,6 +170,7 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
 - Experiment with [Swift function hooking](https://github.com/rodionovd/SWRoute/wiki/Function-hooking-in-Swift)? ⚡️
 - Test against Swift Nightly as Cron Job
+- Switch to Trampolines to manage cases where other code overrides super, so we end up with a super call that's [not on top of the class hierarchy](https://github.com/steipete/InterposeKit/pull/15#discussion_r439871752).
 - I'm sure there's more - Pull Requests or [comments](https://twitter.com/steipete) very welcome!
 
 Make this happen:
