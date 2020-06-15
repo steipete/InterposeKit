@@ -133,7 +133,7 @@ try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
 Naming it Interpose was the plan, but then [SR-898](https://bugs.swift.org/browse/SR-898) came. While having a class with the same name as the module works [in most cases](https://forums.swift.org/t/frameworkname-is-not-a-member-type-of-frameworkname-errors-inside-swiftinterface/28962), [this breaks](https://twitter.com/BalestraPatrick/status/1260928023357878273) when you enable build-for-distribution. There's some [discussion](https://forums.swift.org/t/pitch-fully-qualified-name-syntax/28482/81) to get that fixed, but this will be more towards end of 2020, if even.
 
 ### I want to hook into Swift! You made another ObjC swizzle thingy, why?
-UIKit and AppKit won't go away, and the bugs won't go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that's a separate (and much more difficult!) project.
+UIKit and AppKit won't go away, and the bugs won't go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that's a separate (and much more difficult!) project. (See [Dynamic function replacement #20333](https://github.com/apple/swift/pull/20333) aka `@_dynamicReplacement` for details.)
 
 ### Can I ship this?
 Yes, absolutely. The goal for this one project is a simple library that doesn't try to be too smart. I did this in [Aspects](https://github.com/steipete/Aspects) and while I loved this to no end, it's problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don't have to worry about conditions like "We added New Relic to our app and now [your thing crashes](https://github.com/steipete/Aspects/issues/21)".
@@ -162,7 +162,10 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 
 - Write proposal to allow to [convert the calling convention of existing types](https://twitter.com/steipete/status/1266799174563041282?s=21).
 - Use the C block struct to perform type checking between Method type and C type (I do that in  [Aspects library](https://github.com/steipete/Aspects)), it's still a runtime crash but could be at hook time, not when we call it.
-- Add object-based hooking with dynamic subclassing (Aspects again)
+- Add a way to get all current hooks from an object/class.
+- Add a way to revert hooks without super helper.
+- Add a way to apply multiple hooks to classes
+- Enable hooking of class methods.
 - Add [dyld_dynamic_interpose](https://twitter.com/steipete/status/1258482647933870080) to hook pure C functions
 - Combine Promise-API for `Interpose.whenAvailable` for better error bubbling.
 - Experiment with [Swift function hooking](https://github.com/rodionovd/SWRoute/wiki/Function-hooking-in-Swift)? ⚡️
