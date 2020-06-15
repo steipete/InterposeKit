@@ -33,6 +33,14 @@ extension Interpose {
         }
     }
 
+    private static func isSupportedArchitectureForSuper() -> Bool {
+        #if os(Linux)
+        return false
+        #else
+        return NSClassFromString("SuperBuilder")?.value(forKey: "isSupportedArchitecure") as? Bool ?? false
+        #endif
+    }
+
     /// A hook to an instance method of a single object, stores both the original and new implementation.
     /// Think about: Multiple hooks for one object
     final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
@@ -41,7 +49,7 @@ extension Interpose {
         var dynamicSubclass: AnyClass?
 
         // Logic switch to use super builder
-        let generatesSuperIMP = NSClassFromString("SuperBuilder")?.value(forKey: "isSupportedArchitecure") as? Bool ?? false
+        let generatesSuperIMP = isSupportedArchitectureForSuper()
 
         /// Initialize a new hook to interpose an instance method.
         public init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
