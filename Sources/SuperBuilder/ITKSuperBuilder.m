@@ -33,7 +33,7 @@ static IMP ITKGetTrampolineForTypeEncoding(__unused const char *typeEncoding) {
     // See ILP32: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dai0490a/ar01s01.html
     #endif
 
-    return requiresStructDispatch ? msgSendSuperStretTrampoline : msgSendSuperTrampoline;
+    return requiresStructDispatch ? (IMP)msgSendSuperStretTrampoline : (IMP)msgSendSuperTrampoline;
 }
 
 // Helper for binding with Swift
@@ -109,7 +109,7 @@ _Thread_local struct objc_super _threadSuperStorage;
 
 static BOOL ITKMethodIsSuperTrampoline(Method method) {
     let methodIMP = method_getImplementation(method);
-    return methodIMP == msgSendSuperTrampoline || methodIMP == msgSendSuperStretTrampoline;
+    return methodIMP == (IMP)msgSendSuperTrampoline || methodIMP == (IMP)msgSendSuperStretTrampoline;
 }
 
 struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd);
