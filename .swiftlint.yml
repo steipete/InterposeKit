@@ -2,8 +2,6 @@ included:
   - Sources
   - Tests
 analyzer_rules:
-  - unused_import
-  - unused_declaration
 line_length: 120
 identifier_name:
   excluded:

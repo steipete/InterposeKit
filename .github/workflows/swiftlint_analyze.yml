@@ -8,7 +8,7 @@ on:
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
-      - 'Tests/**/*.swift'
+      - '!Tests/**/*.swift'
       - '!Tests/LinuxMain.swift'
   pull_request:
     paths:
@@ -16,7 +16,7 @@ on:
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
-      - 'Tests/**/*.swift'
+      - '!Tests/**/*.swift'
       - '!Tests/LinuxMain.swift'
 
 jobs:

@@ -1,5 +1,4 @@
-// swift-tools-version:5.2
-
+// swift-tools-version:5.0
 import PackageDescription
 
 let package = Package(
@@ -11,18 +10,11 @@ let package = Package(
        .watchOS(.v5)
      ],
     products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
-        .library(
-            name: "InterposeKit",
-            targets: ["InterposeKit"]),
+        .library(name: "InterposeKit", targets: ["InterposeKit"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
-        .target(
-            name: "InterposeKit"),
-        .testTarget(
-            name: "InterposeKitTests",
-            dependencies: ["InterposeKit"]),
+        .target(name: "SuperBuilder"),
+        .target(name: "InterposeKit", dependencies: ["SuperBuilder"]),
+        .testTarget(name: "InterposeKitTests", dependencies: ["InterposeKit"]),
     ]
 )

@@ -31,16 +31,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 private func fixMacCatalystInputSystemSessionRace() {
     do {
         try Interpose.whenAvailable(["RTIInput", "SystemSession"]) {
-            let lock = DispatchQueue(label: "com.steipete.document-state-hack")
-            try $0.hook("documentState", { store in { `self` in
-                lock.sync {
-                    store((@convention(c) (AnyObject, Selector) -> AnyObject).self)(`self`, store.selector)
-                }} as @convention(block) (AnyObject) -> AnyObject})
 
-            try $0.hook("setDocumentState:", { store in { `self`, newValue in
-                lock.sync {
-                    store((@convention(c) (AnyObject, Selector, AnyObject) -> Void).self)(`self`, store.selector, newValue)
-                }} as @convention(block) (AnyObject, AnyObject) -> Void})
+            let lock = DispatchQueue(label: "com.steipete.document-state-hack")
+
+            try $0.hook("documentState") { (store: TypedHook<@convention(c) (AnyObject, Selector) -> AnyObject, @convention(block) (AnyObject) -> AnyObject>) in { `self` in
+                lock.sync { store.original(`self`, store.selector) }
+                }
+            }
+
+            try $0.hook("setDocumentState:") { (store: TypedHook<@convention(c) (AnyObject, Selector, AnyObject) -> Void, @convention(block) (AnyObject, AnyObject) -> Void>) in { `self`, newValue in
+                lock.sync { store.original(`self`, store.selector, newValue) }
+                }
+            }
         }
     } catch {
         print("Failed to fix input system: \(error).")
