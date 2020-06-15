@@ -1,16 +1,6 @@
 import Foundation
 
-struct AssociatedKeys {
-    static var interposeObject: UInt8 = 0
-}
-
 extension NSObject {
-    /// Access an existing Interpose container, if available.
-    var interpose: Interpose? {
-        get { objc_getAssociatedObject(self, &AssociatedKeys.interposeObject) as? Interpose }
-        set { objc_setAssociatedObject(self, &AssociatedKeys.interposeObject, newValue, .OBJC_ASSOCIATION_RETAIN) }
-    }
-
     /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
     @discardableResult public func hook<MethodSignature, HookSignature> (
         _ selector: Selector,
@@ -23,6 +13,15 @@ extension NSObject {
         } else {
             return try Interpose.ObjectHook(object: self, selector: selector, implementation: implementation).apply()
         }
+    }
+
+    /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
+    @discardableResult public class func hook<MethodSignature, HookSignature> (
+        _ selector: Selector,
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSignature.Type = HookSignature.self,
+       _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
+        return try Interpose.ClassHook(class: self as AnyClass, selector: selector, implementation: implementation).apply()
     }
 }
 
@@ -84,9 +83,6 @@ final public class Interpose {
         if let builder = builder {
             try apply(builder)
         }
-
-        // Store interpose on object
-        object.interpose = self
     }
 
     deinit {

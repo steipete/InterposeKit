@@ -25,17 +25,17 @@ final class MultipleInterposingTests: InterposeKitTestCase {
         XCTAssertEqual(testObj.sayHi(), testClassHi + testString)
         XCTAssertEqual(testObj2.sayHi(), testClassHi)
 
-        try testObj.interpose!.hook(
+        try testObj.hook(
             #selector(TestClass.sayHi),
             methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
             hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { `self` in
                 return store.original(`self`, store.selector) + testString2
                 }
-        }.apply()
+        }
 
         XCTAssertEqual(testObj.sayHi(), testClassHi + testString + testString2)
         try interposer.revert()
-        XCTAssertEqual(testObj.sayHi(), testClassHi)
+        XCTAssertEqual(testObj.sayHi(), testClassHi + testString2)
     }
 
     func testInterposeAgeAndRevert() throws {
