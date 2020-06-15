@@ -24,11 +24,14 @@ func class_getSuperclass(_ cls: AnyClass?) -> AnyClass? { return nil }
 func method_getTypeEncoding(_ m: Method) -> UnsafePointer<Int8>? { return nil }
 // swiftlint:disable:next identifier_name
 func _dyld_register_func_for_add_image(_ func: (@convention(c) (UnsafePointer<Int8>?, Int) -> Void)!) {}
+func objc_allocateClassPair(_ superclass: AnyClass?, _ name: UnsafePointer<Int8>, _ extraBytes: Int) -> AnyClass? { return nil }
+func objc_registerClassPair(_ cls: AnyClass) {}
 func imp_implementationWithBlock(_ block: Any) -> IMP { IMP() }
 func imp_getBlock(_ anImp: IMP) -> Any? { return nil }
 func imp_removeBlock(_ anImp: IMP) -> Bool { false }
 class NSError : NSObject {}
-typealias NSErrorPointer = AutoreleasingUnsafeMutablePointer<NSError?>?
+// AutoreleasingUnsafeMutablePointer is not available on Linux.
+typealias NSErrorPointer = UnsafeMutablePointer<NSError?>?
 extension NSObject {
     open func value(forKey key: String) -> Any?
 }
@@ -48,5 +51,4 @@ enum objc_AssociationPolicy : UInt {
 }
 public func objc_setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer, _ value: Any?, _ policy: objc_AssociationPolicy) {}
 public func objc_getAssociatedObject(_ object: Any, _ key: UnsafeRawPointer) -> Any? { return nil }
-struct AutoreleasingUnsafeMutablePointer<Pointee> {}
 #endif
