@@ -22,13 +22,13 @@ extension Interpose {
         static var hookForBlock: UInt8 = 0
     }
 
-    public class WeakObjectContainer<T: AnyObject>: NSObject {
+    class WeakObjectContainer<T: AnyObject>: NSObject {
         private weak var _object: T?
 
-        public var object: T? {
+        var object: T? {
             return _object
         }
-        public init(with object: T?) {
+        init(with object: T?) {
             _object = object
         }
     }
@@ -44,7 +44,10 @@ extension Interpose {
     /// A hook to an instance method of a single object, stores both the original and new implementation.
     /// Think about: Multiple hooks for one object
     final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
+
+        /// The object that is being hooked.
         public let object: AnyObject
+
         /// Subclass that we create on the fly
         var dynamicSubclass: AnyClass?
 
@@ -160,8 +163,7 @@ extension Interpose {
         private func addSuperTrampolineMethod(subclass: AnyClass) { }
         #endif
 
-
-        /// The original implementation is looked up at runtime .
+        /// The original implementation of the hook. Might be looked up at runtime. Do not cache this.
         public override var original: MethodSignature {
             // If we switched implementations, return stored.
             if let savedOrigIMP = origIMP {

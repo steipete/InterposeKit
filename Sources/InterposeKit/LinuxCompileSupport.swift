@@ -41,6 +41,7 @@ func imp_getBlock(_ anImp: IMP) -> Any? { return nil }
 // AutoreleasingUnsafeMutablePointer is not available on Linux.
 typealias NSErrorPointer = UnsafeMutablePointer<NSError?>?
 extension NSObject {
+    /// :nodoc: value
     open func value(forKey key: String) -> Any? { return nil }
 }
 /// :nodoc: objc_AssociationPolicy

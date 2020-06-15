@@ -1,15 +1,21 @@
 import Foundation
 
+/// Base class, represents a hook to exactly one method.
 public class AnyHook {
+    /// The class this hook is based on.
     public let `class`: AnyClass
+
+    /// The selector this hook interposes.
     public let selector: Selector
+
+    /// The current state of the hook.
     public internal(set) var state = State.prepared
 
     // else we validate init order
-    public internal(set) var replacementIMP: IMP!
+    var replacementIMP: IMP!
 
     // fetched at apply time, changes late, thus class requirement
-    public internal(set) var origIMP: IMP?
+    var origIMP: IMP?
     
     /// The possible task states
     public enum State: Equatable {
@@ -50,10 +56,6 @@ public class AnyHook {
         try execute(newState: .prepared) { try resetImplementation() }
         return self
     }
-
-    public func callAsFunction<U>(_ type: U.Type) -> U {
-        unsafeBitCast(origIMP, to: type)
-    }
     
     /// Validate that the selector exists on the active class.
     @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
@@ -86,7 +88,9 @@ public class AnyHook {
     }
 }
 
+/// Hook baseclass with generic signatures.
 public class TypedHook<MethodSignature, HookSignature>: AnyHook {
+    /// The original implementation of the hook. Might be looked up at runtime. Do not cache this.
     public var original: MethodSignature {
         preconditionFailure("Always override")
     }
