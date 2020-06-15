@@ -130,12 +130,14 @@ extension Interpose {
         }
 
         private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
+            #if !os(Linux) // crashes on linux
             let getClass: @convention(block) (UnsafeRawPointer?) -> AnyClass = { _ in
                 perceivedClass
             }
             let impl = imp_implementationWithBlock(getClass as Any)
             _ = class_replaceMethod(`class`, ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
             _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
+            #endif
         }
 
         #if !os(Linux)
