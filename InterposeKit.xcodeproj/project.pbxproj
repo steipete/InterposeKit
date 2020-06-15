@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		780FC9FA249822C900DA5A14 /* HookFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780FC9F9249822C900DA5A14 /* HookFinder.swift */; };
 		7810959E248D43DC008A943C /* ClassHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959D248D43DC008A943C /* ClassHook.swift */; };
 		781095A0248D50C1008A943C /* Watcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959F248D50C1008A943C /* Watcher.swift */; };
 		781095A8248D6DFB008A943C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095A7248D6DFB008A943C /* AppDelegate.swift */; };
@@ -66,6 +67,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		780FC9F9249822C900DA5A14 /* HookFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HookFinder.swift; path = Sources/InterposeKit/HookFinder.swift; sourceTree = SOURCE_ROOT; };
 		7810959D248D43DC008A943C /* ClassHook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClassHook.swift; path = Sources/InterposeKit/ClassHook.swift; sourceTree = SOURCE_ROOT; };
 		7810959F248D50C1008A943C /* Watcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Watcher.swift; path = Sources/InterposeKit/Watcher.swift; sourceTree = SOURCE_ROOT; };
 		781095A5248D6DFB008A943C /* InterposeTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InterposeTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,6 +187,7 @@
 				78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */,
 				7810959F248D50C1008A943C /* Watcher.swift */,
 				78E20D9724981B2A0021552C /* InterposeSubclass.swift */,
+				780FC9F9249822C900DA5A14 /* HookFinder.swift */,
 			);
 			path = InterposeKit;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				780FC9FA249822C900DA5A14 /* HookFinder.swift in Sources */,
 				781095A0248D50C1008A943C /* Watcher.swift in Sources */,
 				78A2F26E2496B54B00F5AC5F /* InterposeError.swift in Sources */,
 				78E20D962497B3480021552C /* ITKSuperBuilder.m in Sources */,

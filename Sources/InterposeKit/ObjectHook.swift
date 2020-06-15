@@ -2,21 +2,6 @@ import Foundation
 
 extension Interpose {
 
-    struct AssociatedKeys {
-        static var hookForBlock: UInt8 = 0
-    }
-
-    class WeakObjectContainer<T: AnyObject>: NSObject {
-        private weak var _object: T?
-
-        var object: T? {
-            return _object
-        }
-        init(with object: T?) {
-            _object = object
-        }
-    }
-
     /// A hook to an instance method of a single object, stores both the original and new implementation.
     /// Think about: Multiple hooks for one object
     final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
@@ -41,15 +26,7 @@ extension Interpose {
             }
 
             // Weakly store reference to hook inside the block of the IMP.
-            objc_setAssociatedObject(block, &AssociatedKeys.hookForBlock, WeakObjectContainer(with: self), .OBJC_ASSOCIATION_RETAIN)
-        }
-
-        // Finds the hook to a given implementation.
-        private func hookForIMP(_ imp: IMP) -> ObjectHook<MethodSignature, HookSignature>? {
-            // Get the block that backs our IMP replacement
-            guard let block = imp_getBlock(imp) else { return nil }
-            let container = objc_getAssociatedObject(block, &AssociatedKeys.hookForBlock) as? WeakObjectContainer<ObjectHook<MethodSignature, HookSignature>>
-            return container?.object
+            Interpose.storeHook(hook: self, to: block)
         }
 
         //    /// Release the hook block if possible.
@@ -154,25 +131,6 @@ extension Interpose {
             }
         }
 
-        // Find the hook above us (not necessarily topmost)
-        private func findNextHook(_ topmostIMP: IMP) -> ObjectHook<MethodSignature, HookSignature>? {
-            // We are not topmost hook, so find the hook above us!
-            var impl: IMP? = topmostIMP
-            var currentHook: ObjectHook<MethodSignature, HookSignature>?
-            repeat {
-                // get topmost hook
-                let hook = hookForIMP(impl!)
-                if hook === self {
-                    // return parent
-                    return currentHook
-                }
-                // crawl down the chain until we find ourselves
-                currentHook = hook
-                impl = hook?.origIMP
-            } while impl != nil
-            return nil
-        }
-
         override func resetImplementation() throws {
             let method = try validate(expectedState: .interposed)
 
@@ -197,7 +155,7 @@ extension Interpose {
                 guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(dynamicSubclass, selector, previousIMP) }
                 Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
             } else {
-                let nextHook = findNextHook(currentIMP)
+                let nextHook = Interpose.findNextHook(selfHook: self, topmostIMP: currentIMP)
                 // Replace next's original IMP
                 nextHook?.origIMP = self.origIMP
             }
