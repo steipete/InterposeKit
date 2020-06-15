@@ -2,10 +2,10 @@ import Foundation
 
 // Linux is used to create Jazzy docs
 #if os(Linux)
-
 /// :nodoc: Selector
-public struct Selector {
-    init(_ name: String) {}
+public struct Selector: Equatable {
+    var name: String?
+    init(_ name: String) { self.name = name }
 }
 /// :nodoc: IMP
 public struct IMP: Equatable {}
@@ -20,7 +20,7 @@ func class_addMethod(_ cls: AnyClass?, _ name: Selector,
                      _ imp: IMP, _ types: UnsafePointer<Int8>?) -> Bool { return false }
 func class_copyMethodList(_ cls: AnyClass?, _ outCount: UnsafeMutablePointer<UInt32>?) -> UnsafeMutablePointer<Method>? { return nil }
 func object_getClass(_ obj: Any?) -> AnyClass? { return nil }
-func object_setClass(_ obj: Any?, _ cls: AnyClass) -> AnyClass? { return nil }
+@discardableResult func object_setClass(_ obj: Any?, _ cls: AnyClass) -> AnyClass? { return nil }
 func method_getName(_ method: Method) -> Selector { Selector("") }
 func class_getSuperclass(_ cls: AnyClass?) -> AnyClass? { return nil }
 // swiftlint:disable:next identifier_name
