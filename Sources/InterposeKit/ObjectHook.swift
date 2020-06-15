@@ -138,6 +138,7 @@ extension Interpose {
             _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
         }
 
+        #if !os(Linux)
         private lazy var addSuperImpl: @convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool = {
             let handle = dlopen(nil, RTLD_LAZY)
             let imp = dlsym(handle, "IKTAddSuperImplementationToClass")
@@ -153,6 +154,10 @@ extension Interpose {
                 Interpose.log("Added super for -[\(`class`).\(selector)]: \(imp)")
             }
         }
+        #else
+        private func addSuperTrampolineMethod(subclass: AnyClass) { }
+        #endif
+
 
         /// The original implementation is looked up at runtime .
         public override var original: MethodSignature {
