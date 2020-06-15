@@ -27,7 +27,8 @@ public enum InterposeError: LocalizedError {
     /// This usually happens when other swizzling libraries (like Aspects) also interfere with a class.
     /// While this might just work, it's not worth risking a crash, so similar to KVO this case is rejected.
     ///
-    /// @note Printing classes in Swift uses the class posing mechanism. Use `NSClassFromString` to get the correct name.
+    /// @note Printing classes in Swift uses the class posing mechanism.
+    /// Use `NSClassFromString` to get the correct name.
     case objectPosingAsDifferentClass(AnyObject, actualClass: AnyClass)
 
     /// Can't revert or apply if already done so.
@@ -61,7 +62,7 @@ extension InterposeError: Equatable {
         case .keyValueObservationDetected(let obj):
             return "Unable to hook object that uses Key Value Observing: \(obj)"
         case .objectPosingAsDifferentClass(let obj, let actualClass):
-            return "Unable to hook object posing as different class. Expected: \(type(of: obj)) Is: \(NSStringFromClass(actualClass))/"
+            return "Unable to hook \(type(of: obj)) posing as \(NSStringFromClass(actualClass))/"
         case .invalidState(let expectedState):
             return "Invalid State. Expected: \(expectedState)"
         case .resetUnsupported(let reason):

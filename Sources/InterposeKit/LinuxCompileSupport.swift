@@ -25,14 +25,20 @@ func imp_removeBlock(_ anImp: IMP) -> Bool { false }
 class NSError : NSObject {}
 public typealias NSErrorPointer = AutoreleasingUnsafeMutablePointer<NSError?>?
 extension NSObject {
-open func value(forKey key: String) -> Any?
+    open func value(forKey key: String) -> Any?
 }
 /// :nodoc: objc_AssociationPolicy
+// swiftlint:disable:next type_name
 public enum objc_AssociationPolicy : UInt {
+    // swiftlint:disable:next identifier_name
     case OBJC_ASSOCIATION_ASSIGN = 0
+    // swiftlint:disable:next identifier_name
     case OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1
+    // swiftlint:disable:next identifier_name
     case OBJC_ASSOCIATION_COPY_NONATOMIC = 3
+    // swiftlint:disable:next identifier_name
     case OBJC_ASSOCIATION_RETAIN = 769
+    // swiftlint:disable:next identifier_name
     case OBJC_ASSOCIATION_COPY = 771
 }
 public func objc_setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer, _ value: Any?, _ policy: objc_AssociationPolicy) {}
