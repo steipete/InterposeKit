@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>InterposeError Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Enum/InterposeError" class="dashAnchor"></a>
+
+    <a title="InterposeError Enumeration Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          InterposeKit 0.0.1 Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/steipete/InterposeKit">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="dash-feed://https%3A%2F%2Fpages%2Egithub%2Ecom%2Fsteipete%2Fdocsets%2FInterposeKit%2Exml">
+            <img class="header-icon" src="../img/dash.png"/>
+            Install in Dash
+          </a>
+        </p>
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">InterposeKit Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      InterposeError Enumeration Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AnyHook.html">AnyHook</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AnyHook/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose.html">Interpose</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose/ClassHook.html">– ClassHook</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose/ObjectHook.html">– ObjectHook</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">– Waiter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TypedHook.html">TypedHook</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/InterposeError.html">InterposeError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSObject.html">NSObject</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>InterposeError</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">InterposeError</span> <span class="p">:</span> <span class="kt">LocalizedError</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">InterposeError</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                </div>
+              </div>
+            <p>The list of errors while hooking a method.</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO14methodNotFoundyACyXlXp_AA8SelectorVtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/methodNotFound(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO14methodNotFoundyACyXlXp_AA8SelectorVtcACmF">methodNotFound(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The method couldn&rsquo;t be found. Usually happens for when you use stringified selectors that do not exist.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">methodNotFound</span><span class="p">(</span><span class="kt">AnyClass</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L6">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO25nonExistingImplementationyACyXlXp_AA8SelectorVtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/nonExistingImplementation(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO25nonExistingImplementationyACyXlXp_AA8SelectorVtcACmF">nonExistingImplementation(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The implementation could not be found. Class must be in a weird state for this to happen.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">nonExistingImplementation</span><span class="p">(</span><span class="kt">AnyClass</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L9">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO24unexpectedImplementationyACyXlXp_AA8SelectorVAA3IMPVSgtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/unexpectedImplementation(_:_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO24unexpectedImplementationyACyXlXp_AA8SelectorVAA3IMPVSgtcACmF">unexpectedImplementation(_:<wbr>_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Someone else changed the implementation; reverting removed this implementation.
+This is bad, likely someone else also hooked this method. If you are in such a codebase, do not use revert.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">unexpectedImplementation</span><span class="p">(</span><span class="kt">AnyClass</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">,</span> <span class="kt">IMP</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L13">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO25failedToAllocateClassPairyACyXlXp_SStcACmF"></a>
+                    <a name="//apple_ref/swift/Element/failedToAllocateClassPair(class:subclassName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO25failedToAllocateClassPairyACyXlXp_SStcACmF">failedToAllocateClassPair(class:<wbr>subclassName:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unable to register subclass for object-based interposing.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">failedToAllocateClassPair</span><span class="p">(</span><span class="nv">class</span><span class="p">:</span> <span class="kt">AnyClass</span><span class="p">,</span> <span class="nv">subclassName</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L16">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO17unableToAddMethodyACyXlXp_AA8SelectorVtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/unableToAddMethod(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO17unableToAddMethodyACyXlXp_AA8SelectorVtcACmF">unableToAddMethod(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unable to add method  for object-based interposing.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">unableToAddMethod</span><span class="p">(</span><span class="kt">AnyClass</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L19">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO27keyValueObservationDetectedyACyXlcACmF"></a>
+                    <a name="//apple_ref/swift/Element/keyValueObservationDetected(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO27keyValueObservationDetectedyACyXlcACmF">keyValueObservationDetected(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Object-based hooking does not work if an object is using KVO.
+The KVO mechanism also uses subclasses created at runtime but doesn&rsquo;t check for additional overrides.
+Adding a hook eventually crashes the KVO management code so we reject hooking altogether in this case.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">keyValueObservationDetected</span><span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L24">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO28objectPosingAsDifferentClassyACyXl_yXlXptcACmF"></a>
+                    <a name="//apple_ref/swift/Element/objectPosingAsDifferentClass(_:actualClass:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO28objectPosingAsDifferentClassyACyXl_yXlXptcACmF">objectPosingAsDifferentClass(_:<wbr>actualClass:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Object is lying about it&rsquo;s actual class metadata.
+This usually happens when other swizzling libraries (like Aspects) also interfere with a class.
+While this might just work, it&rsquo;s not worth risking a crash, so similar to KVO this case is rejected.</p>
+
+<p>@note Printing classes in Swift uses the class posing mechanism.
+Use <code>NSClassFromString</code> to get the correct name.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">objectPosingAsDifferentClass</span><span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="nv">actualClass</span><span class="p">:</span> <span class="kt">AnyClass</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L32">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO12invalidStateyAcA7AnyHookC0E0O_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidState(expectedState:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO12invalidStateyAcA7AnyHookC0E0O_tcACmF">invalidState(expectedState:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Can&rsquo;t revert or apply if already done so.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">invalidState</span><span class="p">(</span><span class="nv">expectedState</span><span class="p">:</span> <span class="kt"><a href="../Classes/AnyHook.html">AnyHook</a></span><span class="o">.</span><span class="kt">State</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L35">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO16resetUnsupportedyACSScACmF"></a>
+                    <a name="//apple_ref/swift/Element/resetUnsupported(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO16resetUnsupportedyACSScACmF">resetUnsupported(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unable to remove hook.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">resetUnsupported</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L38">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit0A5ErrorO07unknownC0yACSScACmF"></a>
+                    <a name="//apple_ref/swift/Element/unknownError(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit0A5ErrorO07unknownC0yACSScACmF">unknownError(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Generic failure</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">unknownError</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L41">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">InterposeError</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">InterposeError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L46-L48">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Foundation14LocalizedErrorP16errorDescriptionSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/errorDescription" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Foundation14LocalizedErrorP16errorDescriptionSSSgvp">errorDescription</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">errorDescription</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeError.swift#L50-L73">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>© 2020 <a class="link" href="https://steipete.com" target="_blank" rel="external">Peter Steinberger</a> under MIT.</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>

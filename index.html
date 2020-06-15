@@ -59,16 +59,41 @@
             <a class="nav-group-name-link" href="Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/AnyHook.html">AnyHook</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/AnyHook/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Interpose.html">Interpose</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/Interpose/Error.html">– Error</a>
+                <a class="nav-group-task-link" href="Classes/Interpose/ClassHook.html">– ClassHook</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/Interpose/Task.html">– Task</a>
+                <a class="nav-group-task-link" href="Classes/Interpose/ObjectHook.html">– ObjectHook</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">– Waiter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/TypedHook.html">TypedHook</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/InterposeError.html">InterposeError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/NSObject.html">NSObject</a>
               </li>
             </ul>
           </li>
@@ -90,7 +115,7 @@
 <!--
 [![codecov](https://codecov.io/gh/steipete/InterposeKit/branch/master/graph/badge.svg)](https://codecov.io/gh/steipete/InterposeKit) -->
 
-<p>InterposeKit is a modern library to swizzle elegantly in Swift. It is <a href="http://interposekit.com/">well-documented</a>, <a href="https://github.com/steipete/InterposeKit/actions?query=workflow%3ASwiftPM">tested</a>, written in &ldquo;pure&rdquo; Swift 5.2 and works on <code>@objc dynamic</code> Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was <a href="https://steipete.com/posts/mac-catalyst-crash-hunt/">a race condition in Mac Catalyst</a>, which required tricky swizzling to fix, I also wrote up  <a href="https://steipete.com/posts/interposekit/">implementation thoughts on my blog</a>.</p>
+<p>InterposeKit is a modern library to swizzle elegantly in Swift, supporting hooks on classes and individual objects. It is <a href="http://interposekit.com/">well-documented</a>, <a href="https://github.com/steipete/InterposeKit/actions?query=workflow%3ASwiftPM">tested</a>, written in &ldquo;pure&rdquo; Swift 5.2 and works on <code>@objc dynamic</code> Swift functions or Objective-C instance methods. The Inspiration for InterposeKit was <a href="https://steipete.com/posts/mac-catalyst-crash-hunt/">a race condition in Mac Catalyst</a>, which required tricky swizzling to fix, I also wrote up  <a href="https://steipete.com/posts/interposekit/">implementation thoughts on my blog</a>.</p>
 
 <p>Instead of <a href="https://nshipster.com/method-swizzling/">adding new methods and exchanging implementations</a> based on <a href="https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations"><code>method_exchangeImplementations</code></a>, this library replaces the implementation directly using <a href="https://developer.apple.com/documentation/objectivec/1418677-class_replacemethod"><code>class_replaceMethod</code></a>. This avoids some of <a href="https://pspdfkit.com/blog/2019/swizzling-in-swift/">the usual problems with swizzling</a>.</p>
 
@@ -111,25 +136,33 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
 <span class="p">}</span>
 
 <span class="k">let</span> <span class="nv">interposer</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">Interpose</span><span class="p">(</span><span class="kt">TestClass</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">try</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">hook</span><span class="p">(</span><span class="kd">#selector(</span><span class="nf">TestClass.sayHi</span><span class="kd">)</span><span class="p">,</span> <span class="p">{</span> <span class="n">store</span> <span class="k">in</span> <span class="p">{</span> <span class="p">`</span><span class="nv">self</span><span class="p">`</span> <span class="k">in</span>
+    <span class="k">try</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">hook</span><span class="p">(</span>
+        <span class="cp">#selector(TestClass.sayHi),</span>
+        <span class="nv">methodSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
+        <span class="nv">hookSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">store</span> <span class="k">in</span> <span class="p">{</span> <span class="p">`</span><span class="nv">self</span><span class="p">`</span> <span class="k">in</span>
 
-        <span class="nf">print</span><span class="p">(</span><span class="s">"Before Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+                <span class="c1">// You're free to skip calling the original implementation.</span>
+                <span class="nf">print</span><span class="p">(</span><span class="s">"Before Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+                <span class="k">let</span> <span class="nv">string</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="nf">original</span><span class="p">(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span>
+                <span class="nf">print</span><span class="p">(</span><span class="s">"After Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 
-        <span class="c1">// Calling convention and passing selector is important!</span>
-        <span class="c1">// You're free to skip calling the original implementation.</span>
-        <span class="k">let</span> <span class="nv">origCall</span> <span class="o">=</span> <span class="nf">store</span><span class="p">((</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span>
-        <span class="k">let</span> <span class="nv">string</span> <span class="o">=</span> <span class="nf">origCall</span><span class="p">(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span>
-
-        <span class="nf">print</span><span class="p">(</span><span class="s">"After Interposing </span><span class="se">\(</span><span class="p">`</span><span class="nv">self</span><span class="p">`</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">string</span> <span class="o">+</span> <span class="s">" and Interpose"</span>
-
-        <span class="c1">// Similar signature cast as above, but without selector.</span>
-        <span class="p">}</span> <span class="k">as</span> <span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">})</span>
+                <span class="k">return</span> <span class="n">string</span> <span class="o">+</span> <span class="s">"and Interpose"</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1">// Don't need the hook anymore? Undo is built-in!</span>
 <span class="n">interposer</span><span class="o">.</span><span class="nf">revert</span><span class="p">()</span>
+
+<span class="c1">// Want to hook just a single instance? No problem!</span>
+<span class="k">let</span> <span class="nv">hook</span> <span class="o">=</span> <span class="k">try</span> <span class="n">testObj</span><span class="o">.</span><span class="nf">hook</span><span class="p">(</span>
+    <span class="cp">#selector(TestClass.sayHi),</span>
+    <span class="nv">methodSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
+    <span class="nv">hookSignature</span><span class="p">:(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span> <span class="n">store</span> <span class="k">in</span> <span class="p">{</span> <span class="p">`</span><span class="nv">self</span><span class="p">`</span> <span class="k">in</span>
+        <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="nf">original</span><span class="p">(`</span><span class="nv">self</span><span class="p">`,</span> <span class="n">store</span><span class="o">.</span><span class="n">selector</span><span class="p">)</span> <span class="o">+</span> <span class="s">"just this instance"</span>
+        <span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>Here&rsquo;s what we get when calling <code>print(TestClass().sayHi())</code></p>
@@ -139,16 +172,47 @@ Calling sayHi
 After Interposing &lt;InterposeTests.TestClass: 0x7fa0b160c1e0&gt;
 Hi there 👋 and Interpose
 </code></pre>
-<h2 id='key-facts' class='heading'>Key Facts</h2>
+<h2 id='key-features' class='heading'>Key Features</h2>
 
 <ul>
-<li>Interpose directly modifies the implementation of a <code>Method</code>, which is <a href="(https://pspdfkit.com/blog/2019/swizzling-in-swift/)">better than selector-based swizzling</a>.</li>
+<li>Interpose directly modifies the implementation of a <code>Method</code>, which is <a href="(https://pspdfkit.com/blog/2019/swizzling-in-swift/)">safer than selector-based swizzling</a>.</li>
+<li>Interpose works on classes and individual objects.</li>
 <li>Hooks can easily be undone via calling <code>revert()</code>. This also checks and errors if someone else changed stuff in between.</li>
-<li>Pure Swift, no <code>NSInvocation</code>, which requires boxing and can be slow.</li>
+<li>Mostly Swift, no <code>NSInvocation</code>, which requires boxing and can be slow.</li>
 <li>No Type checking. If you have a typo or forget a <code>convention</code> part, this will crash at runtime.</li>
-<li>Yes, you have to type the resulting type twice This is a tradeoff, else we need NSInvocation or assembly.</li>
+<li>Yes, you have to type the resulting type twice This is a tradeoff, else we need <code>NSInvocation</code>.</li>
 <li>Delayed Interposing helps when a class is loaded at runtime. This is useful for <a href="https://steipete.com/posts/mac-catalyst-crash-hunt/">Mac Catalyst</a>.</li>
 </ul>
+<h2 id='object-hooking' class='heading'>Object Hooking</h2>
+
+<p>InterposeKit can hook classes and object. Class hooking is similar to swizzling, but object-based hooking offers a variety of new ways to set hooks. This is achieved via creating a dynamic subclass at runtime. </p>
+
+<p>Caveat: Hooking will fail with an error if the object uses KVO. The KVO machinery is fragile and it&rsquo;s to easy to cause a crash. Using KVO after a hook was created is supported and will not cause issues.</p>
+<h2 id='various-ways-to-define-the-signature' class='heading'>Various ways to define the signature</h2>
+
+<p>Next to using  <code>methodSignature</code> and <code>hookSignature</code>, following variants to define the signature are also possible:</p>
+<h3 id='methodsignature-casted-block' class='heading'>methodSignature + casted block</h3>
+<pre class="highlight plaintext"><code>let interposer = try Interpose(testObj) {
+    try $0.hook(
+        #selector(TestClass.sayHi),
+        methodSignature: (@convention(c) (AnyObject, Selector) -&gt; String).self) { store in { `self` in
+            let string = store.original(`self`, store.selector)
+            return string + testString
+            } as @convention(block) (AnyObject) -&gt; String }
+}
+</code></pre>
+<h3 id='define-type-via-store-object' class='heading'>Define type via store object</h3>
+<pre class="highlight plaintext"><code>// Functions need to be `@objc dynamic` to be hookable.
+let interposer = try Interpose(testObj) {
+    try $0.hook(#selector(TestClass.returnInt)) { (store: TypedHook&lt;@convention(c) (AnyObject, Selector) -&gt; Int, @convention(block) (AnyObject) -&gt; Int&gt;) in {
+
+        // You're free to skip calling the original implementation.
+        let int = store.original($0, store.selector)
+        return int + returnIntOverrideOffset
+        }
+    }
+}
+</code></pre>
 <h2 id='delayed-hooking' class='heading'>Delayed Hooking</h2>
 
 <p>Sometimes it can be necessary to hook a class deep in a system framework, which is loaded at a later time. Interpose has a solution for this and uses a hook in the dynamic linker to be notified whenever new classes are loaded.</p>
@@ -171,7 +235,7 @@ Hi there 👋 and Interpose
 <p>Naming it Interpose was the plan, but then <a href="https://bugs.swift.org/browse/SR-898">SR-898</a> came. While having a class with the same name as the module works <a href="https://forums.swift.org/t/frameworkname-is-not-a-member-type-of-frameworkname-errors-inside-swiftinterface/28962">in most cases</a>, <a href="https://twitter.com/BalestraPatrick/status/1260928023357878273">this breaks</a> when you enable build-for-distribution. There&rsquo;s some <a href="https://forums.swift.org/t/pitch-fully-qualified-name-syntax/28482/81">discussion</a> to get that fixed, but this will be more towards end of 2020, if even.</p>
 <h3 id='i-want-to-hook-into-swift-you-made-another-objc-swizzle-thingy-why' class='heading'>I want to hook into Swift! You made another ObjC swizzle thingy, why?</h3>
 
-<p>UIKit and AppKit won&rsquo;t go away, and the bugs won&rsquo;t go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that&rsquo;s a separate (and much more difficult!) project.</p>
+<p>UIKit and AppKit won&rsquo;t go away, and the bugs won&rsquo;t go away either. I see this as a rarely-needed instrument to fix system-level issues. There are ways to do some of that in Swift, but that&rsquo;s a separate (and much more difficult!) project. (See <a href="https://github.com/apple/swift/pull/20333">Dynamic function replacement #20333</a> aka <code>@_dynamicReplacement</code> for details.)</p>
 <h3 id='can-i-ship-this' class='heading'>Can I ship this?</h3>
 
 <p>Yes, absolutely. The goal for this one project is a simple library that doesn&rsquo;t try to be too smart. I did this in <a href="https://github.com/steipete/Aspects">Aspects</a> and while I loved this to no end, it&rsquo;s problematic and can cause side-effects with other code that tries to be clever. InterposeKit is boring, so you don&rsquo;t have to worry about conditions like &ldquo;We added New Relic to our app and now <a href="https://github.com/steipete/Aspects/issues/21">your thing crashes</a>&rdquo;.</p>
@@ -196,7 +260,10 @@ Hi there 👋 and Interpose
 <ul>
 <li>Write proposal to allow to <a href="https://twitter.com/steipete/status/1266799174563041282?s=21">convert the calling convention of existing types</a>.</li>
 <li>Use the C block struct to perform type checking between Method type and C type (I do that in  <a href="https://github.com/steipete/Aspects">Aspects library</a>), it&rsquo;s still a runtime crash but could be at hook time, not when we call it.</li>
-<li>Add object-based hooking with dynamic subclassing (Aspects again)</li>
+<li>Add a way to get all current hooks from an object/class.</li>
+<li>Add a way to revert hooks without super helper.</li>
+<li>Add a way to apply multiple hooks to classes</li>
+<li>Enable hooking of class methods.</li>
 <li>Add <a href="https://twitter.com/steipete/status/1258482647933870080">dyld_dynamic_interpose</a> to hook pure C functions</li>
 <li>Combine Promise-API for <code>Interpose.whenAvailable</code> for better error bubbling.</li>
 </ul><div class="aside aside-experiment">
@@ -205,6 +272,7 @@ Hi there 👋 and Interpose
 
 </div><ul>
 <li>Test against Swift Nightly as Cron Job</li>
+<li>Switch to Trampolines to manage cases where other code overrides super, so we end up with a super call that&rsquo;s <a href="https://github.com/steipete/InterposeKit/pull/15#discussion_r439871752">not on top of the class hierarchy</a>.</li>
 <li>I&rsquo;m sure there&rsquo;s more - Pull Requests or <a href="https://twitter.com/steipete">comments</a> very welcome!</li>
 </ul>
 

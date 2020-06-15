@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Classes  Reference</title>
+    <title>Extensions  Reference</title>
     <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Section/Classes" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
 
-    <a title="Classes  Reference"></a>
+    <a title="Extensions  Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="index.html">InterposeKit Reference</a>
       <img class="carat" src="img/carat.png" />
-      Classes  Reference
+      Extensions  Reference
     </p>
 
     <div class="content-wrapper">
@@ -104,8 +104,8 @@
 
         <section class="section">
           <div class="section-content top-matter">
-            <h1>Classes</h1>
-            <p>The following classes are available globally.</p>
+            <h1>Extensions</h1>
+            <p>The following extensions are available globally.</p>
 
           </div>
         </section>
@@ -117,9 +117,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:12InterposeKit7AnyHookC"></a>
-                    <a name="//apple_ref/swift/Class/AnyHook" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12InterposeKit7AnyHookC">AnyHook</a>
+                    <a name="/s:10Foundation8NSObjectC"></a>
+                    <a name="//apple_ref/swift/Extension/NSObject" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Foundation8NSObjectC">NSObject</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -127,85 +127,16 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Base class, represents a hook to exactly one method.</p>
-
-                        <a href="Classes/AnyHook.html" class="slightly-smaller">See more</a>
+                        
+                        <a href="Extensions/NSObject.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AnyHook</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">NSObject</span></code></pre>
 
                         </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/AnyHook.swift#L4-L89">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12InterposeKit9TypedHookC"></a>
-                    <a name="//apple_ref/swift/Class/TypedHook" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12InterposeKit9TypedHookC">TypedHook</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Hook baseclass with generic signatures.</p>
-
-                        <a href="Classes/TypedHook.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TypedHook</span><span class="o">&lt;</span><span class="kt">MethodSignature</span><span class="p">,</span> <span class="kt">HookSignature</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Classes/AnyHook.html">AnyHook</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/AnyHook.swift#L92-L97">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12InterposeKit0A0C"></a>
-                    <a name="//apple_ref/swift/Class/Interpose" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12InterposeKit0A0C">Interpose</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Interpose is a modern library to swizzle elegantly in Swift.</p>
-
-<p>Methods are hooked via replacing the implementation, instead of the usual exchange.
-Supports both swizzling classes and individual objects.</p>
-
-                        <a href="Classes/Interpose.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">final</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">Interpose</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L32-L145">Show on GitHub</a>
                       </div>
                     </section>
                   </div>

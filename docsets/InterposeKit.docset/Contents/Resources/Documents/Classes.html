@@ -60,16 +60,41 @@
             <a class="nav-group-name-link" href="Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/AnyHook.html">AnyHook</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/AnyHook/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Interpose.html">Interpose</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/Interpose/Error.html">– Error</a>
+                <a class="nav-group-task-link" href="Classes/Interpose/ClassHook.html">– ClassHook</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/Interpose/Task.html">– Task</a>
+                <a class="nav-group-task-link" href="Classes/Interpose/ObjectHook.html">– ObjectHook</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/Interpose.html#/s:12InterposeKit0A0C6WaiterV">– Waiter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/TypedHook.html">TypedHook</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/InterposeError.html">InterposeError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/NSObject.html">NSObject</a>
               </li>
             </ul>
           </li>
@@ -92,6 +117,68 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:12InterposeKit7AnyHookC"></a>
+                    <a name="//apple_ref/swift/Class/AnyHook" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit7AnyHookC">AnyHook</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Base class, represents a hook to exactly one method.</p>
+
+                        <a href="Classes/AnyHook.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">AnyHook</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/AnyHook.swift#L4-L89">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12InterposeKit9TypedHookC"></a>
+                    <a name="//apple_ref/swift/Class/TypedHook" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12InterposeKit9TypedHookC">TypedHook</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Hook baseclass with generic signatures.</p>
+
+                        <a href="Classes/TypedHook.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">TypedHook</span><span class="o">&lt;</span><span class="kt">MethodSignature</span><span class="p">,</span> <span class="kt">HookSignature</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="Classes/AnyHook.html">AnyHook</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/AnyHook.swift#L92-L97">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:12InterposeKit0A0C"></a>
                     <a name="//apple_ref/swift/Class/Interpose" class="dashAnchor"></a>
                     <a class="token" href="#/s:12InterposeKit0A0C">Interpose</a>
@@ -102,7 +189,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Helper to swizzle methods the right way, via replacing the IMP.</p>
+                        <p>Interpose is a modern library to swizzle elegantly in Swift.</p>
+
+<p>Methods are hooked via replacing the implementation, instead of the usual exchange.
+Supports both swizzling classes and individual objects.</p>
 
                         <a href="Classes/Interpose.html" class="slightly-smaller">See more</a>
                       </div>
@@ -115,7 +205,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L15-L93">Show on GitHub</a>
+                        <a href="https://github.com/steipete/InterposeKit/tree/master/Sources/InterposeKit/InterposeKit.swift#L32-L145">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
