@@ -24,4 +24,17 @@ func imp_getBlock(_ anImp: IMP) -> Any? { return nil }
 func imp_removeBlock(_ anImp: IMP) -> Bool { false }
 class NSError : NSObject {}
 public typealias NSErrorPointer = AutoreleasingUnsafeMutablePointer<NSError?>?
+extension NSObject {
+open func value(forKey key: String) -> Any?
+}
+/// :nodoc: objc_AssociationPolicy
+public enum objc_AssociationPolicy : UInt {
+    case OBJC_ASSOCIATION_ASSIGN = 0
+    case OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1
+    case OBJC_ASSOCIATION_COPY_NONATOMIC = 3
+    case OBJC_ASSOCIATION_RETAIN = 769
+    case OBJC_ASSOCIATION_COPY = 771
+}
+public func objc_setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer, _ value: Any?, _ policy: objc_AssociationPolicy) {}
+public func objc_getAssociatedObject(_ object: Any, _ key: UnsafeRawPointer) -> Any? { return nil }
 #endif
