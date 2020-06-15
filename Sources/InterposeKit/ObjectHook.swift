@@ -2,22 +2,6 @@ import Foundation
 
 extension Interpose {
 
-    private enum Constants {
-        static let subclassSuffix = "InterposeKit_"
-    }
-
-    enum ObjCSelector {
-        static let getClass = Selector((("class")))
-    }
-
-    enum ObjCMethodEncoding {
-        static let getClass = extract("#@:")
-
-        private static func extract(_ string: StaticString) -> UnsafePointer<CChar> {
-            return UnsafeRawPointer(string.utf8Start).assumingMemoryBound(to: CChar.self)
-        }
-    }
-
     struct AssociatedKeys {
         static var hookForBlock: UInt8 = 0
     }
@@ -33,14 +17,6 @@ extension Interpose {
         }
     }
 
-    private static func isSupportedArchitectureForSuper() -> Bool {
-        #if os(Linux)
-        return false
-        #else
-        return NSClassFromString("SuperBuilder")?.value(forKey: "isSupportedArchitecure") as? Bool ?? false
-        #endif
-    }
-
     /// A hook to an instance method of a single object, stores both the original and new implementation.
     /// Think about: Multiple hooks for one object
     final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
@@ -49,10 +25,10 @@ extension Interpose {
         public let object: AnyObject
 
         /// Subclass that we create on the fly
-        var dynamicSubclass: AnyClass?
+        var interposeSubclass: InterposeSubclass?
 
         // Logic switch to use super builder
-        let generatesSuperIMP = isSupportedArchitectureForSuper()
+        let generatesSuperIMP = InterposeSubclass.supportsSuperTrampolines
 
         /// Initialize a new hook to interpose an instance method.
         public init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
@@ -81,87 +57,6 @@ extension Interpose {
         //        // remove subclass!
         //        super.cleanup()
         //    }
-
-        /// We need to reuse a dynamic subclass if the object already has one.
-        private func getExistingSubclass() -> AnyClass? {
-            let actualClass: AnyClass = object_getClass(object)!
-            if NSStringFromClass(actualClass).hasPrefix(Constants.subclassSuffix) {
-                return actualClass
-            }
-            return nil
-        }
-
-        /// Creates a unique dynamic subclass of the current object
-        private func createSubclass() throws -> AnyClass {
-
-            // If the class has been altered (e.g. via NSKVONotifying_ KVO logic)
-            // then perceived and actual class don't match.
-            //
-            // Making KVO and Object-based hooking work at the same time is difficult.
-            // If we make a dynamic subclass over KVO, invalidating the token crashes in cache_getImp.
-
-            let perceivedClass: AnyClass = `class`
-            let actualClass: AnyClass = object_getClass(object)!
-
-            let className = NSStringFromClass(perceivedClass)
-            // Right now we are wasteful. Might be able to optimize for shared IMP?
-            let uuid = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-            let subclassName = Constants.subclassSuffix + className + uuid
-
-            let subclass: AnyClass? = subclassName.withCString { cString in
-                // swiftlint:disable:next force_cast
-                if let existingClass = objc_getClass(cString) as! AnyClass? {
-                    return existingClass
-                } else {
-                    if let subclass: AnyClass = objc_allocateClassPair(actualClass, cString, 0) {
-                        replaceGetClass(in: subclass, decoy: perceivedClass)
-                        objc_registerClassPair(subclass)
-                        return subclass
-                    } else {
-                        return nil
-                    }
-                }
-            }
-
-            guard let nonnullSubclass = subclass else {
-                throw InterposeError.failedToAllocateClassPair(class: perceivedClass, subclassName: subclassName)
-            }
-
-            object_setClass(object, nonnullSubclass)
-            Interpose.log("Generated \(NSStringFromClass(nonnullSubclass)) for object (was: \(NSStringFromClass(class_getSuperclass(object_getClass(object)!)!)))")
-            return nonnullSubclass
-        }
-
-        private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
-            #if !os(Linux) // crashes on linux
-            let getClass: @convention(block) (UnsafeRawPointer?) -> AnyClass = { _ in
-                perceivedClass
-            }
-            let impl = imp_implementationWithBlock(getClass as Any)
-            _ = class_replaceMethod(`class`, ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
-            _ = class_replaceMethod(object_getClass(`class`), ObjCSelector.getClass, impl, ObjCMethodEncoding.getClass)
-            #endif
-        }
-
-        #if !os(Linux)
-        private lazy var addSuperImpl: @convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool = {
-            let handle = dlopen(nil, RTLD_LAZY)
-            let imp = dlsym(handle, "IKTAddSuperImplementationToClass")
-            return unsafeBitCast(imp, to: (@convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool).self)
-        }()
-
-        private func addSuperTrampolineMethod(subclass: AnyClass) {
-            var error: NSError?
-            if addSuperImpl(subclass, self.selector, &error) == false {
-                Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]: \(error!)")
-            } else {
-                let imp = class_getMethodImplementation(subclass, self.selector)!
-                Interpose.log("Added super for -[\(`class`).\(selector)]: \(imp)")
-            }
-        }
-        #else
-        private func addSuperTrampolineMethod(subclass: AnyClass) { }
-        #endif
 
         /// The original implementation of the hook. Might be looked up at runtime. Do not cache this.
         public override var original: MethodSignature {
@@ -204,12 +99,16 @@ extension Interpose {
             return false
         }
 
+        var dynamicSubclass: AnyClass {
+            interposeSubclass!.dynamicClass
+        }
+
         override func replaceImplementation() throws {
             let method = try validate()
 
             // Check if there's an existing subclass we can reuse.
             // Create one at runtime if there is none.
-            dynamicSubclass = try getExistingSubclass() ?? createSubclass()
+            interposeSubclass = try InterposeSubclass(object: object)
 
             // The implementation of the call that is hooked must exist.
             guard lookupOrigIMP != nil else {
@@ -217,26 +116,26 @@ extension Interpose {
             }
 
             //  This function searches superclasses for implementations
-            let hasExistingMethod = exactClassImplementsSelector(dynamicSubclass!, selector)
+            let hasExistingMethod = exactClassImplementsSelector(dynamicSubclass, selector)
             let encoding = method_getTypeEncoding(method)
 
             if self.generatesSuperIMP {
                 // If the subclass is empty, we create a super trampoline first.
                 // If a hook already exists, we must skip this.
                 if !hasExistingMethod {
-                    addSuperTrampolineMethod(subclass: dynamicSubclass!)
+                    interposeSubclass!.addSuperTrampoline(selector: selector)
                 }
 
                 // Replace IMP (by now we guarantee that it exists)
-                origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                origIMP = class_replaceMethod(dynamicSubclass, selector, replacementIMP, encoding)
                 guard origIMP != nil else {
-                    throw InterposeError.nonExistingImplementation(dynamicSubclass!, selector)
+                    throw InterposeError.nonExistingImplementation(dynamicSubclass, selector)
                 }
                 Interpose.log("Added -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
             } else {
                 // Could potentially be unified in the code paths
                 if hasExistingMethod {
-                    origIMP = class_replaceMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                    origIMP = class_replaceMethod(dynamicSubclass, selector, replacementIMP, encoding)
                     if origIMP != nil {
                         Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!) via replacement")
                     } else {
@@ -244,7 +143,7 @@ extension Interpose {
                         throw InterposeError.unableToAddMethod(`class`, selector)
                     }
                 } else {
-                    let didAddMethod = class_addMethod(dynamicSubclass!, selector, replacementIMP, encoding)
+                    let didAddMethod = class_addMethod(dynamicSubclass, selector, replacementIMP, encoding)
                     if didAddMethod {
                         Interpose.log("Added -[\(`class`).\(selector)] IMP: \(replacementIMP!)")
                     } else {
@@ -288,14 +187,14 @@ extension Interpose {
                 throw InterposeError.resetUnsupported("No Original IMP found. SuperBuilder missing?")
             }
 
-            guard let currentIMP = class_getMethodImplementation(dynamicSubclass!, selector) else {
+            guard let currentIMP = class_getMethodImplementation(dynamicSubclass, selector) else {
                 throw InterposeError.unknownError("No Implementation found")
             }
 
             // We are the topmost hook, replace method.
             if currentIMP == replacementIMP {
-                let previousIMP = class_replaceMethod(dynamicSubclass!, selector, origIMP!, method_getTypeEncoding(method))
-                guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(dynamicSubclass!, selector, previousIMP) }
+                let previousIMP = class_replaceMethod(dynamicSubclass, selector, origIMP!, method_getTypeEncoding(method))
+                guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(dynamicSubclass, selector, previousIMP) }
                 Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
             } else {
                 let nextHook = findNextHook(currentIMP)
