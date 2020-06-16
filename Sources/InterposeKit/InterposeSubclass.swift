@@ -105,7 +105,7 @@ class InterposeSubclass {
         }
     }
     #else
-    private func addSuperTrampoline(selector: Selector) { }
+    func addSuperTrampoline(selector: Selector) { }
     class var supportsSuperTrampolines: Bool { return false }
     private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {}
     #endif
