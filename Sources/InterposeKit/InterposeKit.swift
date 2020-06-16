@@ -6,7 +6,7 @@ extension NSObject {
         _ selector: Selector,
         methodSignature: MethodSignature.Type = MethodSignature.self,
         hookSignature: HookSignature.Type = HookSignature.self,
-       _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
+        _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
 
         if let klass = self as? AnyClass {
             return try Interpose.ClassHook(class: klass, selector: selector, implementation: implementation).apply()
@@ -20,8 +20,9 @@ extension NSObject {
         _ selector: Selector,
         methodSignature: MethodSignature.Type = MethodSignature.self,
         hookSignature: HookSignature.Type = HookSignature.self,
-       _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
-        return try Interpose.ClassHook(class: self as AnyClass, selector: selector, implementation: implementation).apply()
+        _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
+        return try Interpose.ClassHook(class: self as AnyClass,
+                                       selector: selector, implementation: implementation).apply()
     }
 }
 
@@ -88,14 +89,16 @@ final public class Interpose {
     deinit {
         hooks.forEach({ $0.cleanup() })
     }
-    
+
     /// Hook an `@objc dynamic` instance method via selector name on the current class.
     @discardableResult public func hook<MethodSignature, HookSignature>(
         _ selName: String,
         methodSignature: MethodSignature.Type = MethodSignature.self,
         hookSignature: HookSignature.Type = HookSignature.self,
-        _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> TypedHook<MethodSignature, HookSignature>  {
-        try hook(NSSelectorFromString(selName), methodSignature: methodSignature, hookSignature: hookSignature, implementation)
+        _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
+        throws -> TypedHook<MethodSignature, HookSignature> {
+        try hook(NSSelectorFromString(selName),
+                 methodSignature: methodSignature, hookSignature: hookSignature, implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
@@ -103,8 +106,8 @@ final public class Interpose {
         _ selector: Selector,
         methodSignature: MethodSignature.Type = MethodSignature.self,
         hookSignature: HookSignature.Type = HookSignature.self,
-       _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> TypedHook<MethodSignature, HookSignature> {
-
+        _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
+        throws -> TypedHook<MethodSignature, HookSignature> {
         var hook: TypedHook<MethodSignature, HookSignature>
         if let object = self.object {
             hook = try ObjectHook(object: object, selector: selector, implementation: implementation)

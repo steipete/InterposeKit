@@ -45,8 +45,7 @@ final class MultipleInterposingTests: InterposeKitTestCase {
         let interpose = try Interpose(testObj) {
             try $0.hook(#selector(getter: TestClass.age),
                         methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
-                        hookSignature: (@convention(block) (AnyObject) -> Int).self) {
-                            store in { `self` in
+                        hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                                 return 3
                             }
             }
@@ -55,8 +54,7 @@ final class MultipleInterposingTests: InterposeKitTestCase {
 
         try interpose.hook(#selector(getter: TestClass.age),
                     methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
-                    hookSignature: (@convention(block) (AnyObject) -> Int).self) {
-                        store in { `self` in
+                    hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                             return 5
                         }
         }.apply()

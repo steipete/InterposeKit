@@ -18,14 +18,14 @@ func class_replaceMethod(_ cls: AnyClass?, _ name: Selector,
                          _ imp: IMP, _ types: UnsafePointer<Int8>?) -> IMP? { IMP() }
 func class_addMethod(_ cls: AnyClass?, _ name: Selector,
                      _ imp: IMP, _ types: UnsafePointer<Int8>?) -> Bool { return false }
-func class_copyMethodList(_ cls: AnyClass?, _ outCount: UnsafeMutablePointer<UInt32>?) -> UnsafeMutablePointer<Method>? { return nil }
+func class_copyMethodList(_ cls: AnyClass?,
+                          _ outCount: UnsafeMutablePointer<UInt32>?) -> UnsafeMutablePointer<Method>? { return nil }
 func object_getClass(_ obj: Any?) -> AnyClass? { return nil }
 @discardableResult func object_setClass(_ obj: Any?, _ cls: AnyClass) -> AnyClass? { return nil }
 func method_getName(_ method: Method) -> Selector { Selector("") }
 func class_getSuperclass(_ cls: AnyClass?) -> AnyClass? { return nil }
-// swiftlint:disable:next identifier_name
 func method_getTypeEncoding(_ method: Method) -> UnsafePointer<Int8>? { return nil }
-func method_getImplementation(_ method: Method) -> IMP  { IMP() }
+func method_getImplementation(_ method: Method) -> IMP { IMP() }
 // swiftlint:disable:next identifier_name
 func _dyld_register_func_for_add_image(_ func:
     (@convention(c) (UnsafePointer<Int8>?, Int) -> Void)!) {}
@@ -60,6 +60,6 @@ enum objc_AssociationPolicy: UInt {
 }
 func objc_setAssociatedObject(_ object: Any, _ key: UnsafeRawPointer,
                               _ value: Any?, _ policy: objc_AssociationPolicy) {}
-func objc_getAssociatedObject(_ object: Any, _ key: UnsafeRawPointer) -> Any?
-{ return nil }
+func objc_getAssociatedObject(_ object: Any,
+                              _ key: UnsafeRawPointer) -> Any? { return nil }
 #endif

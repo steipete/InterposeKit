@@ -16,7 +16,8 @@ extension Interpose {
         let generatesSuperIMP = InterposeSubclass.supportsSuperTrampolines
 
         /// Initialize a new hook to interpose an instance method.
-        public init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+        public init(object: AnyObject, selector: Selector,
+                    implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
             self.object = object
             try super.init(class: type(of: object), selector: selector)
             let block = implementation(self) as AnyObject
@@ -64,7 +65,7 @@ extension Interpose {
 
         /// Looks for an instance method in the exact class, without looking up the hierarchy.
         func exactClassImplementsSelector(_ klass: AnyClass, _ selector: Selector) -> Bool {
-            var methodCount : CUnsignedInt = 0
+            var methodCount: CUnsignedInt = 0
             guard let methodsInAClass = class_copyMethodList(klass, &methodCount) else { return false }
             defer { free(methodsInAClass) }
             for index in 0 ..< Int(methodCount) {
@@ -136,12 +137,13 @@ extension Interpose {
 
             guard super.origIMP != nil else {
                 // Removing methods at runtime is not supported.
-                // https://stackoverflow.com/questions/1315169/how-do-i-remove-instance-methods-at-runtime-in-objective-c-2-0
+                // https://stackoverflow.com/questions/1315169/
+                // how-do-i-remove-instance-methods-at-runtime-in-objective-c-2-0
                 //
                 // This codepath will be hit if the super helper is missing.
                 // We could recreate the whole class at runtime and rebuild all hooks,
                 // but that seesm excessive when we have a trampoline at our disposal.
-                Interpose.log("Reset of -[\(`class`).\(selector)] not supported. No Original IMP")
+                Interpose.log("Reset of -[\(`class`).\(selector)] not supported. No IMP")
                 throw InterposeError.resetUnsupported("No Original IMP found. SuperBuilder missing?")
             }
 
@@ -151,8 +153,11 @@ extension Interpose {
 
             // We are the topmost hook, replace method.
             if currentIMP == replacementIMP {
-                let previousIMP = class_replaceMethod(dynamicSubclass, selector, origIMP!, method_getTypeEncoding(method))
-                guard previousIMP == replacementIMP else { throw InterposeError.unexpectedImplementation(dynamicSubclass, selector, previousIMP) }
+                let previousIMP = class_replaceMethod(
+                    dynamicSubclass, selector, origIMP!, method_getTypeEncoding(method))
+                guard previousIMP == replacementIMP else {
+                    throw InterposeError.unexpectedImplementation(dynamicSubclass, selector, previousIMP)
+                }
                 Interpose.log("Restored -[\(`class`).\(selector)] IMP: \(origIMP!)")
             } else {
                 let nextHook = Interpose.findNextHook(selfHook: self, topmostIMP: currentIMP)
