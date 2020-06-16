@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		780FC9FA249822C900DA5A14 /* HookFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780FC9F9249822C900DA5A14 /* HookFinder.swift */; };
 		7810959E248D43DC008A943C /* ClassHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959D248D43DC008A943C /* ClassHook.swift */; };
 		781095A0248D50C1008A943C /* Watcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810959F248D50C1008A943C /* Watcher.swift */; };
 		781095A8248D6DFB008A943C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781095A7248D6DFB008A943C /* AppDelegate.swift */; };
@@ -26,6 +27,7 @@
 		78C5A4A82494D75100EE9756 /* MultipleInterposing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C5A4A72494D75100EE9756 /* MultipleInterposing.swift */; };
 		78E20D952497B3480021552C /* ITKSuperBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 78E20D922497B3470021552C /* ITKSuperBuilder.h */; };
 		78E20D962497B3480021552C /* ITKSuperBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 78E20D942497B3470021552C /* ITKSuperBuilder.m */; };
+		78E20D9824981B2A0021552C /* InterposeSubclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E20D9724981B2A0021552C /* InterposeSubclass.swift */; };
 		78EDB8DA248BA9B300D2F6C1 /* TestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */; };
 		78EDB8DB248BA9BB00D2F6C1 /* ObjectInterposeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */; };
 		78EDB8DD248BAA5600D2F6C1 /* AnyHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */; };
@@ -65,6 +67,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		780FC9F9249822C900DA5A14 /* HookFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HookFinder.swift; path = Sources/InterposeKit/HookFinder.swift; sourceTree = SOURCE_ROOT; };
 		7810959D248D43DC008A943C /* ClassHook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClassHook.swift; path = Sources/InterposeKit/ClassHook.swift; sourceTree = SOURCE_ROOT; };
 		7810959F248D50C1008A943C /* Watcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Watcher.swift; path = Sources/InterposeKit/Watcher.swift; sourceTree = SOURCE_ROOT; };
 		781095A5248D6DFB008A943C /* InterposeTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InterposeTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -92,6 +95,7 @@
 		78C5A4A72494D75100EE9756 /* MultipleInterposing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultipleInterposing.swift; path = Tests/InterposeKitTests/MultipleInterposing.swift; sourceTree = SOURCE_ROOT; };
 		78E20D922497B3470021552C /* ITKSuperBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITKSuperBuilder.h; sourceTree = "<group>"; };
 		78E20D942497B3470021552C /* ITKSuperBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITKSuperBuilder.m; sourceTree = "<group>"; };
+		78E20D9724981B2A0021552C /* InterposeSubclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InterposeSubclass.swift; path = Sources/InterposeKit/InterposeSubclass.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClass.swift; path = Tests/InterposeKitTests/TestClass.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ObjectInterposeTests.swift; path = Tests/InterposeKitTests/ObjectInterposeTests.swift; sourceTree = SOURCE_ROOT; };
 		78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnyHook.swift; path = Sources/InterposeKit/AnyHook.swift; sourceTree = SOURCE_ROOT; };
@@ -182,6 +186,8 @@
 				78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */,
 				78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */,
 				7810959F248D50C1008A943C /* Watcher.swift */,
+				78E20D9724981B2A0021552C /* InterposeSubclass.swift */,
+				780FC9F9249822C900DA5A14 /* HookFinder.swift */,
 			);
 			path = InterposeKit;
 			sourceTree = "<group>";
@@ -391,6 +397,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				780FC9FA249822C900DA5A14 /* HookFinder.swift in Sources */,
 				781095A0248D50C1008A943C /* Watcher.swift in Sources */,
 				78A2F26E2496B54B00F5AC5F /* InterposeError.swift in Sources */,
 				78E20D962497B3480021552C /* ITKSuperBuilder.m in Sources */,
@@ -398,6 +405,7 @@
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
 				78EDB8FF248D0A9900D2F6C1 /* ObjectHook.swift in Sources */,
 				78EDB903248D42CD00D2F6C1 /* LinuxCompileSupport.swift in Sources */,
+				78E20D9824981B2A0021552C /* InterposeSubclass.swift in Sources */,
 				78EDB8DD248BAA5600D2F6C1 /* AnyHook.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
