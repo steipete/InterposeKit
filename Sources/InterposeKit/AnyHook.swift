@@ -16,19 +16,19 @@ public class AnyHook {
 
     // fetched at apply time, changes late, thus class requirement
     var origIMP: IMP?
-    
+
     /// The possible task states
     public enum State: Equatable {
         /// The task is prepared to be nterposed.
         case prepared
-        
+
         /// The method has been successfully interposed.
         case interposed
-        
+
         /// An error happened while interposing a method.
         indirect case error(InterposeError)
     }
-    
+
     init(`class`: AnyClass, selector: Selector) throws {
         self.selector = selector
         self.class = `class`
@@ -36,34 +36,36 @@ public class AnyHook {
         // Check if method exists
         try validate()
     }
-    
+
     func replaceImplementation() throws {
         preconditionFailure("Not implemented")
     }
-    
+
     func resetImplementation() throws {
         preconditionFailure("Not implemented")
     }
-    
+
     /// Apply the interpose hook.
     @discardableResult public func apply() throws -> AnyHook {
         try execute(newState: .interposed) { try replaceImplementation() }
         return self
     }
-    
+
     /// Revert the interpose hoook.
     @discardableResult public func revert() throws -> AnyHook {
         try execute(newState: .prepared) { try resetImplementation() }
         return self
     }
-    
+
     /// Validate that the selector exists on the active class.
     @discardableResult func validate(expectedState: State = .prepared) throws -> Method {
-        guard let method = class_getInstanceMethod(`class`, selector) else { throw InterposeError.methodNotFound(`class`, selector)}
+        guard let method = class_getInstanceMethod(`class`, selector) else {
+            throw InterposeError.methodNotFound(`class`, selector)
+        }
         guard state == expectedState else { throw InterposeError.invalidState(expectedState: expectedState) }
         return method
     }
-    
+
     private func execute(newState: State, task: () throws -> Void) throws {
         do {
             try task()
@@ -73,7 +75,7 @@ public class AnyHook {
             throw error
         }
     }
-    
+
     /// Release the hook block if possible.
     public func cleanup() {
         switch state {

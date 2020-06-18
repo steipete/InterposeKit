@@ -6,7 +6,7 @@ let testString = " and Interpose"
 let testString2 = " testString2"
 let testSubclass = "Subclass is here!"
 
-public func ==(lhs: CATransform3D, rhs: CATransform3D) -> Bool {
+public func == (lhs: CATransform3D, rhs: CATransform3D) -> Bool {
     return CATransform3DEqualToTransform(lhs, rhs)
 }
 

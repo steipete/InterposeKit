@@ -16,8 +16,8 @@ final class MultipleInterposingTests: InterposeKitTestCase {
             try $0.hook(
                 #selector(TestClass.sayHi),
                 methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
-                hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { `self` in
-                    return store.original(`self`, store.selector) + testString
+                hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { bSelf in
+                    return store.original(bSelf, store.selector) + testString
                     }
             }
         }
@@ -28,8 +28,8 @@ final class MultipleInterposingTests: InterposeKitTestCase {
         try testObj.hook(
             #selector(TestClass.sayHi),
             methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
-            hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { `self` in
-                return store.original(`self`, store.selector) + testString2
+            hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { bSelf in
+                return store.original(bSelf, store.selector) + testString2
                 }
         }
 
