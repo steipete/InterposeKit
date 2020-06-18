@@ -10,7 +10,7 @@ final class KVOTests: InterposeKitTestCase {
         var didCallObserver = false
 
         func observe(obj: TestClass) {
-            kvoToken = obj.observe(\.age, options: .new) { [weak self] obj, change in
+            kvoToken = obj.observe(\.age, options: .new) { [weak self] _, change in
                 guard let age = change.newValue else { return }
                 print("New age is: \(age)")
                 self?.didCallObserver = true
@@ -40,8 +40,7 @@ final class KVOTests: InterposeKitTestCase {
         let hook = try testObj.hook(
             #selector(getter: TestClass.age),
             methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
-            hookSignature: (@convention(block) (AnyObject) -> Int).self) {
-                store in { `self` in
+            hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                     return 3
                 }
         }

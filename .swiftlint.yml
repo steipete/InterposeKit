@@ -2,6 +2,11 @@ included:
   - Sources
   - Tests
 analyzer_rules:
+  disallowed_racist_terms_of_art:
+    name: "Disallowed racist terms of art"
+    regex: 'blacklist|whitelist|^((?<!git)[^\n])*master(?! (manifest|playlist))|slave'
+    message: "Please, refrain from using terms which have racist connotations. Consider alternatives such as allow, disallow, primary, secondary..."
+    severity: error
 line_length: 120
 identifier_name:
   excluded:

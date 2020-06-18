@@ -6,7 +6,7 @@ let testString = " and Interpose"
 let testString2 = " testString2"
 let testSubclass = "Subclass is here!"
 
-public func ==(lhs: CATransform3D, rhs: CATransform3D) -> Bool {
+public func == (lhs: CATransform3D, rhs: CATransform3D) -> Bool {
     return CATransform3DEqualToTransform(lhs, rhs)
 }
 
@@ -48,6 +48,7 @@ class TestClass: NSObject {
         var1 + var2 + var3
     }
 
+    // swiftlint:disable:next function_parameter_count
     @objc dynamic func calculate2(var1: Int, var2: Int, var3: Int, var4: Int, var5: Int, var6: Int) -> Int {
         var1 + var2 + var3 + var4 + var5 + var6
     }

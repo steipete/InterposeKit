@@ -54,7 +54,7 @@ Want to hook just a single instance? No problem!
 let hook = try testObj.hook(
     #selector(TestClass.sayHi),
     methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
-    hookSignature:(@convention(block) (AnyObject) -> String).self) { store in { `self` in
+    hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { `self` in
         return store.original(`self`, store.selector) + "just this instance"
         }
 }

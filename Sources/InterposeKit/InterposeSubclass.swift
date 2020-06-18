@@ -56,13 +56,14 @@ class InterposeSubclass {
             }
         }
 
-        guard let nonnullSubclass = subclass else {
+        guard let nnSubclass = subclass else {
             throw InterposeError.failedToAllocateClassPair(class: perceivedClass, subclassName: subclassName)
         }
 
-        object_setClass(object, nonnullSubclass)
-        Interpose.log("Generated \(NSStringFromClass(nonnullSubclass)) for object (was: \(NSStringFromClass(class_getSuperclass(object_getClass(object)!)!)))")
-        return nonnullSubclass
+        object_setClass(object, nnSubclass)
+        let oldName = NSStringFromClass(class_getSuperclass(object_getClass(object)!)!)
+        Interpose.log("Generated \(NSStringFromClass(nnSubclass)) for object (was: \(oldName))")
+        return nnSubclass
     }
 
     /// We need to reuse a dynamic subclass if the object already has one.

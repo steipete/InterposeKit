@@ -13,11 +13,11 @@ final class MultipleInterposingTests: InterposeKitTestCase {
 
         // Functions need to be `@objc dynamic` to be hookable.
         let interposer = try Interpose(testObj) {
-            try $0.hook(
+            try $0.prepareHook(
                 #selector(TestClass.sayHi),
                 methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
-                hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { `self` in
-                    return store.original(`self`, store.selector) + testString
+                hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { bSelf in
+                    return store.original(bSelf, store.selector) + testString
                     }
             }
         }
@@ -28,8 +28,8 @@ final class MultipleInterposingTests: InterposeKitTestCase {
         try testObj.hook(
             #selector(TestClass.sayHi),
             methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
-            hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { `self` in
-                return store.original(`self`, store.selector) + testString2
+            hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { bSelf in
+                return store.original(bSelf, store.selector) + testString2
                 }
         }
 
@@ -43,10 +43,9 @@ final class MultipleInterposingTests: InterposeKitTestCase {
         XCTAssertEqual(testObj.age, 1)
 
         let interpose = try Interpose(testObj) {
-            try $0.hook(#selector(getter: TestClass.age),
+            try $0.prepareHook(#selector(getter: TestClass.age),
                         methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
-                        hookSignature: (@convention(block) (AnyObject) -> Int).self) {
-                            store in { `self` in
+                        hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                                 return 3
                             }
             }
@@ -55,11 +54,10 @@ final class MultipleInterposingTests: InterposeKitTestCase {
 
         try interpose.hook(#selector(getter: TestClass.age),
                     methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
-                    hookSignature: (@convention(block) (AnyObject) -> Int).self) {
-                        store in { `self` in
+                    hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                             return 5
                         }
-        }.apply()
+        }
         XCTAssertEqual(testObj.age, 5)
         try interpose.revert()
         XCTAssertEqual(testObj.age, 1)
