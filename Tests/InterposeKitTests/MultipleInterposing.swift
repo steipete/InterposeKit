@@ -13,7 +13,7 @@ final class MultipleInterposingTests: InterposeKitTestCase {
 
         // Functions need to be `@objc dynamic` to be hookable.
         let interposer = try Interpose(testObj) {
-            try $0.hook(
+            try $0.prepareHook(
                 #selector(TestClass.sayHi),
                 methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
                 hookSignature: (@convention(block) (AnyObject) -> String).self) { store in { bSelf in
@@ -43,7 +43,7 @@ final class MultipleInterposingTests: InterposeKitTestCase {
         XCTAssertEqual(testObj.age, 1)
 
         let interpose = try Interpose(testObj) {
-            try $0.hook(#selector(getter: TestClass.age),
+            try $0.prepareHook(#selector(getter: TestClass.age),
                         methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
                         hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                                 return 3
@@ -57,7 +57,7 @@ final class MultipleInterposingTests: InterposeKitTestCase {
                     hookSignature: (@convention(block) (AnyObject) -> Int).self) { _ in { _ in
                             return 5
                         }
-        }.apply()
+        }
         XCTAssertEqual(testObj.age, 5)
         try interpose.revert()
         XCTAssertEqual(testObj.age, 1)

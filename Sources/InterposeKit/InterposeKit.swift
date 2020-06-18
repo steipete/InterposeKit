@@ -98,7 +98,7 @@ final public class Interpose {
         _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
         throws -> TypedHook<MethodSignature, HookSignature> {
         try hook(NSSelectorFromString(selName),
-                 methodSignature: methodSignature, hookSignature: hookSignature, implementation)
+            methodSignature: methodSignature, hookSignature: hookSignature, implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.
@@ -108,14 +108,28 @@ final public class Interpose {
         hookSignature: HookSignature.Type = HookSignature.self,
         _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
         throws -> TypedHook<MethodSignature, HookSignature> {
-        var hook: TypedHook<MethodSignature, HookSignature>
-        if let object = self.object {
-            hook = try ObjectHook(object: object, selector: selector, implementation: implementation)
-        } else {
-            hook = try ClassHook(class: `class`, selector: selector, implementation: implementation)
-        }
-        hooks.append(hook)
-        return hook
+            let hook = try prepareHook(selector, methodSignature: methodSignature,
+                                       hookSignature: hookSignature, implementation)
+            try hook.apply()
+            return hook
+
+    }
+
+    /// Prepares a hook, but does not call apply immediately.
+    @discardableResult public func prepareHook<MethodSignature, HookSignature> (
+        _ selector: Selector,
+        methodSignature: MethodSignature.Type = MethodSignature.self,
+        hookSignature: HookSignature.Type = HookSignature.self,
+        _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
+        throws -> TypedHook<MethodSignature, HookSignature> {
+            var hook: TypedHook<MethodSignature, HookSignature>
+            if let object = self.object {
+                hook = try ObjectHook(object: object, selector: selector, implementation: implementation)
+            } else {
+                hook = try ClassHook(class: `class`, selector: selector, implementation: implementation)
+            }
+            hooks.append(hook)
+            return hook
     }
 
     /// Apply all stored hooks.
