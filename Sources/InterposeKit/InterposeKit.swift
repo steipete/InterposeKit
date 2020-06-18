@@ -16,6 +16,15 @@ extension NSObject {
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
+    @discardableResult public func hook (
+        _ selector: Selector,
+        strategy: AspectStrategy = .before,
+        _ implementation: @escaping (AnyObject) -> Void) throws -> AnyHook {
+        return try Interpose.DynamicHook(object: self, selector: selector,
+            strategy: strategy, implementation: implementation).apply()
+    }
+
+    /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
     @discardableResult public class func hook<MethodSignature, HookSignature> (
         _ selector: Selector,
         methodSignature: MethodSignature.Type = MethodSignature.self,
@@ -97,8 +106,8 @@ final public class Interpose {
         hookSignature: HookSignature.Type = HookSignature.self,
         _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
         throws -> TypedHook<MethodSignature, HookSignature> {
-        try hook(NSSelectorFromString(selName),
-            methodSignature: methodSignature, hookSignature: hookSignature, implementation)
+            try hook(NSSelectorFromString(selName),
+                     methodSignature: methodSignature, hookSignature: hookSignature, implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.

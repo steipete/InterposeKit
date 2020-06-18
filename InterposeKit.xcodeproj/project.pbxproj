@@ -17,6 +17,9 @@
 		781095B4248D6DFD008A943C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 781095B2248D6DFD008A943C /* LaunchScreen.storyboard */; };
 		781095F5248E7C91008A943C /* InterposeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; };
 		781095F6248E7C91008A943C /* InterposeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 78863EC62464B2F900BA3762 /* InterposeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		781EB556249BEF54002545B4 /* ObjCInvocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781EB555249BEF54002545B4 /* ObjCInvocation.swift */; };
+		781EB558249BF0D1002545B4 /* DynamicHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781EB557249BF0D1002545B4 /* DynamicHook.swift */; };
+		781EB55A249BFA58002545B4 /* DynamicHookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781EB559249BFA58002545B4 /* DynamicHookTests.swift */; };
 		78A2F265249635B100F5AC5F /* KVOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F264249635B100F5AC5F /* KVOTests.swift */; };
 		78A2F26724964AF200F5AC5F /* InterposeKitTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */; };
 		78A2F26E2496B54B00F5AC5F /* InterposeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A2F26D2496B54B00F5AC5F /* InterposeError.swift */; };
@@ -78,6 +81,9 @@
 		781095B3248D6DFD008A943C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		781095B5248D6DFD008A943C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		781095B9248D6E0A008A943C /* InterposeTestHost.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InterposeTestHost.entitlements; sourceTree = "<group>"; };
+		781EB555249BEF54002545B4 /* ObjCInvocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ObjCInvocation.swift; path = Sources/InterposeKit/ObjCInvocation.swift; sourceTree = SOURCE_ROOT; };
+		781EB557249BF0D1002545B4 /* DynamicHook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DynamicHook.swift; path = Sources/InterposeKit/DynamicHook.swift; sourceTree = SOURCE_ROOT; };
+		781EB559249BFA58002545B4 /* DynamicHookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DynamicHookTests.swift; path = Tests/InterposeKitTests/DynamicHookTests.swift; sourceTree = SOURCE_ROOT; };
 		78863EC62464B2F900BA3762 /* InterposeKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = InterposeKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78863ECA2464B2F900BA3762 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = InterposeKit.xcodeproj/Info.plist; sourceTree = "<group>"; };
 		78A2F264249635B100F5AC5F /* KVOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KVOTests.swift; path = Tests/InterposeKitTests/KVOTests.swift; sourceTree = SOURCE_ROOT; };
@@ -184,10 +190,12 @@
 				78EDB8DC248BAA5600D2F6C1 /* AnyHook.swift */,
 				7810959D248D43DC008A943C /* ClassHook.swift */,
 				78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */,
+				781EB557249BF0D1002545B4 /* DynamicHook.swift */,
 				78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */,
 				7810959F248D50C1008A943C /* Watcher.swift */,
 				78E20D9724981B2A0021552C /* InterposeSubclass.swift */,
 				780FC9F9249822C900DA5A14 /* HookFinder.swift */,
+				781EB555249BEF54002545B4 /* ObjCInvocation.swift */,
 			);
 			path = InterposeKit;
 			sourceTree = "<group>";
@@ -208,6 +216,7 @@
 				78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */,
 				78C39D922483169300B46395 /* InterposeKitTests.swift */,
 				78EDB8D6248B9C1200D2F6C1 /* ObjectInterposeTests.swift */,
+				781EB559249BFA58002545B4 /* DynamicHookTests.swift */,
 				78C5A4A72494D75100EE9756 /* MultipleInterposing.swift */,
 				78A2F264249635B100F5AC5F /* KVOTests.swift */,
 				78A2F26624964AF200F5AC5F /* InterposeKitTestCase.swift */,
@@ -405,7 +414,9 @@
 				78C39D912483165600B46395 /* InterposeKit.swift in Sources */,
 				78EDB8FF248D0A9900D2F6C1 /* ObjectHook.swift in Sources */,
 				78EDB903248D42CD00D2F6C1 /* LinuxCompileSupport.swift in Sources */,
+				781EB556249BEF54002545B4 /* ObjCInvocation.swift in Sources */,
 				78E20D9824981B2A0021552C /* InterposeSubclass.swift in Sources */,
+				781EB558249BF0D1002545B4 /* DynamicHook.swift in Sources */,
 				78EDB8DD248BAA5600D2F6C1 /* AnyHook.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,6 +429,7 @@
 				78C5A4A82494D75100EE9756 /* MultipleInterposing.swift in Sources */,
 				78EDB8DA248BA9B300D2F6C1 /* TestClass.swift in Sources */,
 				78EDB8DB248BA9BB00D2F6C1 /* ObjectInterposeTests.swift in Sources */,
+				781EB55A249BFA58002545B4 /* DynamicHookTests.swift in Sources */,
 				78A2F26724964AF200F5AC5F /* InterposeKitTestCase.swift in Sources */,
 				78A2F265249635B100F5AC5F /* KVOTests.swift in Sources */,
 			);

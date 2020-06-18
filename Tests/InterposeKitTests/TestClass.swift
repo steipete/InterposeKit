@@ -34,6 +34,10 @@ class TestClass: NSObject {
         return testClassHi
     }
 
+    @objc dynamic func executeBlock(_ block: () -> ()) {
+        block()
+    }
+
     @objc dynamic func doNothing() { }
 
     @objc dynamic func doubleString(string: String) -> String {

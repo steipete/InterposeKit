@@ -8,10 +8,14 @@ class InterposeSubclass {
 
     enum ObjCSelector {
         static let getClass = Selector((("class")))
+        static let forwardInvocation = Selector((("forwardInvocation:")))
+        //static let methodSignatureForSelector = Selector((("methodSignatureForSelector:")))
     }
 
     enum ObjCMethodEncoding {
         static let getClass = extract("#@:")
+        static let forwardInvocation = extract("v@:@")
+        //static let methodSignatureForSelector = extract("v@::")
 
         private static func extract(_ string: StaticString) -> UnsafePointer<CChar> {
             return UnsafeRawPointer(string.utf8Start).assumingMemoryBound(to: CChar.self)
@@ -23,6 +27,16 @@ class InterposeSubclass {
 
     /// Subclass that we create on the fly
     private(set) var dynamicClass: AnyClass
+
+    /// Hooks that have to be called dynamically.
+    var hookContainer: Interpose.DynamicHookContainer? {
+        get { objc_getAssociatedObject(object, &Interpose.AssociatedKeys.hookContainer)
+                as? Interpose.DynamicHookContainer }
+        set {
+            objc_setAssociatedObject(object, &Interpose.AssociatedKeys.hookContainer,
+            newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
 
     /// If the class has been altered (e.g. via NSKVONotifying_ KVO logic)
     /// then perceived and actual class don't match.
@@ -75,7 +89,83 @@ class InterposeSubclass {
         return nil
     }
 
+    /// Overrides the invocation forwarding machinery to support dynamic invocation.
+    func prepareDynamicInvocation() throws {
+        guard InterposeSubclass.supportsSuperTrampolines else { throw InterposeError.unknownError("SuperBuilder is required for dynamic invocation")}
+
+        replaceForwardInvocation()
+    }
+
+    /// Looks for an instance method in this subclass, without looking up the hierarchy.
+    func exactClassImplementsSelector(_ selector: Selector) -> Bool {
+        exactClassImplementsSelector(dynamicClass, selector)
+    }
+
+    /// Looks for an instance method in `klass`, without looking up the hierarchy.
+    func exactClassImplementsSelector(_ klass: AnyClass, _ selector: Selector) -> Bool {
+        var methodCount: CUnsignedInt = 0
+        guard let methodsInAClass = class_copyMethodList(klass, &methodCount) else { return false }
+        defer { free(methodsInAClass) }
+        for index in 0 ..< Int(methodCount) {
+            let method = methodsInAClass[index]
+            if method_getName(method) == selector {
+                return true
+            }
+        }
+        return false
+    }
+
     #if !os(Linux)
+
+    class func aspectPrefixed(_ selector: Selector) -> Selector {
+        Selector("interpose_" + selector.description)
+    }
+
+    /// Test if the class requires adding dynamic implementation preparation hooks.
+    private func requiresPrepareDynamicInvocation() -> Bool {
+        exactClassImplementsSelector(
+            dynamicClass, ObjCSelector.forwardInvocation) == false
+    }
+
+    private func replaceForwardInvocation() {
+        guard requiresPrepareDynamicInvocation() else { return }
+
+        // Add super trampoline
+        addSuperTrampoline(selector: ObjCSelector.forwardInvocation)
+
+        // Replace with custom handler that calls our hooks
+        var origImp: IMP?
+        let forwardInvocation: @convention(block) (AnyObject, ObjCInvocation) -> Void = { bSelf, invocation in
+
+            if let hookContainer = self.hookContainer {
+                hookContainer.before.executeAll(bSelf)
+
+                // Call instead hooks or original
+                let instead = hookContainer.instead
+                if instead.isEmpty {
+                    let selector = invocation.selector()
+                    let prefixedSelector = InterposeSubclass.aspectPrefixed(selector)
+                    invocation.setSelector(prefixedSelector)
+                    invocation.invoke()
+                } else {
+                    instead.executeAll(bSelf)
+                }
+
+                hookContainer.after.executeAll(bSelf)
+
+            } else {
+                // Call original forward
+                // - (void)forwardInvocation:(NSInvocation *)anInvocation
+                let originalInvocation = unsafeBitCast(origImp!, to: (@convention(c) (AnyObject, Selector, AnyObject) -> Void).self)
+                originalInvocation(bSelf, ObjCSelector.forwardInvocation, invocation)
+
+            }
+        }
+
+        let impl = imp_implementationWithBlock(forwardInvocation as Any)
+        origImp = class_replaceMethod(dynamicClass, ObjCSelector.forwardInvocation, impl, ObjCMethodEncoding.getClass)
+    }
+
     private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
         // crashes on linux
         let getClass: @convention(block) (AnyObject) -> AnyClass = { _ in

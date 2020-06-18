@@ -2,8 +2,9 @@ import Foundation
 
 extension Interpose {
 
-    private struct AssociatedKeys {
+    struct AssociatedKeys {
         static var hookForBlock: UInt8 = 0
+        static var hookContainer: UInt8 = 0
     }
 
     private class WeakObjectContainer<T: AnyObject>: NSObject {

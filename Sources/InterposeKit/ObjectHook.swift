@@ -63,20 +63,6 @@ extension Interpose {
             return nil
         }
 
-        /// Looks for an instance method in the exact class, without looking up the hierarchy.
-        func exactClassImplementsSelector(_ klass: AnyClass, _ selector: Selector) -> Bool {
-            var methodCount: CUnsignedInt = 0
-            guard let methodsInAClass = class_copyMethodList(klass, &methodCount) else { return false }
-            defer { free(methodsInAClass) }
-            for index in 0 ..< Int(methodCount) {
-                let method = methodsInAClass[index]
-                if method_getName(method) == selector {
-                    return true
-                }
-            }
-            return false
-        }
-
         var dynamicSubclass: AnyClass {
             interposeSubclass!.dynamicClass
         }
@@ -94,7 +80,7 @@ extension Interpose {
             }
 
             //  This function searches superclasses for implementations
-            let hasExistingMethod = exactClassImplementsSelector(dynamicSubclass, selector)
+            let hasExistingMethod = interposeSubclass!.exactClassImplementsSelector(dynamicSubclass, selector)
             let encoding = method_getTypeEncoding(method)
 
             if self.generatesSuperIMP {
