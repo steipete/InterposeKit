@@ -13,11 +13,18 @@ extension Interpose {
         var interposeSubclass: InterposeSubclass?
 
         // Logic switch to use super builder
-        let generatesSuperIMP = InterposeSubclass.supportsSuperTrampolines
+        let generatesSuperIMP: Bool
 
         /// Initialize a new hook to interpose an instance method.
-        public init(object: AnyObject, selector: Selector,
+        public init(object: AnyObject,
+                    selector: Selector,
+                    generateSuper: Bool = true,
                     implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+            if generateSuper && !InterposeSubclass.supportsSuperTrampolines {
+                throw InterposeError.superTrampolineNotAvailable
+            }
+            self.generatesSuperIMP = generateSuper
+
             self.object = object
             try super.init(class: type(of: object), selector: selector)
             let block = implementation(self) as AnyObject

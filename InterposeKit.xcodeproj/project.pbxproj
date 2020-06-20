@@ -191,11 +191,11 @@
 				7810959D248D43DC008A943C /* ClassHook.swift */,
 				78EDB8FE248D0A9900D2F6C1 /* ObjectHook.swift */,
 				781EB557249BF0D1002545B4 /* DynamicHook.swift */,
-				78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */,
 				7810959F248D50C1008A943C /* Watcher.swift */,
 				78E20D9724981B2A0021552C /* InterposeSubclass.swift */,
 				780FC9F9249822C900DA5A14 /* HookFinder.swift */,
 				781EB555249BEF54002545B4 /* ObjCInvocation.swift */,
+				78EDB902248D42CD00D2F6C1 /* LinuxCompileSupport.swift */,
 			);
 			path = InterposeKit;
 			sourceTree = "<group>";

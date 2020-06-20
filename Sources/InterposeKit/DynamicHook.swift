@@ -2,6 +2,12 @@ import Foundation
 
 extension Interpose {
 
+    public enum AspectStrategy {
+        case before  /// Called before the original implementation.
+        case instead /// Called insted of the original implementation.
+        case after   /// Called after the original implementation.
+    }
+
     /// Hook that uses `NSInvocation `to not require specific signatures
     /// The call is converted into an invocation via `_objc_msgForward`.
     final public class DynamicHook: AnyHook {
@@ -18,9 +24,19 @@ extension Interpose {
         /// Subclass that we create on the fly
         var interposeSubclass: InterposeSubclass?
 
-        public init(object: AnyObject, selector: Selector,
+        // Logic switch to use super builder
+        let generatesSuperIMP: Bool
+
+        public init(object: AnyObject,
+                    selector: Selector,
                     strategy: AspectStrategy = .before,
+                    generateSuper: Bool = true,
                     implementation: @escaping (AnyObject) -> Void) throws {
+            if generateSuper && !InterposeSubclass.supportsSuperTrampolines {
+                throw InterposeError.superTrampolineNotAvailable
+            }
+            self.generatesSuperIMP = generateSuper
+
             self.object = object
             self.strategy  = strategy
             self.action = implementation
