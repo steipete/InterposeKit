@@ -10,21 +10,21 @@ extension Interpose {
         public let object: AnyObject
 
         /// Subclass that we create on the fly
-        /// Generated when replace is called, checked via state.
+        /// maked when replace is called, checked via state.
         var subclass: InterposeSubclass!
 
         // Logic switch to use super builder
-        let generatesSuperIMP: Bool
+        let makesSuperIMP: Bool
 
         /// Initialize a new hook to interpose an instance method.
         public init(object: AnyObject,
                     selector: Selector,
-                    generateSuper: Bool = true,
+                    makeSuper: Bool = true,
                     implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
-            if generateSuper && !InterposeSubclass.supportsSuperTrampolines {
+            if makeSuper && !InterposeSubclass.supportsSuperTrampolines {
                 throw InterposeError.superTrampolineNotAvailable
             }
-            self.generatesSuperIMP = generateSuper
+            self.makesSuperIMP = makeSuper
 
             self.object = object
             try super.init(class: type(of: object), selector: selector)
@@ -86,7 +86,7 @@ extension Interpose {
             //  This function searches superclasses for implementations
             let hasExistingMethod = subclass!.implementsExact(selector: selector)
 
-            if self.generatesSuperIMP {
+            if self.makesSuperIMP {
                 // If the subclass is empty, we create a super trampoline first.
                 // If a hook already exists, we must skip this.
                 if !hasExistingMethod {

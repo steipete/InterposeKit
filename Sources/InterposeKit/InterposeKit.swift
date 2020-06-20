@@ -60,7 +60,7 @@ final public class Interpose {
     }
 
     // This is based on observation, there is no documented way
-    private func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
+    private func isKVORuntimemakedClass(_ klass: AnyClass) -> Bool {
         NSStringFromClass(klass).hasPrefix("NSKVO")
     }
 
@@ -82,7 +82,7 @@ final public class Interpose {
         self.class = type(of: object)
 
         if let actualClass = checkObjectPosingAsDifferentClass(object) {
-            if isKVORuntimeGeneratedClass(actualClass) {
+            if isKVORuntimemakedClass(actualClass) {
                 throw InterposeError.keyValueObservationDetected(object)
             } else {
                 throw InterposeError.objectPosingAsDifferentClass(object, actualClass: actualClass)

@@ -25,21 +25,21 @@ extension Interpose {
         var subclass: InterposeSubclass!
 
         // Logic switch to use super builder
-        let generatesSuperIMP: Bool
+        let makesSuperIMP: Bool
 
         public init(object: AnyObject,
                     selector: Selector,
                     strategy: AspectStrategy = .before,
-                    generateSuper: Bool = true,
+                    makeSuper: Bool = true,
                     implementation: @escaping (AnyObject) -> Void) throws {
-            if generateSuper && !InterposeSubclass.supportsSuperTrampolines {
+            if makeSuper && !InterposeSubclass.supportsSuperTrampolines {
                 throw InterposeError.superTrampolineNotAvailable
             }
 
             self.object = object
             self.strategy = strategy
             self.action = implementation
-            self.generatesSuperIMP = generateSuper
+            self.makesSuperIMP = makeSuper
             try super.init(class: type(of: object), selector: selector)
         }
 
@@ -73,7 +73,7 @@ extension Interpose {
 
                 try subclass.add(selector: aspectSelector, imp: origImp, encoding: method.typeEncoding)
 
-                Interpose.log("Generated -[\(`class`).\(aspectSelector)]: \(origImp)")
+                Interpose.log("maked -[\(`class`).\(aspectSelector)]: \(origImp)")
             }
 
             // append hook as copy

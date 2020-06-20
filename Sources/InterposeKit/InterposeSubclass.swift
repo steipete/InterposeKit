@@ -76,7 +76,7 @@ class InterposeSubclass: ModifyableClass {
 
         object_setClass(object, nnSubclass)
         let oldName = NSStringFromClass(class_getSuperclass(object_getClass(object)!)!)
-        Interpose.log("Generated \(NSStringFromClass(nnSubclass)) for object (was: \(oldName))")
+        Interpose.log("maked \(NSStringFromClass(nnSubclass)) for object (was: \(oldName))")
         return nnSubclass
     }
 
