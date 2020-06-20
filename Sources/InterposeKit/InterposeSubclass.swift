@@ -97,7 +97,7 @@ class InterposeSubclass {
     }
 
     /// Looks for an instance method in this subclass, without looking up the hierarchy.
-    func exactClassImplementsSelector(_ selector: Selector) -> Bool {
+    func exactClassImplements(selector: Selector) -> Bool {
         exactClassImplementsSelector(dynamicClass, selector)
     }
 

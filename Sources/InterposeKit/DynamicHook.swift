@@ -42,12 +42,13 @@ extension Interpose {
             try subclass.prepareDynamicInvocation()
             interposeSubclass = subclass
 
-            let hasExistingMethod = subclass.exactClassImplementsSelector(selector)
-            if !hasExistingMethod {
+            // If there is no existing implementation, add one.
+            if !subclass.exactClassImplements(selector: selector) {
                 // Add super trampoline, then swizzle
                 subclass.addSuperTrampoline(selector: selector)
                 let superCallingMethod = class_getInstanceMethod(subclass.dynamicClass, selector)!
 
+                // add a prefixed copy of the method
                 let aspectSelector = InterposeSubclass.aspectPrefixed(selector)
                 let origImp = method_getImplementation(superCallingMethod)
                 class_addMethod(subclass.dynamicClass, aspectSelector, origImp, encoding)
@@ -70,9 +71,27 @@ extension Interpose {
         }
 
         override func resetImplementation() throws {
-            //let method = try validate(expectedState: .interposed)
+            let method = try validate(expectedState: .interposed)
 
-            // TODO
+            // Get the super-implementation via the prefixed method...
+            let aspectSelector = InterposeSubclass.aspectPrefixed(selector)
+            guard let dynamicClass = interposeSubclass?.dynamicClass,
+                let superIMP = class_getMethodImplementation(dynamicClass, aspectSelector) else {
+                    throw InterposeError.unknownError("Unable to get subclass or met")
+            }
+
+            // ... and replace the original
+            // The subclassed method can't be removed, but will be unused.
+            let encoding = method_getTypeEncoding(method)
+            let origIMP = class_replaceMethod(dynamicClass, selector, superIMP, encoding)
+
+            // If the IMP does not match our expectations, throw!
+            // TODO: guard for dynamic + static hook mix!
+            guard origIMP == forwardIMP else {
+                throw InterposeError.unexpectedImplementation(dynamicClass, selector, origIMP)
+            }
+
+            Interpose.log("Removed dynamic -[\(`class`).\(selector)]")
         }
     }
 
