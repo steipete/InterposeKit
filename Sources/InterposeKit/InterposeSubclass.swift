@@ -1,6 +1,6 @@
 import Foundation
 
-class InterposeSubclass {
+class InterposeSubclass: ModifyableClass {
 
     private enum Constants {
         static let subclassSuffix = "InterposeKit_"
@@ -26,15 +26,15 @@ class InterposeSubclass {
     let object: AnyObject
 
     /// Subclass that we create on the fly
-    private(set) var dynamicClass: AnyClass
+    private(set) var `class`: AnyClass
 
     /// Hooks that have to be called dynamically.
     var hookContainer: Interpose.DynamicHookContainer? {
         get { objc_getAssociatedObject(object, &Interpose.AssociatedKeys.hookContainer)
-                as? Interpose.DynamicHookContainer }
+            as? Interpose.DynamicHookContainer }
         set {
             objc_setAssociatedObject(object, &Interpose.AssociatedKeys.hookContainer,
-            newValue, .OBJC_ASSOCIATION_RETAIN)
+                                     newValue, .OBJC_ASSOCIATION_RETAIN)
         }
     }
 
@@ -45,8 +45,8 @@ class InterposeSubclass {
     /// If we make a dynamic subclass over KVO, invalidating the token crashes in cache_getImp.
     init(object: AnyObject) throws {
         self.object = object
-        dynamicClass = type(of: object) // satisfy set to something
-        dynamicClass = try getExistingSubclass() ?? createSubclass()
+        `class` = type(of: object) // satisfy set to something
+        `class` = try getExistingSubclass() ?? createSubclass()
     }
 
     private func createSubclass() throws -> AnyClass {
@@ -93,26 +93,7 @@ class InterposeSubclass {
     func prepareDynamicInvocation() throws {
         guard InterposeSubclass.supportsSuperTrampolines else { throw InterposeError.unknownError("SuperBuilder is required for dynamic invocation")}
 
-        replaceForwardInvocation()
-    }
-
-    /// Looks for an instance method in this subclass, without looking up the hierarchy.
-    func exactClassImplements(selector: Selector) -> Bool {
-        exactClassImplementsSelector(dynamicClass, selector)
-    }
-
-    /// Looks for an instance method in `klass`, without looking up the hierarchy.
-    func exactClassImplementsSelector(_ klass: AnyClass, _ selector: Selector) -> Bool {
-        var methodCount: CUnsignedInt = 0
-        guard let methodsInAClass = class_copyMethodList(klass, &methodCount) else { return false }
-        defer { free(methodsInAClass) }
-        for index in 0 ..< Int(methodCount) {
-            let method = methodsInAClass[index]
-            if method_getName(method) == selector {
-                return true
-            }
-        }
-        return false
+        try replaceForwardInvocation()
     }
 
     #if !os(Linux)
@@ -123,11 +104,10 @@ class InterposeSubclass {
 
     /// Test if the class requires adding dynamic implementation preparation hooks.
     private func requiresPrepareDynamicInvocation() -> Bool {
-        exactClassImplementsSelector(
-            dynamicClass, ObjCSelector.forwardInvocation) == false
+        implementsExact(selector: ObjCSelector.forwardInvocation) == false
     }
 
-    private func replaceForwardInvocation() {
+    private func replaceForwardInvocation() throws {
         guard requiresPrepareDynamicInvocation() else { return }
 
         // Add super trampoline
@@ -163,7 +143,7 @@ class InterposeSubclass {
         }
 
         let impl = imp_implementationWithBlock(forwardInvocation as Any)
-        origImp = class_replaceMethod(dynamicClass, ObjCSelector.forwardInvocation, impl, ObjCMethodEncoding.getClass)
+        origImp = try replace(selector: ObjCSelector.forwardInvocation, imp: impl, encoding: ObjCMethodEncoding.getClass)
     }
 
     private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
@@ -181,18 +161,17 @@ class InterposeSubclass {
     }
 
     private lazy var addSuperImpl: @convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool = {
-        let handle = dlopen(nil, RTLD_LAZY)
-        let imp = dlsym(handle, "IKTAddSuperImplementationToClass")
+        let imp = Interpose.resolve(symbol: "IKTAddSuperImplementationToClass")
         return unsafeBitCast(imp, to: (@convention(c) (AnyClass, Selector, NSErrorPointer) -> Bool).self)
     }()
 
     func addSuperTrampoline(selector: Selector) {
         var error: NSError?
-        if addSuperImpl(dynamicClass, selector, &error) == false {
-            Interpose.log("Failed to add super implementation to -[\(dynamicClass).\(selector)]: \(error!)")
+        if addSuperImpl(`class`, selector, &error) == false {
+            Interpose.log("Failed to add super implementation to -[\(`class`).\(selector)]: \(error!)")
         } else {
-            let imp = class_getMethodImplementation(dynamicClass, selector)!
-            Interpose.log("Added super for -[\(dynamicClass).\(selector)]: \(imp)")
+            let imp = class_getMethodImplementation(`class`, selector)!
+            Interpose.log("Added super for -[\(`class`).\(selector)]: \(imp)")
         }
     }
     #else

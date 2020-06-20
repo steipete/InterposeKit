@@ -22,7 +22,7 @@ extension Interpose {
         public let action: (AnyObject) -> Void
 
         /// Subclass that we create on the fly
-        var interposeSubclass: InterposeSubclass?
+        var subclass: InterposeSubclass!
 
         // Logic switch to use super builder
         let generatesSuperIMP: Bool
@@ -35,39 +35,44 @@ extension Interpose {
             if generateSuper && !InterposeSubclass.supportsSuperTrampolines {
                 throw InterposeError.superTrampolineNotAvailable
             }
-            self.generatesSuperIMP = generateSuper
 
             self.object = object
-            self.strategy  = strategy
+            self.strategy = strategy
             self.action = implementation
+            self.generatesSuperIMP = generateSuper
             try super.init(class: type(of: object), selector: selector)
         }
 
         private lazy var forwardIMP: IMP = {
-            let imp = dlsym(dlopen(nil, RTLD_LAZY), "_objc_msgForward")
-            return unsafeBitCast(imp, to: IMP.self)
+            resolve(symbol: "_objc_msgForward")
+        }()
+
+        // stret is needed for x86-64 struct returns but not for ARM64
+        private lazy var forwardStretIMP: IMP = {
+            resolve(symbol: "_objc_msgForward_stret")
         }()
 
         override func replaceImplementation() throws {
             let method = try validate()
-            let encoding = method_getTypeEncoding(method)
 
             // Check if there's an existing subclass we can reuse.
             // Create one at runtime if there is none.
             let subclass = try InterposeSubclass(object: object)
             try subclass.prepareDynamicInvocation()
-            interposeSubclass = subclass
+            self.subclass = subclass
 
             // If there is no existing implementation, add one.
-            if !subclass.exactClassImplements(selector: selector) {
+            if !subclass.implementsExact(selector: selector) {
                 // Add super trampoline, then swizzle
                 subclass.addSuperTrampoline(selector: selector)
-                let superCallingMethod = class_getInstanceMethod(subclass.dynamicClass, selector)!
+                let superCallingMethod = subclass.instanceMethod(selector)!
 
                 // add a prefixed copy of the method
                 let aspectSelector = InterposeSubclass.aspectPrefixed(selector)
-                let origImp = method_getImplementation(superCallingMethod)
-                class_addMethod(subclass.dynamicClass, aspectSelector, origImp, encoding)
+                let origImp = superCallingMethod.implementation
+
+                try subclass.add(selector: aspectSelector, imp: origImp, encoding: method.typeEncoding)
+
                 Interpose.log("Generated -[\(`class`).\(aspectSelector)]: \(origImp)")
             }
 
@@ -78,11 +83,7 @@ extension Interpose {
             newContainer.hooks = hooks
             subclass.hookContainer = newContainer
 
-            let forwardIMP = self.forwardIMP
-            guard class_replaceMethod(subclass.dynamicClass, selector, forwardIMP, encoding) != nil else {
-                throw InterposeError.unableToAddMethod(subclass.dynamicClass, selector)
-            }
-
+            try subclass.replace(method: method, imp: self.forwardIMP)
             Interpose.log("Added dynamic -[\(`class`).\(selector)]")
         }
 
@@ -91,20 +92,17 @@ extension Interpose {
 
             // Get the super-implementation via the prefixed method...
             let aspectSelector = InterposeSubclass.aspectPrefixed(selector)
-            guard let dynamicClass = interposeSubclass?.dynamicClass,
-                let superIMP = class_getMethodImplementation(dynamicClass, aspectSelector) else {
-                    throw InterposeError.unknownError("Unable to get subclass or met")
-            }
+
+            let superIMP = try subclass.methodImplementation(aspectSelector)
 
             // ... and replace the original
             // The subclassed method can't be removed, but will be unused.
-            let encoding = method_getTypeEncoding(method)
-            let origIMP = class_replaceMethod(dynamicClass, selector, superIMP, encoding)
+            let origIMP = try subclass.replace(method: method, imp: superIMP)
 
             // If the IMP does not match our expectations, throw!
             // TODO: guard for dynamic + static hook mix!
             guard origIMP == forwardIMP else {
-                throw InterposeError.unexpectedImplementation(dynamicClass, selector, origIMP)
+                throw InterposeError.unexpectedImplementation(subclass.class, selector, origIMP)
             }
 
             Interpose.log("Removed dynamic -[\(`class`).\(selector)]")

@@ -18,6 +18,12 @@ extension Interpose {
         }
     }
 
+    /// Helper to resolve an implementation
+    static func resolve(symbol: String) -> IMP {
+        let imp = dlsym(dlopen(nil, RTLD_LAZY), symbol)
+        return unsafeBitCast(imp, to: IMP.self)
+    }
+
     static func storeHook<HookType: AnyHook>(hook: HookType, to block: AnyObject) {
         // Weakly store reference to hook inside the block of the IMP.
         objc_setAssociatedObject(block, &AssociatedKeys.hookForBlock,
