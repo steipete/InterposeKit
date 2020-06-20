@@ -20,7 +20,7 @@ extension NSObject {
         _ selector: Selector,
         strategy: Interpose.AspectStrategy = .before,
         _ implementation: @escaping (AnyObject) -> Void) throws -> AnyHook {
-        return try Interpose.DynamicHook(object: self, selector: selector,
+        try Interpose.DynamicHook(object: self, selector: selector,
             strategy: strategy, implementation: implementation).apply()
     }
 
@@ -30,7 +30,7 @@ extension NSObject {
         methodSignature: MethodSignature.Type = MethodSignature.self,
         hookSignature: HookSignature.Type = HookSignature.self,
         _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
-        return try Interpose.ClassHook(class: self as AnyClass,
+        try Interpose.ClassHook(class: self as AnyClass,
                                        selector: selector, implementation: implementation).apply()
     }
 }
