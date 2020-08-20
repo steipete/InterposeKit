@@ -31,7 +31,7 @@ class TestClass: NSObject {
 }
 
 let interposer = try Interpose(TestClass.self) {
-    try $0.hook(
+    try $0.prepareHook(
         #selector(TestClass.sayHi),
         methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
         hookSignature: (@convention(block) (AnyObject) -> String).self) {
