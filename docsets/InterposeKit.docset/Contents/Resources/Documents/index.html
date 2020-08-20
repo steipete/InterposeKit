@@ -135,7 +135,7 @@ This is similar to the <a href="https://github.com/steipete/Aspects">Aspects lib
 <span class="p">}</span>
 
 <span class="k">let</span> <span class="nv">interposer</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">Interpose</span><span class="p">(</span><span class="kt">TestClass</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">try</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">hook</span><span class="p">(</span>
+    <span class="k">try</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">prepareHook</span><span class="p">(</span>
         <span class="cp">#selector(TestClass.sayHi),</span>
         <span class="nv">methodSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">,</span> <span class="kt">Selector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
         <span class="nv">hookSignature</span><span class="p">:</span> <span class="p">(</span><span class="kd">@convention</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="p">(</span><span class="kt">AnyObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">)</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
