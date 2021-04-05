@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                      = 'InterposeKit'
-  s.version                   = '0.0.1'
+  s.version                   = '0.0.2'
   s.summary                   = 'A modern library to swizzle elegantly in Swift.'
   s.homepage                  = 'https://github.com/steipete/InterposeKit'
   s.source                    = { :git => s.homepage + '.git', :tag => s.version }
