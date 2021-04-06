@@ -34,6 +34,9 @@ public enum InterposeError: LocalizedError {
     /// Can't revert or apply if already done so.
     case invalidState(expectedState: AnyHook.State)
 
+    /// SuperBuilder is not in the runtime but required for this configuration.
+    case superTrampolineNotAvailable
+
     /// Unable to remove hook.
     case resetUnsupported(_ reason: String)
 
@@ -51,22 +54,34 @@ extension InterposeError: Equatable {
         switch self {
         case .methodNotFound(let klass, let selector):
             return "Method not found: -[\(klass) \(selector)]"
+
         case .nonExistingImplementation(let klass, let selector):
             return "Implementation not found: -[\(klass) \(selector)]"
+
         case .unexpectedImplementation(let klass, let selector, let IMP):
             return "Unexpected Implementation in -[\(klass) \(selector)]: \(String(describing: IMP))"
+
         case .failedToAllocateClassPair(let klass, let subclassName):
             return "Failed to allocate class pair: \(klass), \(subclassName)"
+
         case .unableToAddMethod(let klass, let selector):
             return "Unable to add method: -[\(klass) \(selector)]"
+
         case .keyValueObservationDetected(let obj):
             return "Unable to hook object that uses Key Value Observing: \(obj)"
+
         case .objectPosingAsDifferentClass(let obj, let actualClass):
             return "Unable to hook \(type(of: obj)) posing as \(NSStringFromClass(actualClass))/"
+
         case .invalidState(let expectedState):
             return "Invalid State. Expected: \(expectedState)"
+
         case .resetUnsupported(let reason):
             return "Reset Unsupported: \(reason)"
+
+        case .superTrampolineNotAvailable:
+            return "SuperBuilder is required but not available at runtime."
+
         case .unknownError(let reason):
             return reason
         }

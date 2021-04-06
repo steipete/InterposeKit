@@ -14,15 +14,17 @@ extension Interpose {
 
         override func replaceImplementation() throws {
             let method = try validate()
-            origIMP = class_replaceMethod(`class`, selector, replacementIMP, method_getTypeEncoding(method))
-            guard origIMP != nil else { throw InterposeError.nonExistingImplementation(`class`, selector) }
+
+            origIMP = try klass.replace(method: method, imp: replacementIMP)
             Interpose.log("Swizzled -[\(`class`).\(selector)] IMP: \(origIMP!) -> \(replacementIMP!)")
         }
 
         override func resetImplementation() throws {
             let method = try validate(expectedState: .interposed)
             precondition(origIMP != nil)
-            let previousIMP = class_replaceMethod(`class`, selector, origIMP!, method_getTypeEncoding(method))
+
+
+            let previousIMP = try klass.replace(method: method, imp: origIMP!)
             guard previousIMP == replacementIMP else {
                 throw InterposeError.unexpectedImplementation(`class`, selector, previousIMP)
             }

@@ -2,8 +2,9 @@ import Foundation
 
 extension Interpose {
 
-    private struct AssociatedKeys {
+    struct AssociatedKeys {
         static var hookForBlock: UInt8 = 0
+        static var hookContainer: UInt8 = 0
     }
 
     private class WeakObjectContainer<T: AnyObject>: NSObject {
@@ -15,6 +16,12 @@ extension Interpose {
         init(with object: T?) {
             _object = object
         }
+    }
+
+    /// Helper to resolve an implementation
+    static func resolve(symbol: String) -> IMP {
+        let imp = dlsym(dlopen(nil, RTLD_LAZY), symbol)
+        return unsafeBitCast(imp, to: IMP.self)
     }
 
     static func storeHook<HookType: AnyHook>(hook: HookType, to block: AnyObject) {

@@ -16,12 +16,21 @@ extension NSObject {
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
+    @discardableResult public func hook (
+        _ selector: Selector,
+        strategy: Interpose.AspectStrategy = .before,
+        _ implementation: @escaping (AnyObject) -> Void) throws -> AnyHook {
+        try Interpose.DynamicHook(object: self, selector: selector,
+            strategy: strategy, implementation: implementation).apply()
+    }
+
+    /// Hook an `@objc dynamic` instance method via selector  on the current object or class..
     @discardableResult public class func hook<MethodSignature, HookSignature> (
         _ selector: Selector,
         methodSignature: MethodSignature.Type = MethodSignature.self,
         hookSignature: HookSignature.Type = HookSignature.self,
         _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> AnyHook {
-        return try Interpose.ClassHook(class: self as AnyClass,
+        try Interpose.ClassHook(class: self as AnyClass,
                                        selector: selector, implementation: implementation).apply()
     }
 }
@@ -51,7 +60,7 @@ final public class Interpose {
     }
 
     // This is based on observation, there is no documented way
-    private func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
+    private func isKVORuntimemakedClass(_ klass: AnyClass) -> Bool {
         NSStringFromClass(klass).hasPrefix("NSKVO")
     }
 
@@ -73,7 +82,7 @@ final public class Interpose {
         self.class = type(of: object)
 
         if let actualClass = checkObjectPosingAsDifferentClass(object) {
-            if isKVORuntimeGeneratedClass(actualClass) {
+            if isKVORuntimemakedClass(actualClass) {
                 throw InterposeError.keyValueObservationDetected(object)
             } else {
                 throw InterposeError.objectPosingAsDifferentClass(object, actualClass: actualClass)
@@ -97,8 +106,8 @@ final public class Interpose {
         hookSignature: HookSignature.Type = HookSignature.self,
         _ implementation: (TypedHook<MethodSignature, HookSignature>) -> HookSignature?)
         throws -> TypedHook<MethodSignature, HookSignature> {
-        try hook(NSSelectorFromString(selName),
-            methodSignature: methodSignature, hookSignature: hookSignature, implementation)
+            try hook(NSSelectorFromString(selName),
+                     methodSignature: methodSignature, hookSignature: hookSignature, implementation)
     }
 
     /// Hook an `@objc dynamic` instance method via selector  on the current class.

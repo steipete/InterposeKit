@@ -112,6 +112,21 @@ static BOOL ITKMethodIsSuperTrampoline(Method method) {
     return methodIMP == (IMP)msgSendSuperTrampoline || methodIMP == (IMP)msgSendSuperStretTrampoline;
 }
 
+bool prefix(const char *pre, const char *str) {
+    return strncmp(pre, str, strlen(pre)) == 0;
+}
+
+let ITKInterposePrefix = "interpose_";
+
+/// If prefix was found, forward the char pointer and get a new selector
+SEL ITKReplaceCmd(__unsafe_unretained id obj, SEL _cmd);
+SEL ITKReplaceCmd(__unsafe_unretained id obj, SEL _cmd) {
+    let len = strlen(ITKInterposePrefix);
+    let sel = sel_getName(_cmd);
+    let hasPrefix = strncmp(ITKInterposePrefix, sel, len) == 0;
+    return hasPrefix ? sel_getUid(sel + len) : _cmd;
+}
+
 struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd);
 struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd) {
     /**
@@ -197,6 +212,7 @@ void msgSendSuperTrampoline(void) {
                   // protect returned new value when we restore the pairs
                   "mov x9, x0\n"
 
+
                   // pop {x0-x8, lr}
                   "ldp x0, x1, [sp], #16\n"
                   "ldp x2, x3, [sp], #16\n"
@@ -249,14 +265,20 @@ void msgSendSuperTrampoline(void) {
                   //
                   // First parameter can be avoided,
                   // but we need to keep the stack 16-byte algined.
-                  //"movq %%rdi, -8(%%rbp)  \n" // self po *(id *)
-                  "movq %%rsi, -16(%%rbp) \n" // _cmd p (SEL)$rsi
+                  "movq %%rdi, -8(%%rbp)  \n" // self po *(id *)
+                  //"movq %%rsi, -16(%%rbp) \n" // _cmd p (SEL)$rsi
                   "movq %%rdx, -24(%%rbp) \n" // param 1
                   "movq %%rcx, -32(%%rbp) \n" // param 2
                   "movq %%r8,  -40(%%rbp) \n" // param 3
                   "movq %%r9,  -48(%%rbp) \n" // param 4 (rest goes on stack)
 
+                  // replace _cmd
+                  "callq _ITKReplaceCmd \n"
+                  "movq %%rax, %%rsi \n"
+                  "movq %%rsi, -16(%%rbp) \n" // store modified _cmd
+
                   // fetch filled struct objc_super, call with self + _cmd
+                  "movq -8(%%rbp), %%rdi \n"
                   "callq _ITKReturnThreadSuper \n"
                   // first param is now struct objc_super
                   "movq %%rax, %%rdi \n"

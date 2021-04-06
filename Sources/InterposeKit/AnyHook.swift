@@ -37,6 +37,11 @@ public class AnyHook {
         try validate()
     }
 
+    /// Helper to get class wrapper
+    var klass: InterposeClass {
+        InterposeClass(`class`)
+    }
+
     func replaceImplementation() throws {
         preconditionFailure("Not implemented")
     }
