@@ -46,7 +46,11 @@ extension Interpose {
     final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
 
         /// The object that is being hooked.
-        public let object: AnyObject
+        public var object: AnyObject {
+            objectContainer.object
+        }
+
+        private let objectContainer: AnyObjectContainer
 
         /// Subclass that we create on the fly
         var dynamicSubclass: AnyClass?
@@ -55,9 +59,14 @@ extension Interpose {
         let generatesSuperIMP = isSupportedArchitectureForSuper()
 
         /// Initialize a new hook to interpose an instance method.
-        public init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
-            self.object = object
-            try super.init(class: type(of: object), selector: selector)
+        public convenience init(object: AnyObject, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+            try self.init(objectContainer: .strong(object), selector: selector, implementation: implementation)
+        }
+
+        /// Initialize a new hook to interpose an instance method.
+        public init(objectContainer: AnyObjectContainer, selector: Selector, implementation:(ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+            self.objectContainer = objectContainer
+            try super.init(class: type(of: objectContainer.object), selector: selector)
             let block = implementation(self) as AnyObject
             replacementIMP = imp_implementationWithBlock(block)
             guard replacementIMP != nil else {

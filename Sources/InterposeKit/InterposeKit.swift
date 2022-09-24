@@ -30,13 +30,18 @@ extension NSObject {
 /// Methods are hooked via replacing the implementation, instead of the usual exchange.
 /// Supports both swizzling classes and individual objects.
 final public class Interpose {
+
     /// Stores swizzle hooks and executes them at once.
     public let `class`: AnyClass
     /// Lists all hooks for the current interpose class object.
     public private(set) var hooks: [AnyHook] = []
 
     /// If Interposing is object-based, this is set.
-    public let object: AnyObject?
+    public var object: AnyObject? {
+        objectContainer?.object
+    }
+
+    internal let objectContainer: AnyObjectContainer?
 
     // Checks if a object is posing as a different class
     // via implementing 'class' and returning something else.
@@ -58,7 +63,7 @@ final public class Interpose {
     /// If `builder` is present, `apply()` is automatically called.
     public init(_ `class`: AnyClass, builder: ((Interpose) throws -> Void)? = nil) throws {
         self.class = `class`
-        self.object = nil
+        self.objectContainer = nil
 
         // Only apply if a builder is present
         if let builder = builder {
@@ -67,9 +72,16 @@ final public class Interpose {
     }
 
     /// Initialize with a single object to interpose.
-    public init(_ object: NSObject, builder: ((Interpose) throws -> Void)? = nil) throws {
-        self.object = object
-        self.class = type(of: object)
+    public convenience init(_ object: NSObject, builder: ((Interpose) throws -> Void)? = nil) throws {
+        try self.init(.strong(object), builder: builder)
+    }
+
+    /// Initialize with a single object to interpose.
+    public init(_ objectContainer: AnyObjectContainer, builder: ((Interpose) throws -> Void)? = nil) throws {
+        self.objectContainer = objectContainer
+        self.class = type(of: objectContainer.object)
+
+        let object = objectContainer.object
 
         if let actualClass = checkObjectPosingAsDifferentClass(object) {
             if isKVORuntimeGeneratedClass(actualClass) {
@@ -106,8 +118,8 @@ final public class Interpose {
        _ implementation:(TypedHook<MethodSignature, HookSignature>) -> HookSignature?) throws -> TypedHook<MethodSignature, HookSignature> {
 
         var hook: TypedHook<MethodSignature, HookSignature>
-        if let object = self.object {
-            hook = try ObjectHook(object: object, selector: selector, implementation: implementation)
+        if let objectContainer = self.objectContainer {
+            hook = try ObjectHook(objectContainer: objectContainer, selector: selector, implementation: implementation)
         } else {
             hook = try ClassHook(class: `class`, selector: selector, implementation: implementation)
         }
