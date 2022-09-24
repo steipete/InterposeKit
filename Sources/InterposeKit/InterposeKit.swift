@@ -72,18 +72,18 @@ final public class Interpose {
     }
 
     /// Initialize with a single object to interpose.
-    public convenience init(_ object: NSObject, builder: ((Interpose) throws -> Void)? = nil) throws {
-        try self.init(.strong(object), builder: builder)
+    public convenience init(_ object: NSObject, bypass: Bool = false, builder: ((Interpose) throws -> Void)? = nil) throws {
+        try self.init(.strong(object), bypass: bypass, builder: builder)
     }
 
     /// Initialize with a single object to interpose.
-    public init(_ objectContainer: AnyObjectContainer, builder: ((Interpose) throws -> Void)? = nil) throws {
+    public init(_ objectContainer: AnyObjectContainer, bypass: Bool = false, builder: ((Interpose) throws -> Void)? = nil) throws {
         self.objectContainer = objectContainer
         self.class = type(of: objectContainer.object)
 
         let object = objectContainer.object
 
-        if let actualClass = checkObjectPosingAsDifferentClass(object) {
+        if !bypass, let actualClass = checkObjectPosingAsDifferentClass(object) {
             if isKVORuntimeGeneratedClass(actualClass) {
                 throw InterposeError.keyValueObservationDetected(object)
             } else {
