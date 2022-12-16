@@ -26,3 +26,13 @@
 ##### Bug Fixes
 
 * None.
+
+## 0.03
+
+##### Breaking
+
+##### Enhancements
+
+##### Bug Fixes
+
+* Corrupted floating point registers after trampoline.
