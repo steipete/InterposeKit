@@ -206,10 +206,10 @@ void msgSendSuperTrampoline(void) {
 
 #if PROTECT_FLOATING_POINT_REGISTERS
                   // pop {q0-q7}
-                  "ldp q6, q7, [sp], #32\n"
-                  "ldp q4, q5, [sp], #32\n"
-                  "ldp q2, q3, [sp], #32\n"
                   "ldp q0, q1, [sp], #32\n"
+                  "ldp q2, q3, [sp], #32\n"
+                  "ldp q4, q5, [sp], #32\n"
+                  "ldp q6, q7, [sp], #32\n"
 #endif
 
                   // get new return (adr of the objc_super class)
