@@ -32,7 +32,7 @@ final class KVOTests: InterposeKitTestCase {
             testObj.age = 2
             XCTAssertEqual(testObj.age, 2)
             // Hooking is expected to fail
-            assert(try Interpose(testObj), throws: InterposeError.keyValueObservationDetected(testObj))
+            assert(try Interpose(testObj), throws: InterposeError.unknownError("keyValueObservationDetected: \(testObj)"))
             XCTAssertEqual(testObj.age, 2)
         }
 

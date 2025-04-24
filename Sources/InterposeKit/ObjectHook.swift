@@ -86,7 +86,7 @@ extension Interpose {
 
             // Check if there's an existing subclass we can reuse.
             // Create one at runtime if there is none.
-            interposeSubclass = try InterposeSubclass(object: object)
+            interposeSubclass = try InterposeSubclass(object: object, selector: selector)
 
             // The implementation of the call that is hooked must exist.
             guard lookupOrigIMP != nil else {

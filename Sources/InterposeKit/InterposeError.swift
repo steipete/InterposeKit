@@ -18,11 +18,6 @@ public enum InterposeError: LocalizedError {
     /// Unable to add method  for object-based interposing.
     case unableToAddMethod(AnyClass, Selector)
 
-    /// Object-based hooking does not work if an object is using KVO.
-    /// The KVO mechanism also uses subclasses created at runtime but doesn't check for additional overrides.
-    /// Adding a hook eventually crashes the KVO management code so we reject hooking altogether in this case.
-    case keyValueObservationDetected(AnyObject)
-
     /// Object is lying about it's actual class metadata.
     /// This usually happens when other swizzling libraries (like Aspects) also interfere with a class.
     /// While this might just work, it's not worth risking a crash, so similar to KVO this case is rejected.
@@ -59,8 +54,6 @@ extension InterposeError: Equatable {
             return "Failed to allocate class pair: \(klass), \(subclassName)"
         case .unableToAddMethod(let klass, let selector):
             return "Unable to add method: -[\(klass) \(selector)]"
-        case .keyValueObservationDetected(let obj):
-            return "Unable to hook object that uses Key Value Observing: \(obj)"
         case .objectPosingAsDifferentClass(let obj, let actualClass):
             return "Unable to hook \(type(of: obj)) posing as \(NSStringFromClass(actualClass))/"
         case .invalidState(let expectedState):

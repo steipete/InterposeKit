@@ -14,7 +14,8 @@ let package = Package(
     ],
     targets: [
         .target(name: "SuperBuilder"),
-        .target(name: "InterposeKit", dependencies: ["SuperBuilder"]),
+        .target(name: "_ExceptionCatcher", path: "Sources/ExceptionCatcher", publicHeadersPath: "", cSettings: [.headerSearchPath(".")]),
+        .target(name: "InterposeKit", dependencies: ["SuperBuilder", "_ExceptionCatcher"]),
         .testTarget(name: "InterposeKitTests", dependencies: ["InterposeKit"]),
     ]
 )

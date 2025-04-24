@@ -41,7 +41,7 @@ final public class Interpose {
 
     // Checks if a object is posing as a different class
     // via implementing 'class' and returning something else.
-    private func checkObjectPosingAsDifferentClass(_ object: AnyObject) -> AnyClass? {
+    static func checkObjectPosingAsDifferentClass(_ object: AnyObject) -> AnyClass? {
         let perceivedClass: AnyClass = type(of: object)
         let actualClass: AnyClass = object_getClass(object)!
         if actualClass != perceivedClass {
@@ -51,7 +51,7 @@ final public class Interpose {
     }
 
     // This is based on observation, there is no documented way
-    private func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
+    static func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
         NSStringFromClass(klass).hasPrefix("NSKVO")
     }
 
@@ -72,10 +72,8 @@ final public class Interpose {
         self.object = object
         self.class = type(of: object)
 
-        if let actualClass = checkObjectPosingAsDifferentClass(object) {
-            if isKVORuntimeGeneratedClass(actualClass) {
-                throw InterposeError.keyValueObservationDetected(object)
-            } else {
+        if let actualClass = Self.checkObjectPosingAsDifferentClass(object) {
+            if !Self.isKVORuntimeGeneratedClass(actualClass) {
                 throw InterposeError.objectPosingAsDifferentClass(object, actualClass: actualClass)
             }
         }
