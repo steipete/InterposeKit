@@ -20,6 +20,7 @@ on:
       - 'Gemfile*'
       - 'Package*'
       - 'Sources/**/*.swift'
+  workflow_dispatch:
 
 jobs:
   Jazzy:

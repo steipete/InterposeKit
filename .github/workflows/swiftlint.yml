@@ -6,6 +6,7 @@ on:
       - '.github/workflows/swiftlint.yml'
       - '.swiftlint.yml'
       - '**/*.swift'
+  workflow_dispatch:
 
 jobs:
   SwiftLint:

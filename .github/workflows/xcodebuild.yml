@@ -18,38 +18,35 @@ on:
       - 'Sources/**/*.swift'
       - 'Tests/**/*.swift'
       - '!Tests/LinuxMain.swift'
+  workflow_dispatch:
 
 jobs:
   xcodebuild:
     strategy:
       matrix:
-        xcode:
-          - version: '11.4'
-            flags_for_test: -parallel-testing-enabled NO -enableCodeCoverage YES
-          - version: '11.5'
+        include:
+          - name: default
             flags_for_test: -parallel-testing-enabled NO -enableCodeCoverage YES
         xcode_flags: ['-scheme InterposeKit -project InterposeKit.xcodeproj']
     runs-on: macos-latest
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode.version }}.app
     steps:
       - uses: actions/checkout@v2
       - run: xcodebuild -version
       - name: macOS with UTF16
         if: always()
-        run: YAMS_DEFAULT_ENCODING=UTF16 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.xcode.flags_for_test }} test | xcpretty
+        run: YAMS_DEFAULT_ENCODING=UTF16 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test | xcpretty
         shell: bash
       - name: macOS with UTF8
         if: always()
-        run: YAMS_DEFAULT_ENCODING=UTF8 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.xcode.flags_for_test }} test | xcpretty
+        run: YAMS_DEFAULT_ENCODING=UTF8 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test | xcpretty
         shell: bash
       - name: iPhone Simulator
         if: always()
-        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.xcode.flags_for_test }} test -sdk iphonesimulator -destination "name=iPhone 8" | xcpretty
+        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test -sdk iphonesimulator -destination "name=iPhone 15" | xcpretty
         shell: bash
       - name: Apple TV Simulator
         if: always()
-        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.xcode.flags_for_test }} test -sdk appletvsimulator -destination "name=Apple TV 4K" | xcpretty
+        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test -sdk appletvsimulator -destination "name=Apple TV 4K" | xcpretty
         shell: bash
       - name: watchOS Simulator
         if: always()

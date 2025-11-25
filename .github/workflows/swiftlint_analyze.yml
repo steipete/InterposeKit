@@ -18,12 +18,11 @@ on:
       - 'Sources/**/*.swift'
       - '!Tests/**/*.swift'
       - '!Tests/LinuxMain.swift'
+  workflow_dispatch:
 
 jobs:
   Analyze:
     runs-on: macos-latest
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_11.5.app
     steps:
       - uses: actions/checkout@v2
       - name: Generate xcodebuild.log
