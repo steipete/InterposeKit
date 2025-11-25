@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/steipete/InterposeKit/master/logo.png" width="60%" alt="InterposeKit"/>
 
-# InterposeKit 🧩
+# InterposeKit 🧩 - Modern Swift method swizzling
 
 [![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3ASwiftPM)
 [![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
