@@ -1,5 +1,7 @@
 <img src="https://raw.githubusercontent.com/steipete/InterposeKit/master/logo.png" width="60%" alt="InterposeKit"/>
 
+# InterposeKit 🧩
+
 [![SwiftPM](https://github.com/steipete/InterposeKit/workflows/SwiftPM/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3ASwiftPM)
 [![xcodebuild](https://github.com/steipete/InterposeKit/workflows/xcodebuild/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3Axcodebuild)
 [![pod lib lint](https://github.com/steipete/InterposeKit/workflows/pod%20lib%20lint/badge.svg)](https://github.com/steipete/InterposeKit/actions?query=workflow%3A%22pod+lib+lint%22)
