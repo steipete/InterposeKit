@@ -52,7 +52,7 @@ final public class Interpose {
 
     // This is based on observation, there is no documented way
     private func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
-        NSStringFromClass(klass).hasPrefix("NSKVO")
+        String(cString: class_getName(klass)).contains("NSKVONotifying_")
     }
 
     /// Initializes an instance of Interpose for a specific class.
