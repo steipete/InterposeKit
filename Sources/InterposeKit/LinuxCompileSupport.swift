@@ -14,6 +14,8 @@ public struct Method {}
 func NSSelectorFromString(_ aSelectorName: String) -> Selector { Selector("") }
 func class_getInstanceMethod(_ cls: AnyClass?, _ name: Selector) -> Method? { return nil }
 func class_getMethodImplementation(_ cls: AnyClass?, _ name: Selector) -> IMP? { return nil }
+private let linuxClassNameStub = strdup("")!
+func class_getName(_ cls: AnyClass?) -> UnsafePointer<Int8> { return UnsafePointer(linuxClassNameStub) }
 func class_replaceMethod(_ cls: AnyClass?, _ name: Selector,
                          _ imp: IMP, _ types: UnsafePointer<Int8>?) -> IMP? { IMP() }
 func class_addMethod(_ cls: AnyClass?, _ name: Selector,
