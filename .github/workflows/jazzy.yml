@@ -28,7 +28,7 @@ jobs:
     container:
       image: norionomura/jazzy:0.13.3_swift-5.2.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - run: bundle install --path vendor/bundle
       - run: swift build
       - name: Generate documentation json
@@ -42,11 +42,6 @@ jobs:
             cat docs/undocumented.json
             exit 1
           fi
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: API Docs
-          path: docs
       - name: Push to gh-pages
         if: github.event_name == 'push'
         run: |
