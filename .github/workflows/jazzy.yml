@@ -33,7 +33,7 @@ jobs:
             -v "$PWD:/workspace" \
             -w /workspace \
             norionomura/jazzy:0.13.3_swift-5.2.1 \
-            bash -lc "bundle config set path vendor/bundle && bundle install && swift build && sourcekitten doc --spm-module InterposeKit > interposekit.json && bundle exec jazzy --clean --sourcekitten-sourcefile interposekit.json"
+            bash -lc "cp Gemfile /tmp/InterposeKit.Gemfile && BUNDLE_GEMFILE=/tmp/InterposeKit.Gemfile bundle config set path /tmp/interposekit-bundle && BUNDLE_GEMFILE=/tmp/InterposeKit.Gemfile bundle install && swift build && sourcekitten doc --spm-module InterposeKit > interposekit.json && BUNDLE_GEMFILE=/tmp/InterposeKit.Gemfile bundle exec jazzy --clean --sourcekitten-sourcefile interposekit.json"
       - name: Validate documentation coverage
         run: |
           if ruby -rjson -e "j = JSON.parse(File.read('docs/undocumented.json')); exit j['warnings'].length != 0"; then
