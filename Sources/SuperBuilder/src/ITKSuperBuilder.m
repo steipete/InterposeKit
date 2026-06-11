@@ -168,9 +168,15 @@ struct objc_super *ITKReturnThreadSuper(__unsafe_unretained id obj, SEL _cmd) {
  https://azeria-labs.com/functions-and-the-stack-part-7/
  */
 
+#if __has_attribute(no_profile_instrument_function)
+#define ITK_NAKED_TRAMPOLINE __attribute__((__naked__, no_profile_instrument_function))
+#else
+#define ITK_NAKED_TRAMPOLINE __attribute__((__naked__))
+#endif
+
 #if defined(__arm64__)
 
-__attribute__((__naked__))
+ITK_NAKED_TRAMPOLINE
 void msgSendSuperTrampoline(void) {
     asm volatile (
 
@@ -224,7 +230,7 @@ void msgSendSuperStretTrampoline(void) {}
 
 #elif defined(__x86_64__)
 
-__attribute__((__naked__))
+ITK_NAKED_TRAMPOLINE
 void msgSendSuperTrampoline(void) {
     asm volatile (
                   //  push frame pointer
@@ -292,7 +298,7 @@ void msgSendSuperTrampoline(void) {
 }
 
 
-__attribute__((__naked__))
+ITK_NAKED_TRAMPOLINE
 void msgSendSuperStretTrampoline(void) {
     asm volatile (
                   //  push frame pointer
