@@ -21,6 +21,80 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString *const SuperBuilderErrorDomain = @"com.steipete.superbuilder";
 
+typedef NS_OPTIONS(int32_t, IKTBlockFlags) {
+    IKTBlockFlagsHasCopyDisposeHelpers = 1 << 25,
+    IKTBlockFlagsHasSignature = 1 << 30
+};
+
+typedef struct {
+    __unsafe_unretained Class isa;
+    IKTBlockFlags flags;
+    int32_t reserved;
+    void (*invoke)(void *, ...);
+    void *descriptor;
+} IKTBlockLiteral;
+
+const char *IKTBlockGetTypeEncoding(id block) {
+    IKTBlockLiteral *layout = (__bridge void *)block;
+    if (!(layout->flags & IKTBlockFlagsHasSignature) || layout->descriptor == NULL) {
+        return NULL;
+    }
+
+    uint8_t *descriptor = layout->descriptor;
+    descriptor += 2 * sizeof(uintptr_t);
+    if (layout->flags & IKTBlockFlagsHasCopyDisposeHelpers) {
+        descriptor += 2 * sizeof(void *);
+    }
+    return *(const char **)descriptor;
+}
+
+static const char *IKTSkipTypeQualifiers(const char *typeEncoding) {
+    while (strchr("rnNoORV", typeEncoding[0]) != NULL) {
+        typeEncoding++;
+    }
+    return typeEncoding;
+}
+
+static BOOL IKTTypeEncodingsMatch(const char *first, const char *second) {
+    if (first == NULL || second == NULL) {
+        return NO;
+    }
+    first = IKTSkipTypeQualifiers(first);
+    second = IKTSkipTypeQualifiers(second);
+    if (first[0] == '@' && second[0] == '@') {
+        return YES;
+    }
+    return strcmp(first, second) == 0;
+}
+
+BOOL IKTBlockSignatureMatchesMethod(id block, Method method) {
+    const char *blockTypeEncoding = IKTBlockGetTypeEncoding(block);
+    const char *methodTypeEncoding = method_getTypeEncoding(method);
+    if (blockTypeEncoding == NULL || methodTypeEncoding == NULL) {
+        return NO;
+    }
+
+    NSMethodSignature *blockSignature = [NSMethodSignature signatureWithObjCTypes:blockTypeEncoding];
+    NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:methodTypeEncoding];
+    if (blockSignature == nil || methodSignature == nil ||
+        blockSignature.numberOfArguments != methodSignature.numberOfArguments ||
+        blockSignature.numberOfArguments < 2 ||
+        !IKTTypeEncodingsMatch(blockSignature.methodReturnType, methodSignature.methodReturnType) ||
+        !IKTTypeEncodingsMatch([blockSignature getArgumentTypeAtIndex:1],
+                               [methodSignature getArgumentTypeAtIndex:0])) {
+        return NO;
+    }
+
+    // Block argument 0 is the block itself; method argument 1 is _cmd.
+    for (NSUInteger index = 2; index < blockSignature.numberOfArguments; index++) {
+        if (!IKTTypeEncodingsMatch([blockSignature getArgumentTypeAtIndex:index],
+                                   [methodSignature getArgumentTypeAtIndex:index])) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 static os_unfair_lock _imageDidLoadLock = OS_UNFAIR_LOCK_INIT;
 static ITKImageDidLoadCallback *_imageDidLoadCallbacks;
 static size_t _imageDidLoadCallbackCount;
