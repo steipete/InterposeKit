@@ -53,6 +53,15 @@ class TestClass: NSObject {
         var1 + var2 + var3 + var4 + var5 + var6
     }
 
+    #if arch(arm64)
+        // swiftlint:disable:next function_parameter_count
+        @objc dynamic func combine(_ value0: Double, _ value1: Double, _ value2: Double, _ value3: Double,
+                                   _ value4: Double, _ value5: Double, _ value6: Double, _ value7: Double) -> Double {
+            value0 + (value1 * 10) + (value2 * 100) + (value3 * 1_000)
+                + (value4 * 10_000) + (value5 * 100_000) + (value6 * 1_000_000) + (value7 * 10_000_000)
+        }
+    #endif
+
     // This requires _objc_msgSendSuper_stret on x64, returns a large struct
     @objc dynamic func invert3DTransform(_ input: CATransform3D) -> CATransform3D {
         input.inverted

@@ -134,6 +134,26 @@ final class ObjectInterposeTests: InterposeKitTestCase {
         try hook.revert()
     }
 
+    #if arch(arm64)
+        func test8FloatingPointParameters() throws {
+            let testObj = TestClass()
+            let expected = 87_654_321.0
+            XCTAssertEqual(testObj.combine(1, 2, 3, 4, 5, 6, 7, 8), expected)
+
+            let hook = try testObj.hook(#selector(TestClass.combine)) { (store: TypedHook
+                <@convention(c) (AnyObject, Selector, Double, Double, Double, Double,
+                                 Double, Double, Double, Double) -> Double,
+                @convention(block) (AnyObject, Double, Double, Double, Double,
+                                    Double, Double, Double, Double) -> Double>) in {
+                    store.original($0, store.selector, $1, $2, $3, $4, $5, $6, $7, $8)
+                }
+            }
+
+            XCTAssertEqual(testObj.combine(1, 2, 3, 4, 5, 6, 7, 8), expected)
+            try hook.revert()
+        }
+    #endif
+
     func testObjectCallReturn() throws {
         let testObj = TestClass()
         let str = "foo"
