@@ -1,5 +1,9 @@
 import Foundation
 
+#if SWIFT_PACKAGE && !os(Linux)
+import SuperBuilder
+#endif
+
 /// Base class, represents a hook to exactly one method.
 public class AnyHook {
     /// The class this hook is based on.
@@ -64,6 +68,20 @@ public class AnyHook {
         }
         guard state == expectedState else { throw InterposeError.invalidState(expectedState: expectedState) }
         return method
+    }
+
+    func validateImplementationBlock(_ block: AnyObject) throws {
+        #if os(Linux)
+        _ = block
+        #else
+        let method = try validate()
+        guard IKTBlockSignatureMatchesMethod(block, method) else {
+            let methodSignature = method_getTypeEncoding(method).map(String.init(cString:)) ?? "<missing>"
+            let hookSignature = IKTBlockGetTypeEncoding(block).map(String.init(cString:))
+            throw InterposeError.incompatibleHookSignature(
+                `class`, selector, methodSignature: methodSignature, hookSignature: hookSignature)
+        }
+        #endif
     }
 
     private func execute(newState: State, task: () throws -> Void) throws {

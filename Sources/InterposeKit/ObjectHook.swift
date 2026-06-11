@@ -22,6 +22,7 @@ extension Interpose {
             self.object = object
             try super.init(class: type(of: object), selector: selector)
             let block = implementation(self) as AnyObject
+            try validateImplementationBlock(block)
             replacementIMP = imp_implementationWithBlock(block)
             guard replacementIMP != nil else {
                 throw InterposeError.unknownError("imp_implementationWithBlock failed for \(block) - slots exceeded?")

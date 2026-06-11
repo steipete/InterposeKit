@@ -9,7 +9,9 @@ extension Interpose {
         public init(`class`: AnyClass, selector: Selector,
                     implementation: (ClassHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
             try super.init(class: `class`, selector: selector)
-            replacementIMP = imp_implementationWithBlock(implementation(self) as Any)
+            let block = implementation(self) as AnyObject
+            try validateImplementationBlock(block)
+            replacementIMP = imp_implementationWithBlock(block)
         }
 
         override func replaceImplementation() throws {

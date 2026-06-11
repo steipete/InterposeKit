@@ -77,7 +77,7 @@ Hi there 👋 and Interpose
 - Interpose works on classes and individual objects.
 - Hooks can easily be undone via calling `revert()`. This also checks and errors if someone else changed stuff in between.
 - Mostly Swift, no `NSInvocation`, which requires boxing and can be slow.
-- No Type checking. If you have a typo or forget a `convention` part, this will crash at runtime.
+- Replacement block signatures are checked when hooks are created. The `methodSignature` used to call the original implementation remains caller-typed.
 - Yes, you have to type the resulting type twice This is a tradeoff, else we need `NSInvocation`.
 - Delayed Interposing helps when a class is loaded at runtime. This is useful for [Mac Catalyst](https://steipete.com/posts/mac-catalyst-crash-hunt/).
 
@@ -171,7 +171,6 @@ Add `github "steipete/InterposeKit"` to your `Cartfile`.
 ## Improvement Ideas
 
 - Write proposal to allow to [convert the calling convention of existing types](https://twitter.com/steipete/status/1266799174563041282?s=21).
-- Use the C block struct to perform type checking between Method type and C type (I do that in  [Aspects library](https://github.com/steipete/Aspects)), it's still a runtime crash but could be at hook time, not when we call it.
 - Add a way to get all current hooks from an object/class.
 - Add a way to revert hooks without super helper.
 - Add a way to apply multiple hooks to classes

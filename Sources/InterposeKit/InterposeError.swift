@@ -18,6 +18,10 @@ public enum InterposeError: LocalizedError {
     /// Unable to add method  for object-based interposing.
     case unableToAddMethod(AnyClass, Selector)
 
+    /// The replacement block uses a different Objective-C calling convention than the method.
+    case incompatibleHookSignature(
+        AnyClass, Selector, methodSignature: String, hookSignature: String?)
+
     /// Object-based hooking does not work if an object is using KVO.
     /// The KVO mechanism also uses subclasses created at runtime but doesn't check for additional overrides.
     /// Adding a hook eventually crashes the KVO management code so we reject hooking altogether in this case.
@@ -62,6 +66,9 @@ extension InterposeError: Equatable {
             return "Failed to allocate class pair: \(klass), \(subclassName)"
         case .unableToAddMethod(let klass, let selector):
             return "Unable to add method: -[\(klass) \(selector)]"
+        case let .incompatibleHookSignature(klass, selector, methodSignature, hookSignature):
+            return "Hook signature \(hookSignature ?? "<missing>") does not match method signature " +
+                "\(methodSignature): -[\(klass) \(selector)]"
         case .keyValueObservationDetected(let obj):
             return "Unable to hook object that uses Key Value Observing: \(obj)"
         case .coreFoundationObjectDetected(let obj):

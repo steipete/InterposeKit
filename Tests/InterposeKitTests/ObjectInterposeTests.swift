@@ -4,6 +4,38 @@ import XCTest
 
 final class ObjectInterposeTests: InterposeKitTestCase {
 
+    func testRejectsMismatchedHookReturnType() {
+        let testObj = TestClass()
+
+        XCTAssertThrowsError(try testObj.hook(
+            #selector(TestClass.returnInt),
+            methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
+            hookSignature: (@convention(block) (AnyObject) -> Double).self
+        ) { _ in
+            { _ in 1.0 }
+        }) { error in
+            guard case InterposeError.incompatibleHookSignature = error else {
+                return XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+
+    func testRejectsMismatchedHookArgumentType() {
+        let testObj = TestClass()
+
+        XCTAssertThrowsError(try testObj.hook(
+            #selector(TestClass.doubleString),
+            methodSignature: (@convention(c) (AnyObject, Selector, String) -> String).self,
+            hookSignature: (@convention(block) (AnyObject, Int) -> String).self
+        ) { _ in
+            { _, _ in "" }
+        }) { error in
+            guard case InterposeError.incompatibleHookSignature = error else {
+                return XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+
     func testRejectsCoreFoundationBackedObject() throws {
         let url = try XCTUnwrap(NSURL(string: "https://www.google.com"))
         let expectedError = InterposeError.coreFoundationObjectDetected(url)

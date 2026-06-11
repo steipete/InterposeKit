@@ -1,5 +1,6 @@
 #if __APPLE__
 #import <Foundation/Foundation.h>
+#import <objc/runtime.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -8,6 +9,14 @@ typedef void (*ITKImageDidLoadCallback)(void);
 
 /// Schedules `callback` asynchronously when an image load can be inspected safely.
 FOUNDATION_EXPORT void IKTRegisterImageDidLoadCallback(ITKImageDidLoadCallback callback);
+
+#if __APPLE__
+/// Returns the Objective-C type encoding embedded in `block`, or NULL if unavailable.
+FOUNDATION_EXPORT const char *_Nullable IKTBlockGetTypeEncoding(id block);
+
+/// Checks whether `block` can replace `method` without changing its Objective-C calling convention.
+FOUNDATION_EXPORT BOOL IKTBlockSignatureMatchesMethod(id block, Method method);
+#endif
 
 /**
 Adds an empty super implementation instance method to originalClass.

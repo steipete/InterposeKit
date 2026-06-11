@@ -3,6 +3,20 @@ import XCTest
 
 final class InterposeKitTests: InterposeKitTestCase {
 
+    func testRejectsMismatchedClassHookSignature() {
+        XCTAssertThrowsError(try Interpose(TestClass.self).hook(
+            #selector(TestClass.returnInt),
+            methodSignature: (@convention(c) (AnyObject, Selector) -> Int).self,
+            hookSignature: (@convention(block) (AnyObject) -> Double).self
+        ) { _ in
+            { _ in 1.0 }
+        }) { error in
+            guard case InterposeError.incompatibleHookSignature = error else {
+                return XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+
     override func setUpWithError() throws {
         Interpose.isLoggingEnabled = true
     }
