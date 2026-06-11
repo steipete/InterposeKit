@@ -8,7 +8,9 @@ on:
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
+      - 'Example/**'
       - 'Tests/**/*.swift'
+      - 'Tests/verify_release_linking.sh'
       - '!Tests/LinuxMain.swift'
   pull_request:
     paths:
@@ -16,7 +18,9 @@ on:
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
       - 'Sources/**/*.swift'
+      - 'Example/**'
       - 'Tests/**/*.swift'
+      - 'Tests/verify_release_linking.sh'
       - '!Tests/LinuxMain.swift'
   workflow_dispatch:
 
@@ -32,6 +36,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: xcodebuild -version
+      - name: Release device app preserves object-hook helper
+        run: bash Tests/verify_release_linking.sh
       - name: macOS with UTF16
         if: always()
         run: YAMS_DEFAULT_ENCODING=UTF16 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} -destination "platform=macOS,arch=$(uname -m)" test | xcpretty
