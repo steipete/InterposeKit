@@ -4,6 +4,54 @@ import XCTest
 
 final class ObjectInterposeTests: InterposeKitTestCase {
 
+    #if !os(Linux)
+    func testWeakInterposeBreaksAssociatedObjectCycle() throws {
+        weak var weakObject: TestClass?
+        var associationKey: UInt8 = 0
+
+        try autoreleasepool {
+            let object = TestClass()
+            weakObject = object
+            let interpose = try Interpose(.weak(object)) {
+                try $0.prepareHook(
+                    #selector(TestClass.sayHi),
+                    methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+                    hookSignature: (@convention(block) (AnyObject) -> String).self
+                ) { store in
+                    { object in store.original(object, store.selector) }
+                }
+            }
+            objc_setAssociatedObject(object, &associationKey, interpose, .OBJC_ASSOCIATION_RETAIN)
+
+            XCTAssertNotNil(interpose.object)
+            XCTAssertEqual(object.sayHi(), testClassHi)
+        }
+
+        XCTAssertNil(weakObject)
+    }
+
+    func testWeakInterposeReportsDeallocatedObject() throws {
+        var interpose: Interpose?
+
+        autoreleasepool {
+            let object = TestClass()
+            interpose = try? Interpose(.weak(object))
+            XCTAssertNotNil(interpose?.object)
+        }
+
+        XCTAssertNil(interpose?.object)
+        XCTAssertThrowsError(try interpose?.prepareHook(
+            #selector(TestClass.sayHi),
+            methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+            hookSignature: (@convention(block) (AnyObject) -> String).self
+        ) { _ in
+            { _ in testClassHi }
+        }) { error in
+            XCTAssertEqual(error as? InterposeError, .objectDeallocated)
+        }
+    }
+    #endif
+
     func testRejectsMismatchedHookReturnType() {
         let testObj = TestClass()
 

@@ -6,7 +6,7 @@
 
 ##### Enhancements
 
-* None.
+* Support weakly referenced object interposers, avoiding retain cycles when an interposer is associated with its target. Thanks to [@ezoushen](https://github.com/ezoushen).
 
 ##### Bug Fixes
 

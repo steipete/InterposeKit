@@ -87,6 +87,22 @@ InterposeKit can hook classes and object. Class hooking is similar to swizzling,
 
 Caveat: Hooking will fail with an error if the object uses KVO or is backed by Core Foundation, such as `NSURL`. These objects rely on runtime behavior that is incompatible with InterposeKit's dynamic subclass. Using KVO after a hook was created is supported and will not cause issues.
 
+Object interposers retain their target by default. Use a weak reference when associating an interposer back to its target, avoiding a retain cycle:
+
+```swift
+let interposer = try Interpose(.weak(testObj)) {
+    try $0.prepareHook(
+        #selector(TestClass.sayHi),
+        methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+        hookSignature: (@convention(block) (AnyObject) -> String).self
+    ) { store in
+        { object in store.original(object, store.selector) + "weakly held" }
+    }
+}
+```
+
+`interposer.object` becomes `nil` after a weakly referenced target deallocates. Operations that require the target then throw `InterposeError.objectDeallocated`.
+
 ## Various ways to define the signature
 
 Next to using  `methodSignature` and `hookSignature`, following variants to define the signature are also possible:

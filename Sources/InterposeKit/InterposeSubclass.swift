@@ -18,9 +18,6 @@ class InterposeSubclass {
         }
     }
 
-    /// The object that is being hooked.
-    let object: AnyObject
-
     /// Subclass that we create on the fly
     private(set) var dynamicClass: AnyClass
 
@@ -30,12 +27,11 @@ class InterposeSubclass {
     /// Making KVO and Object-based hooking work at the same time is difficult.
     /// If we make a dynamic subclass over KVO, invalidating the token crashes in cache_getImp.
     init(object: AnyObject) throws {
-        self.object = object
         dynamicClass = type(of: object) // satisfy set to something
-        dynamicClass = try getExistingSubclass() ?? createSubclass()
+        dynamicClass = try Self.getExistingSubclass(for: object) ?? Self.createSubclass(for: object)
     }
 
-    private func createSubclass() throws -> AnyClass {
+    private static func createSubclass(for object: AnyObject) throws -> AnyClass {
         let perceivedClass: AnyClass = type(of: object)
         let actualClass: AnyClass = object_getClass(object)!
 
@@ -50,7 +46,7 @@ class InterposeSubclass {
                 return existingClass
             } else {
                 guard let subclass: AnyClass = objc_allocateClassPair(actualClass, cString, 0) else { return nil }
-                replaceGetClass(in: subclass, decoy: perceivedClass)
+                Self.replaceGetClass(in: subclass, decoy: perceivedClass)
                 objc_registerClassPair(subclass)
                 return subclass
             }
@@ -67,7 +63,7 @@ class InterposeSubclass {
     }
 
     /// We need to reuse a dynamic subclass if the object already has one.
-    private func getExistingSubclass() -> AnyClass? {
+    private static func getExistingSubclass(for object: AnyObject) -> AnyClass? {
         let actualClass: AnyClass = object_getClass(object)!
         if Self.isInterposeSubclass(actualClass) {
             return actualClass
@@ -80,7 +76,7 @@ class InterposeSubclass {
     }
 
     #if !os(Linux)
-    private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
+    private static func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {
         // crashes on linux
         let getClass: @convention(block) (AnyObject) -> AnyClass = { _ in
             perceivedClass
@@ -112,6 +108,6 @@ class InterposeSubclass {
     #else
     func addSuperTrampoline(selector: Selector) { }
     class var supportsSuperTrampolines: Bool { return false }
-    private func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {}
+    private static func replaceGetClass(in class: AnyClass, decoy perceivedClass: AnyClass) {}
     #endif
 }

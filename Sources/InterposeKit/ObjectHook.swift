@@ -7,7 +7,14 @@ extension Interpose {
     final public class ObjectHook<MethodSignature, HookSignature>: TypedHook<MethodSignature, HookSignature> {
 
         /// The object that is being hooked.
-        public let object: AnyObject
+        public var object: AnyObject {
+            guard let object = objectReference.object else {
+                preconditionFailure("The interposed object has been deallocated")
+            }
+            return object
+        }
+
+        private let objectReference: Interpose.ObjectReference
 
         /// Subclass that we create on the fly
         var interposeSubclass: InterposeSubclass?
@@ -16,10 +23,21 @@ extension Interpose {
         let generatesSuperIMP = InterposeSubclass.supportsSuperTrampolines
 
         /// Initialize a new hook to interpose an instance method.
-        public init(object: AnyObject, selector: Selector,
-                    implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+        public convenience init(object: AnyObject, selector: Selector,
+                                implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+            try self.init(
+                objectReference: Interpose.ObjectReference(strong: object),
+                selector: selector,
+                implementation: implementation)
+        }
+
+        init(objectReference: Interpose.ObjectReference, selector: Selector,
+             implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+            guard let object = objectReference.object else {
+                throw InterposeError.objectDeallocated
+            }
             try Interpose.validateObjectForHooking(object)
-            self.object = object
+            self.objectReference = objectReference
             try super.init(class: type(of: object), selector: selector)
             let block = implementation(self) as AnyObject
             try validateImplementationBlock(block)
@@ -85,6 +103,9 @@ extension Interpose {
 
         override func replaceImplementation() throws {
             let method = try validate()
+            guard let object = objectReference.object else {
+                throw InterposeError.objectDeallocated
+            }
 
             // Check if there's an existing subclass we can reuse.
             // Create one at runtime if there is none.
@@ -180,7 +201,8 @@ extension Interpose {
 #if DEBUG
 extension Interpose.ObjectHook: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return "\(selector) of \(object) -> \(String(describing: original))"
+        let objectDescription = objectReference.object.map(String.init(describing:)) ?? "<deallocated>"
+        return "\(selector) of \(objectDescription) -> \(String(describing: original))"
     }
 }
 #endif
