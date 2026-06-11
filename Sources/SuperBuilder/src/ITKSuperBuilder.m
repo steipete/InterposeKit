@@ -1,12 +1,204 @@
 #if __APPLE__
 #import "ITKSuperBuilder.h"
 
+#import <dlfcn.h>
+#import <dispatch/dispatch.h>
+#import <mach-o/dyld.h>
+#import <mach-o/getsect.h>
+#import <os/lock.h>
+#import <stdlib.h>
+#import <string.h>
+#import <unistd.h>
+
+#if defined(IKT_TEST_DELAY_DYLD_CALLBACK)
+#import <stdatomic.h>
+#endif
+
 @import ObjectiveC.message;
 @import ObjectiveC.runtime;
 
 NS_ASSUME_NONNULL_BEGIN
 
 NSString *const SuperBuilderErrorDomain = @"com.steipete.superbuilder";
+
+static os_unfair_lock _imageDidLoadLock = OS_UNFAIR_LOCK_INIT;
+static ITKImageDidLoadCallback *_imageDidLoadCallbacks;
+static size_t _imageDidLoadCallbackCount;
+static dispatch_queue_t _imageDidLoadQueue;
+static dispatch_queue_t _legacyImageLoadQueue;
+static BOOL _imageDidLoadHookInstalled;
+static const NSUInteger IKTLegacyImageLoadRetryCount = 5000;
+#if defined(IKT_TEST_DELAY_DYLD_CALLBACK)
+static atomic_int _delayFutureDyldCallbacks;
+#endif
+
+typedef struct {
+    BOOL containsObjCClasses;
+    char *imagePath;
+} IKTLegacyImageLoadContext;
+
+static void IKTInvokeImageDidLoadCallback(void *context) {
+    os_unfair_lock_lock(&_imageDidLoadLock);
+    const size_t callbackCount = _imageDidLoadCallbackCount;
+    ITKImageDidLoadCallback *callbacks = malloc(callbackCount * sizeof(*callbacks));
+    if (callbacks != NULL) {
+        memcpy(callbacks, _imageDidLoadCallbacks, callbackCount * sizeof(*callbacks));
+    }
+    os_unfair_lock_unlock(&_imageDidLoadLock);
+
+    if (callbacks != NULL) {
+        for (size_t index = 0; index < callbackCount; index++) {
+            callbacks[index]();
+        }
+        free(callbacks);
+    }
+    if (context != NULL) {
+        dlclose(context);
+    }
+}
+
+static void IKTScheduleImageDidLoadCallback(void) {
+    dispatch_async_f(_imageDidLoadQueue, NULL, IKTInvokeImageDidLoadCallback);
+}
+
+#if !defined(IKT_FORCE_DYLD_IMAGE_CALLBACK)
+static void IKTObjCImageDidLoad(__unused const struct mach_header *header) {
+    IKTScheduleImageDidLoadCallback();
+}
+#endif
+
+static BOOL IKTImageContainsObjCClasses(const struct mach_header *header) {
+    unsigned long sectionSize = 0;
+    #if __LP64__
+    const struct mach_header_64 *header64 = (const struct mach_header_64 *)header;
+    getsectiondata(header64, "__DATA", "__objc_classlist", &sectionSize);
+    if (sectionSize == 0) {
+        getsectiondata(header64, "__DATA_CONST", "__objc_classlist", &sectionSize);
+    }
+    if (sectionSize == 0) {
+        getsectiondata(header64, "__DATA_DIRTY", "__objc_classlist", &sectionSize);
+    }
+    if (sectionSize == 0) {
+        getsectiondata(header64, "__AUTH_CONST", "__objc_classlist", &sectionSize);
+    }
+    #else
+    getsectiondata(header, "__DATA", "__objc_classlist", &sectionSize);
+    if (sectionSize == 0) {
+        getsectiondata(header, "__DATA_CONST", "__objc_classlist", &sectionSize);
+    }
+    if (sectionSize == 0) {
+        getsectiondata(header, "__DATA_DIRTY", "__objc_classlist", &sectionSize);
+    }
+    #endif
+    return sectionSize > 0;
+}
+
+static void IKTWaitForObjCImageLoad(void *context) {
+    IKTLegacyImageLoadContext *imageContext = context;
+    void *image = NULL;
+    if (imageContext->containsObjCClasses && imageContext->imagePath != NULL) {
+        // The add-image callback can run before RTLD_NOLOAD can retain the image.
+        for (NSUInteger attempt = 0; attempt < IKTLegacyImageLoadRetryCount && image == NULL; attempt++) {
+            image = dlopen(imageContext->imagePath, RTLD_LAZY | RTLD_NOLOAD);
+            if (image == NULL) {
+                usleep(1000);
+            }
+        }
+
+        unsigned int classCount = 0;
+        if (image != NULL) {
+            // Invalid weak-superclass classes may never register, so bound the wait.
+            for (NSUInteger attempt = 0; attempt < IKTLegacyImageLoadRetryCount && classCount == 0; attempt++) {
+                const char **classNames = objc_copyClassNamesForImage(imageContext->imagePath, &classCount);
+                free(classNames);
+                if (classCount == 0) {
+                    usleep(1000);
+                }
+            }
+        }
+    }
+    free(imageContext->imagePath);
+    free(imageContext);
+    dispatch_async_f(_imageDidLoadQueue, image, IKTInvokeImageDidLoadCallback);
+}
+
+static void IKTDyldImageDidLoad(const struct mach_header *header, __unused intptr_t slide) {
+    IKTLegacyImageLoadContext *context = calloc(1, sizeof(*context));
+    if (context != NULL) {
+        context->containsObjCClasses = IKTImageContainsObjCClasses(header);
+        Dl_info imageInfo = {};
+        if (dladdr(header, &imageInfo) != 0 && imageInfo.dli_fname != NULL) {
+            context->imagePath = strdup(imageInfo.dli_fname);
+        }
+        dispatch_async_f(_legacyImageLoadQueue, context, IKTWaitForObjCImageLoad);
+    } else {
+        IKTScheduleImageDidLoadCallback();
+    }
+    #if defined(IKT_TEST_DELAY_DYLD_CALLBACK)
+    if (atomic_load_explicit(&_delayFutureDyldCallbacks, memory_order_relaxed)) {
+        usleep(100000);
+    }
+    #endif
+}
+
+static void IKTRegisterDyldImageLoadCallback(void) {
+    _dyld_register_func_for_add_image(IKTDyldImageDidLoad);
+    #if defined(IKT_TEST_DELAY_DYLD_CALLBACK)
+    atomic_store_explicit(&_delayFutureDyldCallbacks, 1, memory_order_relaxed);
+    #endif
+}
+
+static void IKTReplayImageDidLoadCallback(ITKImageDidLoadCallback callback) {
+    dispatch_async(_imageDidLoadQueue, ^{
+        callback();
+    });
+}
+
+void IKTRegisterImageDidLoadCallback(ITKImageDidLoadCallback callback) {
+    if (callback == NULL) {
+        return;
+    }
+
+    BOOL shouldInstallHook = NO;
+    os_unfair_lock_lock(&_imageDidLoadLock);
+    for (size_t index = 0; index < _imageDidLoadCallbackCount; index++) {
+        if (_imageDidLoadCallbacks[index] == callback) {
+            os_unfair_lock_unlock(&_imageDidLoadLock);
+            return;
+        }
+    }
+
+    ITKImageDidLoadCallback *callbacks = realloc(
+        _imageDidLoadCallbacks, (_imageDidLoadCallbackCount + 1) * sizeof(*callbacks));
+    if (callbacks == NULL) {
+        os_unfair_lock_unlock(&_imageDidLoadLock);
+        return;
+    }
+    _imageDidLoadCallbacks = callbacks;
+    _imageDidLoadCallbacks[_imageDidLoadCallbackCount++] = callback;
+
+    if (!_imageDidLoadHookInstalled) {
+        _imageDidLoadHookInstalled = YES;
+        _imageDidLoadQueue = dispatch_queue_create("com.steipete.image-watcher", DISPATCH_QUEUE_SERIAL);
+        _legacyImageLoadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        shouldInstallHook = YES;
+    }
+    os_unfair_lock_unlock(&_imageDidLoadLock);
+
+    if (!shouldInstallHook) {
+        IKTReplayImageDidLoadCallback(callback);
+        return;
+    }
+    #if defined(IKT_FORCE_DYLD_IMAGE_CALLBACK)
+    IKTRegisterDyldImageLoadCallback();
+    #else
+    if (@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)) {
+        objc_addLoadImageFunc(IKTObjCImageDidLoad);
+    } else {
+        IKTRegisterDyldImageLoadCallback();
+    }
+    #endif
+}
 
 void msgSendSuperTrampoline(void);
 void msgSendSuperStretTrampoline(void);

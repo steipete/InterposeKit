@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.source                    = { :git => s.homepage + '.git', :tag => s.version }
   s.license                   = { :type => 'MIT', :file => 'LICENSE' }
   s.authors                   = { 'Peter Steinberger' => 'steipete@gmail.com' }
-  s.source_files              = 'Sources/**/*.{h,c,swift}'
+  s.source_files              = 'Sources/**/*.{h,m,c,swift}'
   s.swift_versions            = ['5.2']
   s.pod_target_xcconfig       = { 'APPLICATION_EXTENSION_API_ONLY' => 'YES' }
   s.ios.deployment_target     = '11.0'
