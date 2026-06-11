@@ -36,7 +36,8 @@ static IMP ITKGetTrampolineForTypeEncoding(__unused const char *typeEncoding) {
     return requiresStructDispatch ? (IMP)msgSendSuperStretTrampoline : (IMP)msgSendSuperTrampoline;
 }
 
-// Helper for binding with Swift
+// Keep the helper available for Swift's runtime lookup in optimized application binaries.
+__attribute__((__used__))
 BOOL IKTAddSuperImplementationToClass(Class originalClass, SEL selector, NSError **error);
 BOOL IKTAddSuperImplementationToClass(Class originalClass, SEL selector, NSError **error) {
     return [SuperBuilder addSuperInstanceMethodToClass:originalClass selector:selector error:error];
