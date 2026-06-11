@@ -4,6 +4,26 @@ import XCTest
 
 final class ObjectInterposeTests: InterposeKitTestCase {
 
+    func testRejectsCoreFoundationBackedObject() throws {
+        let url = try XCTUnwrap(NSURL(string: "https://www.google.com"))
+        let expectedError = InterposeError.coreFoundationObjectDetected(url)
+
+        XCTAssertThrowsError(try Interpose(url)) { error in
+            XCTAssertEqual(error as? InterposeError, expectedError)
+        }
+        XCTAssertThrowsError(try url.hook(
+            #selector(getter: NSURL.host),
+            methodSignature: (@convention(c) (AnyObject, Selector) -> String).self,
+            hookSignature: (@convention(block) (AnyObject) -> String).self
+        ) { _ in
+            { _ in "www.facebook.com" }
+        }) { error in
+            XCTAssertEqual(error as? InterposeError, expectedError)
+        }
+
+        XCTAssertEqual(url.host, "www.google.com")
+    }
+
     func testInterposeSingleObject() throws {
         let testObj = TestClass()
         let testObj2 = TestClass()

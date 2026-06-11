@@ -23,6 +23,9 @@ public enum InterposeError: LocalizedError {
     /// Adding a hook eventually crashes the KVO management code so we reject hooking altogether in this case.
     case keyValueObservationDetected(AnyObject)
 
+    /// Core Foundation-backed objects do not support isa-swizzling from Swift.
+    case coreFoundationObjectDetected(AnyObject)
+
     /// Object is lying about it's actual class metadata.
     /// This usually happens when other swizzling libraries (like Aspects) also interfere with a class.
     /// While this might just work, it's not worth risking a crash, so similar to KVO this case is rejected.
@@ -61,6 +64,8 @@ extension InterposeError: Equatable {
             return "Unable to add method: -[\(klass) \(selector)]"
         case .keyValueObservationDetected(let obj):
             return "Unable to hook object that uses Key Value Observing: \(obj)"
+        case .coreFoundationObjectDetected(let obj):
+            return "Unable to hook Core Foundation-backed object: \(obj)"
         case .objectPosingAsDifferentClass(let obj, let actualClass):
             return "Unable to hook \(type(of: obj)) posing as \(NSStringFromClass(actualClass))/"
         case .invalidState(let expectedState):

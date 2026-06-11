@@ -69,10 +69,14 @@ class InterposeSubclass {
     /// We need to reuse a dynamic subclass if the object already has one.
     private func getExistingSubclass() -> AnyClass? {
         let actualClass: AnyClass = object_getClass(object)!
-        if NSStringFromClass(actualClass).hasPrefix(Constants.subclassSuffix) {
+        if Self.isInterposeSubclass(actualClass) {
             return actualClass
         }
         return nil
+    }
+
+    static func isInterposeSubclass(_ klass: AnyClass) -> Bool {
+        NSStringFromClass(klass).hasPrefix(Constants.subclassSuffix)
     }
 
     #if !os(Linux)
