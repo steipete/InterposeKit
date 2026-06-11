@@ -10,7 +10,7 @@
 
 ##### Bug Fixes
 
-* None.
+* Preserve trampoline argument registers in code-coverage builds.
 
 ## 0.01
 

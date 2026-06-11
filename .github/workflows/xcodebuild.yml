@@ -34,19 +34,21 @@ jobs:
       - run: xcodebuild -version
       - name: macOS with UTF16
         if: always()
-        run: YAMS_DEFAULT_ENCODING=UTF16 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test | xcpretty
+        run: YAMS_DEFAULT_ENCODING=UTF16 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} -destination "platform=macOS,arch=$(uname -m)" test | xcpretty
         shell: bash
       - name: macOS with UTF8
         if: always()
-        run: YAMS_DEFAULT_ENCODING=UTF8 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test | xcpretty
+        run: YAMS_DEFAULT_ENCODING=UTF8 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} -destination "platform=macOS,arch=$(uname -m)" test | xcpretty
         shell: bash
       - name: iPhone Simulator
         if: always()
-        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test -sdk iphonesimulator -destination "name=iPhone 15" | xcpretty
+        run: |
+          destination_id="$(xcrun simctl list devices available -j | jq -er '[.devices[] | .[] | select(.name | startswith("iPhone"))][0].udid')"
+          xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test -sdk iphonesimulator -destination "platform=iOS Simulator,id=$destination_id" | xcpretty
         shell: bash
       - name: Apple TV Simulator
         if: always()
-        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test -sdk appletvsimulator -destination "name=Apple TV 4K" | xcpretty
+        run: xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} test -sdk appletvsimulator -destination "platform=tvOS Simulator,name=Apple TV" | xcpretty
         shell: bash
       - name: watchOS Simulator
         if: always()
