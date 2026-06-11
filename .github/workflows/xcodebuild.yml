@@ -7,9 +7,11 @@ on:
       - '.github/workflows/xcodebuild.yml'
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
+      - 'Sources/**/*.m'
       - 'Sources/**/*.swift'
       - 'Example/**'
       - 'Tests/**/*.swift'
+      - 'Tests/verify_class_load_watcher.sh'
       - 'Tests/verify_release_linking.sh'
       - '!Tests/LinuxMain.swift'
   pull_request:
@@ -17,9 +19,11 @@ on:
       - '.github/workflows/xcodebuild.yml'
       - 'InterposeKit.xcodeproj/**'
       - 'Sources/**/*.[ch]'
+      - 'Sources/**/*.m'
       - 'Sources/**/*.swift'
       - 'Example/**'
       - 'Tests/**/*.swift'
+      - 'Tests/verify_class_load_watcher.sh'
       - 'Tests/verify_release_linking.sh'
       - '!Tests/LinuxMain.swift'
   workflow_dispatch:
@@ -38,6 +42,10 @@ jobs:
       - run: xcodebuild -version
       - name: Release device app preserves object-hook helper
         run: bash Tests/verify_release_linking.sh
+      - name: Class watcher observes newly loaded image
+        run: bash Tests/verify_class_load_watcher.sh
+      - name: Legacy class watcher waits for image loading
+        run: IKT_FORCE_DYLD_IMAGE_CALLBACK=1 bash Tests/verify_class_load_watcher.sh
       - name: macOS with UTF16
         if: always()
         run: YAMS_DEFAULT_ENCODING=UTF16 xcodebuild ${{ matrix.xcode_flags }} ${{ matrix.flags_for_test }} -destination "platform=macOS,arch=$(uname -m)" test | xcpretty

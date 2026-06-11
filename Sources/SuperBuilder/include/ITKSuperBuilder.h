@@ -4,6 +4,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (*ITKImageDidLoadCallback)(void);
+
+/// Schedules `callback` asynchronously when an image load can be inspected safely.
+FOUNDATION_EXPORT void IKTRegisterImageDidLoadCallback(ITKImageDidLoadCallback callback);
+
 /**
 Adds an empty super implementation instance method to originalClass.
 If a method already exists, this will return NO and a descriptive error message.
@@ -63,7 +68,7 @@ There are a few important details:
 
 @end
 
-NSString *const SuperBuilderErrorDomain;
+FOUNDATION_EXPORT NSString *const SuperBuilderErrorDomain;
 
 typedef NS_ERROR_ENUM(SuperBuilderErrorDomain, SuperBuilderErrorCode) {
     SuperBuilderErrorCodeArchitectureNotSupported,

@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <InterposeKit/ITKSuperBuilder.h>
 
 //! Project version number for InterposeKit.
 FOUNDATION_EXPORT double InterposeKitVersionNumber;

@@ -1,7 +1,7 @@
 import Foundation
 
-#if !os(Linux)
-import MachO.dyld
+#if SWIFT_PACKAGE && !os(Linux)
+import SuperBuilder
 #endif
 
 // MARK: Interpose Class Load Watcher
@@ -81,29 +81,34 @@ private struct InterposeWatcher {
         }
     }
 
-    // Register hook when dyld loads an image
+    // Register hook when the Objective-C runtime finishes loading an image.
     private static let globalWatcherQueue = DispatchQueue(label: "com.steipete.global-image-watcher")
     private static func installGlobalImageLoadWatcher() {
-        _dyld_register_func_for_add_image { _, _ in
-            InterposeWatcher.globalWatcherQueue.sync {
-                // this is called on the thread the image is loaded.
-                InterposeWatcher.globalWatchers = InterposeWatcher.globalWatchers.filter { waiter -> Bool in
-                    do {
-                        if try waiter.tryExecute() == false {
-                            return true // only collect if this fails because class is not there yet
-                        } else {
-                            Interpose.log("\(waiter.className) was successful.")
-                        }
-                    } catch {
-                        Interpose.log("Error while executing task: \(error).")
-                        // We can't bubble up the throw into the C context.
-                        #if DEBUG
-                        // Instead of silently eating, it's better to crash in DEBUG.
-                        fatalError("Error while executing task: \(error).")
-                        #endif
+        #if !os(Linux)
+        IKTRegisterImageDidLoadCallback {
+            InterposeWatcher.processWatchersAfterImageLoad()
+        }
+        #endif
+    }
+
+    private static func processWatchersAfterImageLoad() {
+        globalWatcherQueue.sync {
+            globalWatchers = globalWatchers.filter { waiter -> Bool in
+                do {
+                    if try waiter.tryExecute() == false {
+                        return true // only collect if this fails because class is not there yet
+                    } else {
+                        Interpose.log("\(waiter.className) was successful.")
                     }
-                    return false
+                } catch {
+                    Interpose.log("Error while executing task: \(error).")
+                    // We can't bubble up the throw into the C context.
+                    #if DEBUG
+                    // Instead of silently eating, it's better to crash in DEBUG.
+                    fatalError("Error while executing task: \(error).")
+                    #endif
                 }
+                return false
             }
         }
     }

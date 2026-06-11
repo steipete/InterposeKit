@@ -25,7 +25,7 @@
 		78C39D912483165600B46395 /* InterposeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D902483165600B46395 /* InterposeKit.swift */; };
 		78C39D932483169300B46395 /* InterposeKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C39D922483169300B46395 /* InterposeKitTests.swift */; };
 		78C5A4A82494D75100EE9756 /* MultipleInterposing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C5A4A72494D75100EE9756 /* MultipleInterposing.swift */; };
-		78E20D952497B3480021552C /* ITKSuperBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 78E20D922497B3470021552C /* ITKSuperBuilder.h */; };
+		78E20D952497B3480021552C /* ITKSuperBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 78E20D922497B3470021552C /* ITKSuperBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		78E20D962497B3480021552C /* ITKSuperBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 78E20D942497B3470021552C /* ITKSuperBuilder.m */; };
 		78E20D9824981B2A0021552C /* InterposeSubclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E20D9724981B2A0021552C /* InterposeSubclass.swift */; };
 		78EDB8DA248BA9B300D2F6C1 /* TestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78EDB8D4248B9BB500D2F6C1 /* TestClass.swift */; };
