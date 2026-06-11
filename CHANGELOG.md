@@ -14,6 +14,7 @@
 * Preserve object-hook super trampolines in optimized Release builds, fixing https://github.com/steipete/InterposeKit/issues/29. Thanks to [@Thomvis](https://github.com/Thomvis).
 * Preserve floating-point arguments when object hooks invoke original methods on arm64. Thanks to [@ishutinvv](https://github.com/ishutinvv).
 * Run class-availability hooks after Objective-C loads a new image, fixing https://github.com/steipete/InterposeKit/issues/26.
+* Reject Core Foundation-backed object hooks before dynamic subclassing, preventing crashes such as https://github.com/steipete/InterposeKit/issues/23.
 
 ## 0.01
 

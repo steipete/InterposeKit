@@ -1,3 +1,6 @@
+#if !os(Linux)
+import CoreFoundation
+#endif
 import Foundation
 
 extension NSObject {
@@ -41,7 +44,7 @@ final public class Interpose {
 
     // Checks if a object is posing as a different class
     // via implementing 'class' and returning something else.
-    private func checkObjectPosingAsDifferentClass(_ object: AnyObject) -> AnyClass? {
+    private static func checkObjectPosingAsDifferentClass(_ object: AnyObject) -> AnyClass? {
         let perceivedClass: AnyClass = type(of: object)
         let actualClass: AnyClass = object_getClass(object)!
         if actualClass != perceivedClass {
@@ -51,8 +54,33 @@ final public class Interpose {
     }
 
     // This is based on observation, there is no documented way
-    private func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
+    private static func isKVORuntimeGeneratedClass(_ klass: AnyClass) -> Bool {
         String(cString: class_getName(klass)).contains("NSKVONotifying_")
+    }
+
+    #if !os(Linux)
+    private static let objectiveCObjectTypeID = CFGetTypeID(NSObject())
+    #endif
+
+    private static func isCoreFoundationBackedObject(_ object: AnyObject) -> Bool {
+        #if os(Linux)
+        return false
+        #else
+        return CFGetTypeID(object as CFTypeRef) != objectiveCObjectTypeID
+        #endif
+    }
+
+    static func validateObjectForHooking(_ object: AnyObject) throws {
+        if let actualClass = checkObjectPosingAsDifferentClass(object) {
+            if isKVORuntimeGeneratedClass(actualClass) {
+                throw InterposeError.keyValueObservationDetected(object)
+            } else if !InterposeSubclass.isInterposeSubclass(actualClass) {
+                throw InterposeError.objectPosingAsDifferentClass(object, actualClass: actualClass)
+            }
+        }
+        if isCoreFoundationBackedObject(object) {
+            throw InterposeError.coreFoundationObjectDetected(object)
+        }
     }
 
     /// Initializes an instance of Interpose for a specific class.
@@ -72,13 +100,7 @@ final public class Interpose {
         self.object = object
         self.class = type(of: object)
 
-        if let actualClass = checkObjectPosingAsDifferentClass(object) {
-            if isKVORuntimeGeneratedClass(actualClass) {
-                throw InterposeError.keyValueObservationDetected(object)
-            } else {
-                throw InterposeError.objectPosingAsDifferentClass(object, actualClass: actualClass)
-            }
-        }
+        try Self.validateObjectForHooking(object)
 
         // Only apply if a builder is present
         if let builder = builder {

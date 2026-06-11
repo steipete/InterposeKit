@@ -18,6 +18,7 @@ extension Interpose {
         /// Initialize a new hook to interpose an instance method.
         public init(object: AnyObject, selector: Selector,
                     implementation: (ObjectHook<MethodSignature, HookSignature>) -> HookSignature?) throws {
+            try Interpose.validateObjectForHooking(object)
             self.object = object
             try super.init(class: type(of: object), selector: selector)
             let block = implementation(self) as AnyObject

@@ -85,7 +85,7 @@ Hi there 👋 and Interpose
 
 InterposeKit can hook classes and object. Class hooking is similar to swizzling, but object-based hooking offers a variety of new ways to set hooks. This is achieved via creating a dynamic subclass at runtime. 
 
-Caveat: Hooking will fail with an error if the object uses KVO. The KVO machinery is fragile and it's to easy to cause a crash. Using KVO after a hook was created is supported and will not cause issues.
+Caveat: Hooking will fail with an error if the object uses KVO or is backed by Core Foundation, such as `NSURL`. These objects rely on runtime behavior that is incompatible with InterposeKit's dynamic subclass. Using KVO after a hook was created is supported and will not cause issues.
 
 ## Various ways to define the signature
 
